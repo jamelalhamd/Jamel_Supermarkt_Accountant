@@ -70,7 +70,8 @@ app.use((err, req, res, next) => {
 
 // 404 Handler
 app.use((req, res) => {
-  res.status(404).send('Sorry, we cannot find that!');
+ 
+  res.status(404).render('404');
 });
 
 // Server Listening
