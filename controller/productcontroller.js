@@ -201,12 +201,32 @@ const dashcontroller = (req, res) => {
       const data = { title: 'employees', user: "Error fetching employee data: " + err };
       return res.render('home', { data });
     }
+//================================================================
+    const storeQuery = `SELECT * FROM store`;
+    db.query(storeQuery, (err, storeResults) => {
+      if (err) {
+        console.error("Error fetching store data: " + err);
+        const data = { title: 'dashboard', user: "Error fetching store data: " + err };
+        return res.render('home', { data });
+      }
+  
+      console.log("Successfully fetched store data");
 
-    console.log("Successfully fetched employee data");
-    
-    const data={title:'dashboard', employees: results};
-    
-    res.render('home',{data: data});
+      // Prepare data for the view
+      const data = {
+        title: 'dashboard',
+        employees: results,
+        stores: storeResults
+      };
+      console.log("store data: " + JSON.stringify(  storeResults, null, 2)); 
+      // Render the home view with the fetched data
+      res.render('home', { data });
+    });
+
+//================================================================
+
+
+   
   });
 
 

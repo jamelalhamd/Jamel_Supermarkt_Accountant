@@ -1,87 +1,69 @@
-
 <% const employees = data.employees %>
-
+<% const store = data.stores; console.log("store data in header: " + JSON.stringify(store, null, 2)); %>
 <table
-style="width: 99%"
-class="text-center mx-auto table mt-5 table-striped table-bordered"
+  style="width: 99%"
+  class="text-center mx-auto table mt-5 table-striped table-bordered"
 >
-<thead>
-  <tr>
-    <th scope="col">#</th>
-    <th scope="col">ID</th>
-    <th scope="col">Full Name</th>
-    <th scope="col">Email</th>
-    <th scope="col">Phone</th>
-    <th scope="col">Role</th>
-    <th scope="col">Address</th>
-    <th scope="col">Action</th>
-  </tr>
-</thead>
-<tbody>
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">ID</th>
+      <th scope="col">Full Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Phone</th>
+      <th scope="col">Role</th> <!-- Add Role column -->
+      <th scope="col">Address</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% employees.forEach((e, index) => { %>
+      <% 
+      const storeName = store.find(s => s.StoreID === e.storeID)?.StoreName || 'Store not found'; 
+      console.log("store data: " + JSON.stringify(storeName, null, 2)); 
+    %>
+    <tr>
+      <th scope="row"><%= index + 1 %></th>
+      <td><%= e.employee_id %></td>
+      <td><%= e.employee_name + " " + e.employee_lastname %></td>
+      <td><%= e.employee_email %></td>
+      <td><%= e.employee_phone %></td>
+      <td><%= e.employee_role %></td> <!-- Display Role here -->
+      <td><%= e.employee_address %></td>
+      <td>
+        <a
+          data-bs-toggle="tooltip"
+          data-bs-title="View details"
+          data-bs-placement="top"
+          class="btn btn-primary btn-sm"
+          href="/view/<%= e.employee_id %>"
+        >
+          <i class="bi bi-eye"></i>
+        </a>
 
+        <a
+          data-bs-toggle="tooltip"
+          data-bs-title="Edit user"
+          data-bs-placement="top"
+          class="btn btn-primary btn-sm"
+          href="/edit/<%= e.employee_id %>"
+        >
+          <i class="bi bi-pencil"></i>
+        </a>
 
-  <% employees.forEach((e, index) => { %>
-  <tr>
-    <th scope="row"><%= index+1 %></th>
-    <td><%=e.employee_id  %>	</td>
-    <td><%=e.employee_name+ "  "  +e.employee_lastname  %>	</td>
-    <td><%=e.employee_email  %>	</td>
-    <td><%=e.employee_phone  %></td>
-    <td><%=e.employee_role  %></td>
-    <td><%= e.employee_address  %>  </td>
-    <td>
-      <a
-        data-bs-toggle="tooltip"
-        data-bs-title="View details"
-        data-bs-placement="top"
-        class="btn btn-primary btn-sm"
-        href="/view/<%=e.employee_id  %>"
-        ><i class="bi bi-eye"></i
-      ></a>
-
-      <a
-        data-bs-toggle="tooltip"
-        data-bs-title="Edit user"
-        data-bs-placement="top"
-        class="btn btn-primary btn-sm"
-        href="/edit/<%=e.employee_id  %>"
-      >
-        <i class="bi bi-pencil"></i>
-      </a>
-      <button
-  data-bs-toggle="tooltip"
-  data-bs-title="Delete user"
-  data-bs-placement="top"
-  onclick="window.location.href='/edit';"
-  class="btn btn-danger btn-sm"
->
-<a href='/edit/<%=e.employee_id  %>'> <i class="bi bi-trash"></i>
-</button>
-
-
-    </td>
-
-  </tr>
-
-
-  <% }); %>
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</tbody>
+        <form method="post" action="/delete/<%= e.employee_id %>" style="display: inline;">
+          <button
+            data-bs-toggle="tooltip"
+            data-bs-title="Delete user"
+            data-bs-placement="top"
+            type="submit"
+            class="btn btn-danger btn-sm"
+          >
+            <i class="bi bi-trash"></i>
+          </button>
+        </form>
+      </td>
+    </tr>
+    <% }); %>
+  </tbody>
 </table>
