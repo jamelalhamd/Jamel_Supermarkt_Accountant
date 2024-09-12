@@ -71,30 +71,32 @@ const addcontroller_post = async (req, res) => {
 
 const bcrypt = require('bcrypt'); // Import bcrypt
 
+
 const editcontroller_post = async (req, res) => {
   const { firstname, lastname, phone, gender, address, password, email, role } = req.body;
+  console.log("ROLE UP: " + role);
 
-
-  console.log({ firstname, lastname, phone, gender, address, password, email, role });
-  console.log("1");
-
-//  if (!firstname || !lastname || !phone || !gender || !address || !password || !email || !role)
-//      {
-//     const data = { title: 'edit', user: 'All fields are required' };
-//     return res.render('home', { data });
-//   }
-  console.log("2"); 
-  // Hash the password
-  let hashedPassword;
-  try {
-    hashedPassword = await bcrypt.hash(password, 10);
-  } catch (err) {
-    console.error("Error hashing password: " + err);
-    const data = { title: 'edit', user: 'Error hashing password' };
-    return res.render('home', { data });
+  // Input validation (Example: email validation)
+  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ error: 'Invalid email format' });
   }
 
-  // Create employee object for updating with hashed password
+  // Hash the password if provided
+  let hashedPassword = '';
+  try {
+    if (password && password.trim() !== '') {
+      hashedPassword = await bcrypt.hash(password, 10);
+    } else {
+      // If password not provided, keep the current one
+      hashedPassword = req.currentPassword; // Assuming you get the current password from the DB in earlier middleware
+    }
+  } catch (err) {
+    console.error("Error hashing password: " + err);
+    return res.render('home', { title: 'edit', user: 'Error hashing password' });
+  }
+
+  // Create employee object for updating
   const updatedEmployee = {
     employee_name: firstname,
     employee_lastname: lastname,
@@ -106,35 +108,43 @@ const editcontroller_post = async (req, res) => {
     employee_role: role,
   };
 
+  console.log("ROLE: " + updatedEmployee.employee_role);
+  console.log("updatedEmployee: ", updatedEmployee);
+
   // SQL query to update the employee based on the email
-  const sql = `UPDATE employees SET 
-    employee_name = ?, 
-    employee_lastname = ?, 
-    employee_phone = ?, 
-    employee_gender = ?, 
-    employee_address = ?, 
-    employee_password = ?, 
-    employee_role = ? 
-    WHERE employee_email
-    
-    = ?`;
+  const sql = `
+    UPDATE employees SET 
+      employee_name = ?, 
+      employee_lastname = ?, 
+      employee_phone = ?, 
+      employee_gender = ?, 
+      employee_address = ?, 
+      employee_password = ?, 
+      employee_role = ? 
+    WHERE employee_email = ?
+  `;
 
   // Execute the query with updated employee data
-  db.query(sql, [...Object.values(updatedEmployee).slice(0, -1), email], (err, result) => {
+  db.query(sql, [
+    updatedEmployee.employee_name,
+    updatedEmployee.employee_lastname,
+    updatedEmployee.employee_phone,
+    updatedEmployee.employee_gender,
+    updatedEmployee.employee_address,
+    updatedEmployee.employee_password,
+    updatedEmployee.employee_role,
+    email // Corrected email placement
+  ], (err, result) => {
     if (err) {
       console.error("Error updating employee data: " + err);
-      const data = { title: 'edit', user: "Error updating employee data: " + err };
-      //return res.render('home', { data });
+      return res.render('home', { title: 'edit', user: "Error updating employee data: " + err });
     }
 
     console.log("Successfully updated employee");
-    const data = { title: 'edit', employees: result };
-
-    console.log("Employees data: " + JSON.stringify(result, null, 2)); 
-    res.redirect('/dash');
+    return res.redirect('/dash');
   });
-  
 };
+
 
   
 
@@ -195,7 +205,7 @@ const dashcontroller = (req, res) => {
     console.log("Successfully fetched employee data");
     
     const data={title:'dashboard', employees: results};
-    console.log(results)
+    
     res.render('home',{data: data});
   });
 
