@@ -6,64 +6,153 @@ const errorcontroller = (req, res) => {
   res.render('home',{data: data});
  }
 
-const addcontroller = (req, res) => {  
-  console.log("add")
-  const data={title:'add' ,user: req.user};
-  res.render('home',{data: data});
+const addcontroller = (req, res) => { 
+  
+  
+  const storeQuery = `SELECT * FROM store`;
+    db.query(storeQuery, (err, storeResults) => {
+      if (err) {
+        console.error("Error fetching store data: " + err);
+        const data = { title: 'dashboard', user: "Error fetching store data: " + err };
+        return res.render('home', { data });
+      }
+  
+      console.log("Successfully fetched store data");
+
+      // Prepare data for the view
+      const data = {
+        title: 'add',
+     
+        stores: storeResults
+      };
+      console.log("store data: " + JSON.stringify(  storeResults, null, 2)); 
+      // Render the home view with the fetched data
+      res.render('home', { data });
+    });
+
+
+
+
 }
 
 
 
-
-
 const addcontroller_post = async (req, res) => {
-  const { firstname, lastname, phone, gender, address, password, email, role } = req.body;
 
-  // Check for missing fields
-  if (!firstname || !lastname  || !gender  || !password || !email || !role) {
-    const data = { title: 'add', user: 'All fields are required' };
-    return res.render('home', { data });
-  }
- console.log("password "+ password);
-  // Hash the password
-  let hashedPassword;
-  try {
-    hashedPassword = await bcrypt.hash(password, 10);
-  } catch (err) {
-    console.error("Error hashing password: " + err);
-    const data = { title: 'add', user: 'Error hashing password' };
-    return res.render('home', { data });
-  }console.log("hased_password"+hashedPassword);
-
-  // Create employee object with hashed password
-  const newEmployee = {
-    employee_name: firstname,
-    employee_lastname: lastname,
-    employee_phone: phone,
-    employee_gender: gender,
-    employee_address: address,
-    employee_password: hashedPassword,
-    employee_email: email,
-    employee_role: role,
-  };
-
-  // SQL query to insert the employee
-  const sql = `INSERT INTO employees 
-    (employee_name, employee_lastname, employee_phone, employee_gender, employee_address, employee_password, employee_email, employee_role) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-
-  // Execute the query
-  db.query(sql, Object.values(newEmployee), (err, result) => {
+  const storeQuery = `SELECT * FROM store`;
+  db.query(storeQuery, (err, storeResults) => {
     if (err) {
-      console.error("Error inserting employee data: " + err);
-      const data = { title: 'add', user: "Error inserting employee data: " + err };
+      console.error("Error fetching store data: " + err);
+      const data = { title: 'dashboard', user: "Error fetching store data: " + err };
       return res.render('home', { data });
     }
 
-    console.log("Successfully added employee");
+   
+
+    const { firstname, lastname, phone, gender, address, password, email, role, store } = req.body;
+
+    // Validate required fields
+    if (!firstname || !lastname || !gender || !password || !email || !role || !store || !address) {
   
-    res.redirect('/dash');
+  
+      const data = {
+        title: 'add',
+  user:"All field required",
+        stores: storeResults
+      };
+     return res.render('home',{data})
+  
+  
+    }
+  
+    
+    const sqlemail = `SELECT * FROM employees WHERE employee_email = ?`;
+    db.query(sqlemail, [email], async (err, result) => {
+      if (err) {
+        console.error("Error checking email: " + err);
+        const data = {
+          title: 'add',
+    user:"Error checking email,select anothe email " + err,
+          stores: storeResults
+        };
+      return  res.render('home',{data})
+      }
+  
+      if (result.length > 0) {
+        const data = {
+          title: 'add',
+    user:"The email already Used: " ,
+          stores: storeResults
+        };
+      return  res.render('home',{data})
+      }
+  
+      // Hash the password
+      let hashedPassword;
+      try {
+        hashedPassword = await bcrypt.hash(password, 10);
+      } catch (err) {
+        console.error("Error hashing password: " + err);
+        const data = {
+          title: 'add',
+    user:"Error hashing password: " + err,
+          stores: storeResults
+        };
+      return  res.render('home',{data})
+      }
+  
+      // Create new employee object
+      const newEmployee = {
+        employee_name: firstname,
+        employee_lastname: lastname,
+        employee_phone: phone,
+        employee_gender: gender,
+        employee_address: address,
+        employee_password: hashedPassword,
+        employee_email: email,
+        employee_role: role,
+        storeID: store,
+      };
+  
+      // Insert the employee into the database
+      const sql = `INSERT INTO employees 
+      (employee_name, employee_lastname, employee_phone, employee_gender, employee_address, employee_password, employee_email, employee_role, storeID) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  
+      db.query(sql, Object.values(newEmployee), (err, result) => {
+        if (err) {
+          console.error("Error inserting employee data: " + err);
+          const data = {
+            title: 'add',
+      user:"Error inserting employee data: " + err,
+            stores: storeResults
+          };
+        return  res.render('home',{data})
+        }
+  
+        const data = {
+          title: 'add',
+    user:"User successfully added " ,
+          stores: storeResults
+        };
+      return  res.render('home',{data}) // Redirect to dashboard after successful insertion
+      });
+    });
+    
+  
   });
+
+
+
+
+
+
+
+
+
+
+
+  
 };
 
 
@@ -256,11 +345,30 @@ const editcontroller = (req, res) => {
       return res.render('home', { data, message: 'No employee found' });
     }
 
-    console.log("Successfully fetched employee data for ID: " + id);
-    const data = { title: 'edit', employees: results };
-
-    console.log("Employees data: " + JSON.stringify(results, null, 2)); 
+    const storeQuery = `SELECT * FROM store`;
+db.query(storeQuery, (err, storeResults) => {
+  if (err) {
+    console.error("Error fetching store data: " + err);
+    const data = { title: 'dashboard', user: "Error fetching store data: " + err };
     return res.render('home', { data });
+  }
+
+  console.log("Successfully fetched store data");
+
+  // Prepare data for the view
+  const data = {
+    title: 'edit',
+    employees: results,
+    stores: storeResults
+  };
+  console.log("store data: " + JSON.stringify(  storeResults, null, 2)); 
+  // Render the home view with the fetched data
+  res.render('home', { data });
+});
+
+//================================================================
+
+   
   });
 
  }

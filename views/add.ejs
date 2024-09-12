@@ -1,4 +1,5 @@
 
+<% const stores = data.stores;  %>
 
 <form action="/adduser" method="post" class="mx-0 row gx-3 gy-4 mt-3">
 <div class="col-md-6">
@@ -73,6 +74,16 @@
 </div>
 
 
+<div class="col-md-6">
+  <label for="inputstore" class="form-label">Store:</label>
+  <select name="store" id="inputstore" class="form-select" required>
+    <option value="0"  >Choose here...</option>
+    <% stores.forEach(element => { %>
+      <option value="<%= element.StoreID %>" ><%= element.StoreName %></option>
+    <% }) %>
+  </select>
+</div>
+
 <div>
   <div class="col-md-6">
     <label for="inputGender" class="form-label">Role:</label>
@@ -90,4 +101,5 @@
 
 </div>
 <h5><%= data.user ? data.user : '' %></h5>
+
 </form>

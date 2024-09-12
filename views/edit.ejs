@@ -1,5 +1,6 @@
 <nav class="px-2 mt-4 d-flex flex-wrap justify-content-between" aria-label="breadcrumb">
-  <% const emp = data.employees[0]; %> <!-- تأكد من وجود الموظف -->
+  <% const emp = data.employees[0]; %> 
+  <% const store = data.stores;  %>
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/">Home</a></li>
     <li class="breadcrumb-item active" aria-current="page">
@@ -56,11 +57,27 @@
     <label for="inputRole" class="form-label">Role:</label>
     <select name="role" id="inputRole" class="form-select" required>
       <option value="" disabled <% if (!emp.employee_role) { %> selected <% } %>>Choose here...</option>
+      
       <option value="Casher" <% if (emp.employee_role === 'Casher') { %> selected <% } %>>Casher Empl.</option>
       <option value="Store" <% if (emp.employee_role === 'Store') { %> selected <% } %>>Store Admin</option>
       <option value="Chef" <% if (emp.employee_role === 'Chef') { %> selected <% } %>>Chef</option>
     </select>
   </div>
+
+
+  <div class="col-md-6">
+    <label for="inputstore" class="form-label">Store:</label>
+    <select name="store" id="inputstore" class="form-select" required>
+      <option value="" disabled <% if (!emp.storeID) { %> selected <% } %>>Choose here...</option>
+      <% store.forEach(element => { %>
+        <option value="<%= element.StoreID %>" <% if (emp.storeID === element.StoreID) { %> selected <% } %>><%= element.StoreName %></option>
+      <% }) %>
+    </select>
+  </div>
+
+
+
+
 
   <div style="display: inline;" class="col-12">
     <button type="submit" class="btn btn-primary">Update changes</button>
