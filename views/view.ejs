@@ -1,5 +1,6 @@
 <% const emp=data.employees[0] %>
 
+<% const storedetail=data.storedetails %>
 <nav
 style="width: 88%"
 class="px-2 mt-4 d-flex flex-wrap justify-content-between"
@@ -58,7 +59,14 @@ class="ms-1 table mt-5 table-striped table-bordered"
     <th scope="row">Address</th>
     <td><%= emp.employee_address %></td>
   </tr>
+  <tr>
+    
+    <th scope="row">Store</th>
 
+    <% const storeData = storedetail.find(element => emp.storeID === element.StoreID); %>
+    <td><%= storeData ? storeData.StoreName : 'Store not found' %></td>
+  
+  </tr>
 
 </tbody>
 </table>

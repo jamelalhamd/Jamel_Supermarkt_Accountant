@@ -268,6 +268,7 @@ const viewcontroller = async (req, res) => {
   const { id } = req.params;
 
   try {
+    const storeResults = await getStoreData();
     const employeeResults = await new Promise((resolve, reject) => {
       const sql = 'SELECT * FROM employees WHERE employee_id = ?';
       db.query(sql, [id], (err, results) => {
@@ -286,7 +287,7 @@ const viewcontroller = async (req, res) => {
     }
 
     console.log("Successfully fetched employee data for ID: " + id);
-    const data = { title: 'view', employees: employeeResults };
+    const data = { title: 'view', employees: employeeResults,storedetails:storeResults  };
     console.log("Employees data: " + JSON.stringify(employeeResults, null, 2));
     return res.render('home', { data });
   } catch (err) {
