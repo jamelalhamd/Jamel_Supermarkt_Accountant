@@ -1,0 +1,93 @@
+<nav class="px-2 mt-4 d-flex flex-wrap justify-content-between" aria-label="breadcrumb">
+  <% const emp = data.employees[0]; %> 
+  <% const store = data.stores;  %>
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+      <%= emp.employee_firstname + " " + emp.employee_lastname %>
+    </li>
+  </ol>
+  <p class="me-md-5">
+    <span class="fw-medium fs-6">ID:</span> <%= emp.employee_id %>
+  </p>
+</nav>
+
+<form action="/edituser" method="post" class="mx-0 row gx-3 gy-4 mt-3">
+  <div class="col-md-6">
+    <label for="inputFirstName" class="form-label">First Name:</label>
+    <input name="firstname" value="<%= emp.employee_name %>" placeholder="Ali..." type="text" class="form-control" id="inputFirstName" required />
+  </div>
+
+  <div class="col-md-6">
+    <label for="inputLastName" class="form-label">Last Name:</label>
+    <input name="lastname" value="<%= emp.employee_lastname %>" placeholder="Hassan..." type="text" class="form-control" id="inputLastName" required />
+  </div>
+
+  <div class="col-md-6">
+    <label for="inputEmail" class="form-label">Email:</label>
+    <input name="email" value="<%= emp.employee_email %>" placeholder="ali@gmail.com" type="email" class="form-control" id="inputEmail" required />
+  </div>
+
+  <div class="col-md-6">
+    <label for="inputPassword" class="form-label">Password:</label>
+    <!-- لا تعرض كلمة المرور الأصلية -->
+    <input name="password" value="<%= emp.employee_password %>"   placeholder="Enter new password (optional)" type="password" class="form-control" id="inputPassword" />
+  </div>
+
+  <div class="col-md-6">
+    <label for="inputGender" class="form-label">Gender:</label>
+    <select name="gender" class="form-control" id="inputGender" required>
+      <option value="" disabled <% if (!emp.employee_gender) { %> selected <% } %>>Select your gender</option>
+      <option value="male" <% if (emp.employee_gender === 'male') { %> selected <% } %>>Male</option>
+      <option value="female" <% if (emp.employee_gender === 'female') { %> selected <% } %>>Female</option>
+    </select>
+  </div>
+
+  <div class="col-md-6">
+    <label for="inputPhone" class="form-label">Phone:</label>
+    <input name="phone" value="<%= emp.employee_phone %>" placeholder="017682216044" type="text" class="form-control" id="inputPhone" required />
+  </div>
+
+  <div class="col-md-6">
+    <label for="inputAddress" class="form-label">Address:</label>
+    <textarea name="address" class="form-control" id="inputAddress" rows="3" required><%= emp.employee_address %></textarea>
+  </div>
+
+  <div class="col-md-6">
+    <label for="inputRole" class="form-label">Role:</label>
+    <select name="role" id="inputRole" class="form-select" required>
+      <option value="" disabled <% if (!emp.employee_role) { %> selected <% } %>>Choose here...</option>
+      
+      <option value="Casher" <% if (emp.employee_role === 'Casher') { %> selected <% } %>>Casher Empl.</option>
+      <option value="Store" <% if (emp.employee_role === 'Store') { %> selected <% } %>>Store Admin</option>
+      <option value="Chef" <% if (emp.employee_role === 'Chef') { %> selected <% } %>>Chef</option>
+    </select>
+  </div>
+
+
+  <div class="col-md-6">
+    <label for="inputstore" class="form-label">Store:</label>
+    <select name="store" id="inputstore" class="form-select" required>
+      <option value="" disabled <% if (!emp.storeID) { %> selected <% } %>>Choose here...</option>
+      <% store.forEach(element => { %>
+        <option value="<%= element.StoreID %>" <% if (emp.storeID === element.StoreID) { %> selected <% } %>><%= element.StoreName %></option>
+      <% }) %>
+    </select>
+  </div>
+
+
+
+
+
+  <div style="display: inline;" class="col-12">
+    <button type="submit" class="btn btn-primary">Update changes</button>
+  </form>
+
+  <form style="display: inline;" method="post" action="/deleteuser/<%= emp.employee_id %>">
+    <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      Delete form
+    </button>
+  </form>
+</div>
+
+<h5><%= data.user ? data.user : '' %></h5>
