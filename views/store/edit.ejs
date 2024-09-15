@@ -4,7 +4,11 @@
       <div class="col-md-8 col-lg-6">
         <div class="form-container">
           <h2 class="mb-4">Edit Store: <%= data.store.StoreName %></h2>
-
+          <% if (data.user) { %>
+            <div class="alert alert-success mt-4">
+              <%= data.user %>
+            </div>
+          <% } %>
           <!-- Form for editing store details -->
           <form action="/editstore/<%= data.store.StoreID %>" method="POST">
             <div class="form-group mb-3">
@@ -54,17 +58,15 @@
             
             </div>
           </form>
-          <div style="display: inline;">
-            <form   method="POST" action="/deletestore/<%= data.store.StoreID %>" style="display: inline;">
-              <button type="submit" class="btn btn-danger">Delete  Store</button>
+          <% if (data.store) { %>
+            <form method="POST" action="/deletestore/<%= data.store.StoreID %>" class="mt-3">
+              <button type="submit" class="btn btn-danger">
+                Delete Store
+              </button>
             </form>
-          </div>
-          <!-- Display any user messages -->
-          <% if (data.user) { %>
-            <div class="alert alert-danger mt-4">
-              <%= data.user %>
-            </div>
           <% } %>
+          <!-- Display any user messages -->
+      
         </div>
       </div>
     </div>

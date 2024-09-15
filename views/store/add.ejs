@@ -4,7 +4,11 @@
       <div class="form-container">
         <h2 class="mb-4">Add New Store</h2>
 
-        <!-- Form for adding a new store -->
+        <% if (data.user &&data.style) { %>
+          <div class="alert alert-<%= data.style %> mt-4">
+            <%= data.user %>
+          </div>
+        <% } %>
         <form action="/addstore" method="POST">
           <div class="form-group mb-3">
             <label for="StoreName">Store Name</label>

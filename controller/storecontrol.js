@@ -107,9 +107,16 @@ const updateStore = (req, res) => {
   db.query(sql, [StoreName, Location, Address, storeId], (err) => {
     if (err) {
       console.error("Error updating store data: " + err);
-      res.redirect('/storeview'); 
+      const data = { title: 'store/add',
+        user:"Error updating store data: " + err,
+        style:"danger"
+     };
+          
+      return   res.render('home', { data });
     }
-    res.redirect('/storeview'); // Redirect back to the store view after successful update
+    const data = { title: 'store/add',user:"User has been sucessfully edited" , style:"success"};
+          
+            return   res.render('home', { data }); // Redirect back to the store view after successful update
   });
 };
 
@@ -144,10 +151,13 @@ const addStore = async (req, res) => {
         db.query(sql, [StoreName, Location, Address], (err, results) => {
             if (err) {
                 console.error("Error inserting store: " + err);
-                return res.status(500).send("Server error");
+               const data = { title: 'store/add',user:"User has been not added" ,   style:"danger"};
+               return  res.render('home', { data });
             }
             // Redirect or send a success message
-            res.redirect('/storeview?success=1'); // Redirect to store view with success message
+            const data = { title: 'store/add',user:"User has been sucessfully added",   style:"success" };
+          
+            return   res.render('home', { data });// Redirect to store view with success message
         });
     } catch (err) {
         console.error("Error handling request: " + err);
@@ -160,19 +170,51 @@ const addStore = async (req, res) => {
 
 
 
-  const deleteStore = (req, res) => {
+const deleteStore = (req, res) => {
     const storeId = req.params.id;
+  
+    if (!storeId) {
+      // Handle the case where no storeId is provided
+      const data = {
+        title: 'store/add',
+        user: 'No store ID provided for deletion'
+      };
+      return res.render('home', { data });
+    }
+  
     console.log("Deleting store with ID: " + storeId);
   
     const sql = 'DELETE FROM store WHERE StoreID = ?';
-    db.query(sql, [storeId], (err) => {
+    db.query(sql, [storeId], (err, result) => {
       if (err) {
         console.error("Error deleting store: " + err);
-       res.redirect('/storeview');
+        const data = {
+          title: 'store/add',
+          user: 'Error occurred while deleting the store'
+        };
+        return res.render('home', { data });
       }
-     res.redirect('/storeview'); // Redirect only after successful deletion
+  
+      if (result.affectedRows === 0) {
+        // No rows were affected, meaning no store was deleted
+        const data = {
+          title: 'store/add',
+          user: 'No store found with the given ID',
+             style:"danger"
+        };
+        return res.render('home', { data });
+      }
+  
+      // Successful deletion
+      const data = {
+        title: 'store/add',
+        user: 'Store has been successfully deleted',
+           style:"danger"
+      };
+      res.render('home', { data });
     });
   };
+  
   
 
   const addStorepage  = (req, res) => {
