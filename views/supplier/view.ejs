@@ -1,13 +1,13 @@
 <div class="container mt-5">
-
+<%  const supplier= data.supplier; %>
   <nav class="px-2 mt-4 d-flex flex-wrap justify-content-between" aria-label="breadcrumb">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/supplierdash">Back</a></li>
       <li class="breadcrumb-item active" aria-current="page">
-        <%= supplier.SupplierName %>
+        Supplier ID: <%= supplier.SupplierID?supplier.SupplierID:"" %>
       </li>
     </ol>
-    <p class="fw-medium fs-6">Supplier ID: <%= supplier.SupplierID %></p>
+    
   </nav>
 
   <div class="table-container">

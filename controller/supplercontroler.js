@@ -178,98 +178,113 @@ const addSupplierPage = (req, res) => {
 
 
 
-
-
 const supplierViewControl = async (req, res) => {
   const { id } = req.params; // Extract the supplier ID from the request parameters
+  console.log("0");
+
+  // SQL query to fetch supplier data
+  const sql = 'SELECT * FROM supplier WHERE SupplierID = ?';
 
   try {
-    // Fetch all supplier data
-    const supplierResults = await getSupplierData();
-
-    // Fetch specific supplier data based on the ID
-    const supplierDetails = await new Promise((resolve, reject) => {
-      const sql = 'SELECT * FROM supplier WHERE SupplierID = ?';
+    // Use a Promise to wrap the db.query call for async/await
+    const supplierResults = await new Promise((resolve, reject) => {
       db.query(sql, [id], (err, results) => {
         if (err) {
-          console.error("Error fetching supplier data: " + err);
-          return reject("Error fetching supplier data: " + err);
+          return reject(err); // Reject the Promise if there's an error
         }
-        resolve(results);
+        resolve(results); // Resolve the Promise with results
       });
     });
 
     // Check if the supplier exists
-    if (supplierDetails.length === 0) {
-      return res.status(404).send('Supplier not found');
+    if (supplierResults.length === 0) {
+      console.warn(`Supplier with ID ${id} not found.`);
+      return res.status(404).render('home', { 
+        data: { 
+          title: 'supplier/dashboard', 
+          user: `Supplier with ID ${id} not found.`, 
+          style: 'danger' 
+        } 
+      });
     }
 
     // Structure the data to be passed to the view
     const data = {
       title: 'supplier/view',
-      suppliers: supplierResults,
-      supplier: supplierDetails[0] // Pass the specific supplier data
+      supplier: supplierResults[0] // Pass the specific supplier data
     };
-
+   
+    console.log("last");
     // Render the supplier view page with the data
-    res.render('supplierView', { data });
+    res.render('home', { data });
 
   } catch (err) {
-    console.error("Error fetching supplier data: " + err);
-    res.status(500).send('Server error');
+    // Catch and handle any errors that occur during the query
+    console.error("Database error: " + err);
+    return res.redirect("/supplierdash"); // Redirect on error
   }
 };
 
 
 
+
 const searchSupplierController = async (req, res) => {
-    console.log("0");
-    const searchTerm = req.body.search ? req.body.search : 1;
-  
-    console.log("searchTerm :" + searchTerm);
-    console.log("1");
-  
-    try {
-      const [supplierResults] = await Promise.all([
-        new Promise((resolve, reject) => {
-          const sql = `
-            SELECT * FROM supplier 
-            WHERE SupplierID = ? 
-            OR SupplierName LIKE ? 
-            OR Phone LIKE ?
-            OR Address LIKE ? 
-            OR Email LIKE ?
-          `;
-          const searchQuery = `%${searchTerm}%`;
-          db.query(sql, [searchTerm, searchQuery, searchQuery, searchQuery, searchQuery], (err, results) => {
-            if (err) {
-              console.error("Error fetching supplier data: " + err);
-              return reject("Error fetching supplier data: " + err);
-            }
-            resolve(results);
-          });
-        })
-      ]);
-  
-      if (supplierResults.length === 0) {
-        console.log("No supplier found for search term: " + searchTerm);
-        const data = { title: 'supplier/dashboard', suppliers: [] };
-        return res.render('home', { data, message: 'No supplier found' });
-      }
-  
-      console.log("Successfully fetched supplier data");
-      const data = {
-        title: 'supplier/dashboard',
-        suppliers: supplierResults
-      };
-      console.log("supplier data: " + JSON.stringify(supplierResults, null, 2));
-      res.render('home', { data });
-    } catch (err) {
-      const data = { title: 'supplier/dashboard', error: err };
-      res.render('home', { data });
+  console.log("0");
+  const searchTerm = req.body.search ? req.body.search : '';
+
+  console.log("searchTerm: " + searchTerm);
+  console.log("1");
+
+  try {
+    // Create the SQL query and search pattern
+    const sql = `
+      SELECT * FROM supplier 
+      WHERE SupplierID = ? 
+      OR SupplierName LIKE ? 
+    
+    
+      OR email LIKE ?
+    `;
+    const searchQuery = `%${searchTerm}%`;
+
+    // Execute the database query using async/await
+    const supplierResults = await new Promise((resolve, reject) => {
+      db.query(sql, [searchTerm, searchQuery, searchQuery], (err, results) => {
+        if (err) {
+          console.error("Error fetching supplier data: " + err);
+          return res.redirect("404"); // Rejects promise if there's an error
+        }
+        resolve(results); // Resolves promise with results
+      });
+    });
+
+    // Check if no supplier was found
+    if (supplierResults.length === 0) {
+      console.log("No supplier found for search term: " + searchTerm);
+      const data = { title: 'supplier/dashboard', suppliers: [], msg: 'No supplier found' };
+      return res.render('home', { data });
     }
-  };
-  
+
+    // If suppliers are found, structure the data
+    console.log("Successfully fetched supplier data");
+    const data = {
+      title: 'supplier/dashboard',
+      suppliers: supplierResults
+    };
+
+    console.log("Supplier data: " + JSON.stringify(supplierResults, null, 2));
+
+    // Render the view with the supplier data
+    res.render('home', { data });
+  } catch (err) {
+    // Catch and handle errors
+    console.error("Error during supplier search: " + err);
+    const data = { title: 'supplier/dashboard', msg: "Error fetching supplier data" };
+    res.render('home', { data });
+  }
+};
+
+
 
 
 module.exports = {

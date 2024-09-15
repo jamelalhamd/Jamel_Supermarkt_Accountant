@@ -6,7 +6,7 @@
         <input class="form-control me-2" name="search" type="search" placeholder="Search Supplier" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
-    </div>
+    </div>  
 <% const suppliers=data.suppliers  %>
     <!-- Add Supplier Button -->
     <div class="btn-container d-flex justify-content-end mb-4">
@@ -44,7 +44,7 @@
                 data-bs-title="View details"
                 data-bs-placement="top"
                 class="btn btn-info btn-sm"
-                href="/viewsupplier/<%= e.SupplierID %>"
+                href="/supplierview/<%= e.SupplierID %>"
               >
                 <i class="bi bi-eye"></i>
               </a>
