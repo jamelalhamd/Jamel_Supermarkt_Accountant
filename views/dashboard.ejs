@@ -1,15 +1,15 @@
-<% const employees = data.employees %>
-<% const store = data.stores;  %>
-<%   console.log("store data header: " + JSON.stringify( store, null, 2));  %>
-<%   console.log("employees data header: " + JSON.stringify( employees, null, 2));  %>
-<div style="width: 25%;  "  class="d-flex justify-content-center ">
-  <form  action="/search"  method="post" class="d-flex" role="search">
+<% const employees = data.employees; %>
+<% const storedetail = data.stores;  %>
+
+<div style="width: 25%;" class="d-flex justify-content-center">
+  <form action="/search" method="post" class="d-flex" role="search">
     <input class="form-control me-2" name="search" type="search" placeholder="Search" aria-label="Search">
     <button class="btn btn-outline-success" type="submit">Search</button>
   </form>
 </div>
+
 <table
-  style="width: 99%"
+  style="width: 99%;"
   class="text-center mx-auto table mt-5 table-striped table-bordered"
 >
   <thead>
@@ -28,51 +28,50 @@
   <tbody>
     <% employees.forEach((e, index) => { %>
       <% 
-      const storeName = store.find(s => s.StoreID === e.storeID)?.StoreName || 'Store not found'; 
-      console.log("e.storeID:"+e.storeID);
+      // Find the store for the employee
+      const storeData = storedetail.find(s => s.StoreID === e.storeID);
       %>
-    <tr>
-      <th scope="row"><%= index + 1 %></th>
-      <td><%= e.employee_id %></td>
-      <td><%= e.employee_name + " " + e.employee_lastname %></td>
-      <td><%= e.employee_email %></td>
-      <td><%= e.employee_phone %></td>
-      <td><%= e.employee_role %></td>
-      <td><%= e.storeID %></td>
-      <td><%= e.employee_address %></td>
-      <td>
-        <a
-          data-bs-toggle="tooltip"
-          data-bs-title="View details"
-          data-bs-placement="top"
-          class="btn btn-primary btn-sm"
-          href="/view/<%= e.employee_id %>"
-        >
-          <i class="bi bi-eye"></i>
-        </a>
+      <tr>
+        <th scope="row"><%= index + 1 %></th>
+        <td><%= e.employee_id %></td>
+        <td><%= e.employee_name + " " + e.employee_lastname %></td>
+        <td><%= e.employee_email %></td>
+        <td><%= e.employee_phone %></td>
+        <td><%= e.employee_role %></td>
+        <td><%= storeData ? storeData.StoreName : 'Store not found' %></td>
+        <td><%= e.employee_address %></td>
+        <td>
+          <a
+            data-bs-toggle="tooltip"
+            data-bs-title="View details"
+            data-bs-placement="top"
+            class="btn btn-primary btn-sm"
+            href="/view/<%= e.employee_id %>"
+          >
+            <i class="bi bi-eye"></i>
+          </a>
 
-        <a
-          data-bs-toggle="tooltip"
-          data-bs-title="Edit user"
-          data-bs-placement="top"
-          class="btn btn-primary btn-sm"
-          href="/edit/<%= e.employee_id %>"
-        >
-          <i class="bi bi-pencil"></i>
-        </a>
+          <a
+            data-bs-toggle="tooltip"
+            data-bs-title="Edit user"
+            data-bs-placement="top"
+            class="btn btn-primary btn-sm"
+            href="/edit/<%= e.employee_id %>"
+          >
+            <i class="bi bi-pencil"></i>
+          </a>
 
-        <a
-        href="/edit/<%= e.employee_id %>"
-        data-bs-toggle="tooltip"
-        data-bs-title="Delete user"
-        data-bs-placement="top"
-        class="btn btn-danger btn-sm"
-      >
-        <i class="bi bi-trash"></i>
-      </a>
-
-      </td>
-    </tr>
+          <a
+            href="/edit/<%= e.employee_id %>"
+            data-bs-toggle="tooltip"
+            data-bs-title="Delete user"
+            data-bs-placement="top"
+            class="btn btn-danger btn-sm"
+          >
+            <i class="bi bi-trash"></i>
+          </a>
+        </td>
+      </tr>
     <% }); %>
   </tbody>
 </table>

@@ -1,19 +1,8 @@
 const bcrypt = require('bcrypt');
-const db = require('../controller/db');
+const { db, getStoreData } = require('../controller/db');
 
 // Helper function to fetch store data
-const getStoreData = () => {
-  return new Promise((resolve, reject) => {
-    const storeQuery = 'SELECT * FROM store';
-    db.query(storeQuery, (err, storeResults) => {
-      if (err) {
-        console.error("Error fetching store data: " + err);
-        return reject("Error fetching store data: " + err);
-      }
-      resolve(storeResults);
-    });
-  });
-};
+
 
 const errorcontroller = (req, res) => {
   const data = { title: '404', user: req.user };

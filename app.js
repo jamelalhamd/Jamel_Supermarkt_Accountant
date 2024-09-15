@@ -51,10 +51,14 @@ liveReloadServer.server.once('connection', () => {
 // Routes
 const productRoutes = require('./route/pruductroute'); // Correct the path if needed
 const userRoutes = require('./route/userrout'); // Correct the path if needed
+const store_item_suppler_Route = require("./route/store_item_suppler_route");
+
+const invoice_Route = require("./route/invoceroute");
 
 app.use(productRoutes);
 app.use(userRoutes);
-
+app.use(invoice_Route);
+app.use(store_item_suppler_Route);
 // Test Route
 app.get("/test", (req, res) => {
   const data = null;
