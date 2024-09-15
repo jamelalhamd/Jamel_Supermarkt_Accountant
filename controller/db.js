@@ -30,6 +30,18 @@ const getStoreData = () => {
   });
 };
 
+const getSupplierData = () => {
+  return new Promise((resolve, reject) => {
+    const supplierQuery = 'SELECT * FROM supplier'; // Query to fetch all suppliers
+    db.query(supplierQuery, (err, supplierResults) => {
+      if (err) {
+        console.error("Error fetching supplier data: " + err);
+        return reject("Error fetching supplier data: " + err);
+      }
+      resolve(supplierResults);
+    });
+  });
+};
 
 
 
@@ -69,6 +81,8 @@ const getUser = (req, res) => {
 
 
 module.exports = {
-  db,getUser,
-  getStoreData
+  db,
+  getUser,
+  getStoreData,
+  getSupplierData
 };

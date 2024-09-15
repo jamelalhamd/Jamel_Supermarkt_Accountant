@@ -6,14 +6,10 @@
         <% const supplier = data.supplier; console.log(data.supplier.SupplierID); %>
         
         <!-- Display user message with dynamic alert style -->
-        <% if (data.msg && data.style) { %>
-          <div class="alert alert-<%= data.style %> mt-4">
-            <%= data.msg %>
-          </div>
-        <% } %>
+    
 
         <!-- Form for editing supplier details -->
-        <form action="/updatesupplier/<%= data.supplier.SupplierID %>" method="POST">
+        <form action="/deletesupplier/<%= data.supplier.SupplierID %>" method="POST">
           <div class="form-group mb-3">
             <label for="SupplierName">Supplier Name</label>
             <input
@@ -61,12 +57,14 @@
 
           <!-- Buttons: Save and Cancel -->
           <div class="btn-container">
-            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <button type="submit" class="btn btn-danger">Delete Supplier </button>
             <a href="/supplierdash" class="btn btn-secondary">Cancel</a>
           </div>
+        
         </form>
 
-      
+     
+        
         
       </div>
     </div>

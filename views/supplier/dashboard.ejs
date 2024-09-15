@@ -1,67 +1,83 @@
-<% const store = data.stores;  %>
-<% console.log("store data header: " + JSON.stringify(store, null, 2)); %>
 
-<div style="width: 25%;" class="d-flex justify-content-center">
-  <form action="/searchstore" method="post" class="d-flex" role="search">
-    <input class="form-control me-2" name="search" type="search" placeholder="Search" aria-label="Search">
-    <button class="btn btn-outline-success" type="submit">Search</button>
-  </form>
-</div>
+  <div class="container mt-5">
+    <!-- Search Form -->
+    <div style="width: 25%;" class="d-flex justify-content-center mb-4">
+      <form action="/searchsupplier" method="post" class="d-flex" role="search">
+        <input class="form-control me-2" name="search" type="search" placeholder="Search Supplier" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    </div>
+<% const suppliers=data.suppliers  %>
+    <!-- Add Supplier Button -->
+    <div class="btn-container d-flex justify-content-end mb-4">
+      <a href="/addsupplier" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Add New Supplier
+      </a>
+    </div>
 
-<table
-  style="width: 99%"
-  class="text-center mx-auto table mt-5 table-striped table-bordered"
->
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Store ID</th>
-      <th scope="col">Store Name</th>
-      <th scope="col">Location</th>
-      <th scope="col">Address</th>
-      <th scope="col">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% store.forEach((e, index) => { %>
-    <tr>
-      <th scope="row"><%= index + 1 %></th>
-      <td><%= e.StoreID %></td>
-      <td><%= e.StoreName %></td>
-      <td><%= e.Location %></td>
-      <td><%= e.Address %></td>
-      <td>
-        <a
-          data-bs-toggle="tooltip"
-          data-bs-title="View details"
-          data-bs-placement="top"
-          class="btn btn-primary btn-sm"
-          href="/addstore"
-        >
-        <i class="bi bi-plus-circle"></i>
-        </a>
+    <!-- Supplier Table -->
+    <div class="table-container">
+      <table class="text-center mx-auto table mt-5 table-striped table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Supplier ID</th>
+            <th scope="col">Supplier Name</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Address</th>
+            <th scope="col">Email</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% suppliers.forEach((e, index) => { %>
+          <tr>
+            <th scope="row"><%= index + 1 %></th>
+            <td><%= e.SupplierID %></td>
+            <td><%= e.SupplierName %></td>
+            <td><%= e.Phone %></td>
+            <td><%= e.address %></td>
+            <td><%= e.email %></td>
+            <td>
+              <a
+                data-bs-toggle="tooltip"
+                data-bs-title="View details"
+                data-bs-placement="top"
+                class="btn btn-info btn-sm"
+                href="/viewsupplier/<%= e.SupplierID %>"
+              >
+                <i class="bi bi-eye"></i>
+              </a>
 
-        <a
-          data-bs-toggle="tooltip"
-          data-bs-title="Edit store"
-          data-bs-placement="top"
-          class="btn btn-primary btn-sm"
-          href="/editstore/<%= e.StoreID %>"
-        >
-          <i class="bi bi-pencil"></i>
-        </a>
+              <a
+                data-bs-toggle="tooltip"
+                data-bs-title="Edit supplier"
+                data-bs-placement="top"
+                class="btn btn-primary btn-sm"
+                href="/editsupplier/<%= e.SupplierID %>"
+              >
+                <i class="bi bi-pencil"></i>
+              </a>
 
-        <a
-        href="/editstore/<%= e.StoreID %>"
-          data-bs-toggle="tooltip"
-          data-bs-title="Delete store"
-          data-bs-placement="top"
-          class="btn btn-danger btn-sm"
-        >
-          <i class="bi bi-trash"></i>
-        </a>
-      </td>
-    </tr>
-    <% }); %>
-  </tbody>
-</table>
+              <a
+              data-bs-toggle="tooltip"
+              data-bs-title="Edit supplier"
+              data-bs-placement="top"
+              class="btn btn-danger btn-sm"
+              href="deletesupplier/<%= e.SupplierID %>"
+            >
+            <i class="bi bi-trash"></i>
+            </a>
+
+
+           
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Include Bootstrap JS and its dependencies -->
+

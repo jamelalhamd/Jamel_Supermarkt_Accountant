@@ -151,7 +151,7 @@ const addStore = async (req, res) => {
         db.query(sql, [StoreName, Location, Address], (err, results) => {
             if (err) {
                 console.error("Error inserting store: " + err);
-               const data = { title: 'store/add',user:"User has been not added" ,   style:"danger"};
+               const data = { title: 'store/add',user:"User has been not added" ,};
                return  res.render('home', { data });
             }
             // Redirect or send a success message
