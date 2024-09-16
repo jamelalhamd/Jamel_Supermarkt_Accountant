@@ -4,9 +4,9 @@
       <div class="form-container">
         <h2 class="mb-4">Add New Promotion</h2>
 
-        <% if (data.user && data.style) { %>
+        <% if (data.msg && data.style) { %>
           <div class="alert alert-<%= data.style %> mt-4">
-            <%= data.user %>
+            <%= data.msg %>
           </div>
         <% } %>
         <form action="/addpromotion" method="POST">
@@ -71,7 +71,7 @@
           <!-- Buttons: Save and Cancel -->
           <div class="btn-container">
             <button type="submit" class="btn btn-primary">Add Promotion</button>
-            <a href="/promotiondash" class="btn btn-secondary">Cancel</a>
+            <a href="/promotions" class="btn btn-secondary">Back</a>
           </div>
         </form>
       </div>

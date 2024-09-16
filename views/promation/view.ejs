@@ -1,17 +1,17 @@
 <div class="container mt-5">
-  <% const supplier = data.supplier; %>
+  <% const promotion = data.promotion; %>
   
   <!-- Breadcrumb Navigation -->
   <nav class="px-2 mt-4 d-flex flex-wrap justify-content-between" aria-label="breadcrumb">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="/supplierdash">Back</a></li>
+      <li class="breadcrumb-item"><a href="/promotions">Back</a></li>
       <li class="breadcrumb-item active" aria-current="page">
-        Supplier ID: <%= supplier.SupplierID ? supplier.SupplierID : "" %>
+        Promotion ID: <%= promotion.PromotionID ? promotion.PromotionID : "" %>
       </li>
     </ol>
   </nav>
 
-  <!-- Supplier Details Table -->
+  <!-- Promotion Details Table -->
   <div class="table-container mt-4">
     <table class="ms-1 table table-striped table-bordered" style="width: 100%;">
       <thead>
@@ -22,20 +22,24 @@
       </thead>
       <tbody>
         <tr>
-          <th scope="row">Supplier Name</th>
-          <td><%= supplier.SupplierName %></td>
+          <th scope="row">Promotion Name</th>
+          <td><%= promotion.PromotionName %></td>
         </tr>
         <tr>
-          <th scope="row">Phone</th>
-          <td><%= supplier.Phone ? supplier.Phone : "N/A" %></td>
+          <th scope="row">Description</th>
+          <td><%= promotion.Description ? promotion.Description : "N/A" %></td>
         </tr>
         <tr>
-          <th scope="row">Email</th>
-          <td><%= supplier.Email ? supplier.Email : "N/A" %></td>
+          <th scope="row">Start Date</th>
+          <td><%= promotion.StartDate ? new Date(promotion.StartDate).toISOString().split('T')[0] : "N/A" %></td>
         </tr>
         <tr>
-          <th scope="row">Address</th>
-          <td><%= supplier.Address ? supplier.Address : "N/A" %></td>
+          <th scope="row">End Date</th>
+          <td><%= promotion.EndDate ? new Date(promotion.EndDate).toISOString().split('T')[0] : "N/A" %></td>
+        </tr>
+        <tr>
+          <th scope="row">Discount Percentage</th>
+          <td><%= promotion.DiscountPercentage ? promotion.DiscountPercentage : "N/A" %></td>
         </tr>
       </tbody>
     </table>

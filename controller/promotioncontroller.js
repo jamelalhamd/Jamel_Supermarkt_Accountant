@@ -19,16 +19,17 @@ const promotionViewControl = async (req, res) => {
 
 // Function to fetch and render a specific promotion for editing
 const editPromotion = (req, res) => {
+  console.log("0");
   const promotionId = req.params.id;
   const sql = 'SELECT * FROM promotion WHERE PromotionID = ?';
   db.query(sql, [promotionId], (err, results) => {
     if (err) {
       console.error("Error fetching promotion data: " + err);
-      return res.redirect('/promotionview');
+      return res.redirect('/promotions');
     }
 
     if (results.length === 0) {
-      return res.redirect('/promotionview');
+      return res.redirect('/promotions');
     }
 
     const data = {
@@ -43,6 +44,7 @@ const editPromotion = (req, res) => {
 
 // Function to handle updating a promotion
 const updatePromotion = (req, res) => {
+  console.log("0");
   const promotionId = req.params.id;
   const { PromotionName, Description, StartDate, EndDate, DiscountPercentage } = req.body;
 
@@ -58,10 +60,22 @@ const updatePromotion = (req, res) => {
       const data = { title: 'promation/edit', msg: "Error updating promotion data: " + err, style: "danger", promotion: req.body };
       return res.render('home', { data });
     }
-    const data = { title: 'promation/edit', msg: "Promotion updated successfully", style: "success", promotion: { PromotionID: promotionId, PromotionName, Description, StartDate, EndDate, DiscountPercentage } };
-    return res.render('home', { data });
+    console.log("done");
+   const data = { title: 'promation/edit', msg: "Promotion updated successfully", style: "success", promotion: { PromotionID: promotionId, PromotionName, Description, StartDate, EndDate, DiscountPercentage } };
+   return res.render('home', { data });
+ // return res.redirect("/promotions");
   });
 };
+
+const addPromotionpage=  (req, res) => {
+
+  const data = { title: 'promation/add'}
+   return res.render('home', { data });
+
+}
+
+
+
 
 // Function to handle adding a new promotion
 const addPromotion = async (req, res) => {
@@ -89,6 +103,31 @@ const addPromotion = async (req, res) => {
   }
 };
 
+const deletePromotionpage = (req, res) => {
+  console.log("0");
+  const promotionId = req.params.id;
+  const sql = 'SELECT * FROM promotion WHERE PromotionID = ?';
+  db.query(sql, [promotionId], (err, results) => {
+    if (err) {
+      console.error("Error fetching promotion data: " + err);
+      return res.redirect('/promotions');
+    }
+
+    if (results.length === 0) {
+      return res.redirect('/promotions');
+    }
+
+    const data = {
+      title: 'promation/delete',
+      promotion: results[0],
+      msg: ""
+    };
+    
+    res.render('home', { data });
+  });
+};
+
+
 // Function to handle deleting a promotion
 const deletePromotion = (req, res) => {
   const promotionId = req.params.id;
@@ -111,11 +150,11 @@ const deletePromotion = (req, res) => {
       return res.render('home', { data });
     }
 
-    const data = { title: 'promation/delete', msg: 'Promotion has been successfully deleted', style: "success" };
+    const data = { title: 'promation/add', msg: 'Promotion has been successfully deleted', style: "danger" };
     res.render('home', { data });
   });
 };
-
+  
 // Function to render the page for adding a new promotion
 const addPromotionPage = (req, res) => {
   const data = { title: 'promation/add' };
@@ -124,10 +163,13 @@ const addPromotionPage = (req, res) => {
 
 // Function to render details of a specific promotion
 const promotionViewDetails = async (req, res) => {
+  console.log("0");
   const { id } = req.params; // Extract the promotion ID from the request parameters
+  console.log(id);
   const sql = 'SELECT * FROM promotion WHERE PromotionID = ?';
 
   try {
+    console.log("1");
     const promotionResults = await new Promise((resolve, reject) => {
       db.query(sql, [id], (err, results) => {
         if (err) {
@@ -136,13 +178,13 @@ const promotionViewDetails = async (req, res) => {
         resolve(results);
       });
     });
-
+    console.log("2");
     if (promotionResults.length === 0) {
       return res.status(404).render('home', { title: 'promotion/dashboard', msg: `Promotion with ID ${id} not found.`, style: 'danger' });
     }
 
     const data = {
-      title: 'promotion/view',
+      title: 'promation/view',
       promotion: promotionResults[0]
     };
 
@@ -220,10 +262,12 @@ const searchPromotionController = async (req, res) => {
 
 // Export all handlers
 module.exports = {
+  deletePromotionpage,
   searchPromotionController,
   promotionViewControl,
   editPromotion,
   updatePromotion,
+  addPromotionpage,
   addPromotion,
   deletePromotion,
   addPromotionPage,

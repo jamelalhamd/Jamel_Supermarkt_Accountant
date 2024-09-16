@@ -27,13 +27,26 @@
           </div>
 
           <div class="form-group mb-3">
+            <label for="PromotionName">Promotion Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="Description"
+              name="Description"
+              value="<%= data.promotion.Description %>"
+              required
+            >
+          </div>
+
+          <div class="form-group mb-3">
             <label for="StartDate">Start Date</label>
             <input
               type="date"
               class="form-control"
               id="StartDate"
               name="StartDate"
-              value="<%= data.promotion.StartDate.toISOString().split('T')[0] %>"
+              
+              value="<%= data.promotion.StartDate ? new Date(data.promotion.StartDate).toISOString().split('T')[0] : '' %>"
               required
             >
           </div>
@@ -45,13 +58,13 @@
               class="form-control"
               id="EndDate"
               name="EndDate"
-              value="<%= data.promotion.EndDate.toISOString().split('T')[0] %>"
+              value="<%= data.promotion.EndDate ? new Date(data.promotion.EndDate).toISOString().split('T')[0] : '' %>"
               required
             >
           </div>
 
           <div class="form-group mb-4">
-            <label for="DiscountPercentage">Discount Percentage</label>
+            <label for="DiscountPercentage">Discount Percentage (%)</label>
             <input
               type="number"
               class="form-control"
@@ -68,7 +81,7 @@
           <!-- Buttons: Save and Cancel -->
           <div class="btn-container">
             <button type="submit" class="btn btn-primary">Save Changes</button>
-            <a href="/promotiondash" class="btn btn-secondary">Cancel</a>
+            <a href="/promotions" class="btn btn-secondary">Back</a>
           </div>
         </form>
       </div>
