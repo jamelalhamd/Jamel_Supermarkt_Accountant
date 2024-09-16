@@ -1,0 +1,88 @@
+<div class="container mt-5">
+  <!-- Search Form -->
+  <div style="width: 25%;" class="d-flex justify-content-center mb-4">
+    <form action="/searchpromotion" method="post" class="d-flex" role="search">
+      <input class="form-control me-2" name="search" type="search" placeholder="Search Promotion" aria-label="Search">
+      <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+  </div>
+
+  <!-- Add Promotion Button -->
+  <div class="btn-container d-flex justify-content-end mb-4">
+    <a href="/addpromotion" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> Add New Promotion
+    </a>
+  </div>
+  
+  <!-- Promotion Table -->
+  <div class="table-container">
+    <% if (data.promotions && data.promotions.length > 0) { %>
+      <table class="text-center mx-auto table mt-5 table-striped table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Promotion ID</th>
+            <th scope="col">Promotion Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Start Date</th>
+            <th scope="col">End Date</th>
+            <th scope="col">Discount (%)</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% data.promotions.forEach((e, index) => { %>
+            <tr>
+              <th scope="row"><%= index + 1 %></th>
+              <td><%= e.PromotionID %></td>
+              <td><%= e.PromotionName %></td>
+              <td><%= e.Description %></td>
+              <td><%= e.StartDate.toISOString().split('T')[0] %></td>
+              <td><%= e.EndDate.toISOString().split('T')[0] %></td>
+              <td><%= e.DiscountPercentage %></td>
+              <td>
+                <a
+                  data-bs-toggle="tooltip"
+                  data-bs-title="View details"
+                  data-bs-placement="top"
+                  class="btn btn-info btn-sm"
+                  href="/promotionview/<%= e.PromotionID %>"
+                >
+                  <i class="bi bi-eye"></i>
+                </a>
+
+                <a
+                  data-bs-toggle="tooltip"
+                  data-bs-title="Edit promotion"
+                  data-bs-placement="top"
+                  class="btn btn-primary btn-sm"
+                  href="/editpromotion/<%= e.PromotionID %>"
+                >
+                  <i class="bi bi-pencil"></i>
+                </a>
+
+                <a
+                  data-bs-toggle="tooltip"
+                  data-bs-title="Delete promotion"
+                  data-bs-placement="top"
+                  class="btn btn-danger btn-sm"
+                  href="/deletepromotion/<%= e.PromotionID %>"
+                >
+                  <i class="bi bi-trash"></i>
+                </a>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <!-- No Promotions Available Message -->
+      <div class="text-center mt-5">
+        <h4>No promotions available at the moment.</h4>
+        <p>Come back later or add a new promotion by clicking the "Add New Promotion" button.</p>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<!-- Include Bootstrap JS and its dependencies -->

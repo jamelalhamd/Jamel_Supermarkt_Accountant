@@ -54,11 +54,13 @@ const userRoutes = require('./route/userrout'); // Correct the path if needed
 const store_item_suppler_Route = require("./route/store_item_suppler_route");
 
 const invoice_Route = require("./route/invoceroute");
+const Promotion_Route = require("./route/promationroute");
 
 app.use(productRoutes);
 app.use(userRoutes);
 app.use(invoice_Route);
 app.use(store_item_suppler_Route);
+app.use(Promotion_Route);
 // Test Route
 app.get("/test", (req, res) => {
   const data = null;

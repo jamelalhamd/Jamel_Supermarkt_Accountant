@@ -1,0 +1,43 @@
+<div class="container mt-5">
+  <% const supplier = data.supplier; %>
+  
+  <!-- Breadcrumb Navigation -->
+  <nav class="px-2 mt-4 d-flex flex-wrap justify-content-between" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/supplierdash">Back</a></li>
+      <li class="breadcrumb-item active" aria-current="page">
+        Supplier ID: <%= supplier.SupplierID ? supplier.SupplierID : "" %>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Supplier Details Table -->
+  <div class="table-container mt-4">
+    <table class="ms-1 table table-striped table-bordered" style="width: 100%;">
+      <thead>
+        <tr>
+          <th scope="col">Attribute</th>
+          <th scope="col">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Supplier Name</th>
+          <td><%= supplier.SupplierName %></td>
+        </tr>
+        <tr>
+          <th scope="row">Phone</th>
+          <td><%= supplier.Phone ? supplier.Phone : "N/A" %></td>
+        </tr>
+        <tr>
+          <th scope="row">Email</th>
+          <td><%= supplier.Email ? supplier.Email : "N/A" %></td>
+        </tr>
+        <tr>
+          <th scope="row">Address</th>
+          <td><%= supplier.Address ? supplier.Address : "N/A" %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

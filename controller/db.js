@@ -79,9 +79,25 @@ const getUser = (req, res) => {
 
 
 
+const getPromotionData = () => {
+  return new Promise((resolve, reject) => {
+    const promotionQuery = 'SELECT * FROM promotion'; 
+    db.query(promotionQuery, (err, promotionResults) => {
+      if (err) {
+        console.error("Error fetching promotion data: " + err);
+        return reject("Error fetching promotion data: " + err); 
+      }
+      resolve(promotionResults); 
+    });
+  });
+};
+
+
+
+
 
 module.exports = {
-  db,
+  db,getPromotionData,
   getUser,
   getStoreData,
   getSupplierData
