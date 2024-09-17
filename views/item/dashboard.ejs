@@ -1,0 +1,110 @@
+<div class="container mt-5">
+  <!-- Search Form -->
+  <div style="width: 25%;" class="d-flex justify-content-center mb-4">
+    <form action="/searchitems" method="post" class="d-flex" role="search">
+      <input required class="form-control me-2" name="search" type="search" placeholder="Search Item" aria-label="Search">
+      <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+  </div>
+ 
+  <!-- Add Item Button -->
+  <div class="btn-container d-flex justify-content-end mb-4">
+    <a href="/additem" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> Add New Item
+    </a>
+  </div>
+  
+  <!-- Item Table -->
+  <div class="table-container">
+    <% if (data.items && data.items.length > 0) { %>
+      <table class="text-center mx-auto table mt-5 table-striped table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Item ID</th>
+            <th scope="col">Item Name</th>
+            <th scope="col">Item Unit</th>
+            <th scope="col">Barcode</th>
+            <th scope="col">Exp. Date</th>
+            <th scope="col">Pro. Date</th>
+            <th scope="col">Price</th>
+            <th scope="col">State</th>
+            <th scope="col">Category</th>
+            <th scope="col">Country </th>
+            <th scope="col">Branch </th>
+            <th scope="col">Promotion %</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% data.items.forEach((e, index) => { %>
+            <tr>
+              <th scope="row"><%= index + 1 %></th>
+              <td><%= e.ItemID %></td>
+              <td><%= e.ItemName %></td>
+              <td><%= e.ItemUnit %></td>
+              <td><%= e.Barcode %></td>
+              <td><%= e.ExpiryDate ? e.ExpiryDate.toISOString().split('T')[0] : 'N/A' %></td>
+              <td><%= e.ProductionDate ? e.ProductionDate.toISOString().split('T')[0] : 'N/A' %></td>
+              <td><%= e.Price %></td>
+              <td><%= e.State %></td>
+              <td><%= e.Category %></td>
+              <td><%= e.CountryOfOrigin %></td>
+              <td>
+                <% 
+                  const store = data.stores.find(store => store.StoreID === e.StoreID);
+                  const storeName = store ? store.StoreName : 'N/A';
+                %>
+                <%= storeName %>
+              </td>
+              <td><% 
+                const promotion = data.promotions.find(promo => promo.PromotionID === e.promotionID);
+                const promotionName = promotion ? promotion.DiscountPercentage : 'N/A';
+              %>
+              <%= promotionName %></td>
+              <td>
+                <a
+                  data-bs-toggle="tooltip"
+                  data-bs-title="View details"
+                  data-bs-placement="top"
+                  class="btn btn-info btn-sm"
+                  href="/viewitem/<%= e.ItemID %>"
+                >
+                  <i class="bi bi-eye"></i>
+                </a>
+
+                <a
+                  data-bs-toggle="tooltip"
+                  data-bs-title="Edit item"
+                  data-bs-placement="top"
+                  class="btn btn-primary btn-sm"
+                  href="/edititem/<%= e.ItemID %>"
+                >
+                  <i class="bi bi-pencil"></i>
+                </a>
+
+                <a
+                  data-bs-toggle="tooltip"
+                  data-bs-title="Delete item"
+                  data-bs-placement="top"
+                  class="btn btn-danger btn-sm"
+                  href="/deleteitem/<%= e.ItemID %>"
+                >
+                  <i class="bi bi-trash"></i>
+                </a>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <!-- No Items Available Message -->
+      <div class="text-center mt-5">
+        <h4>No items available at the moment.</h4>
+        <p>Come back later or add a new item by clicking the "Add New Item" button.</p>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<!-- Include Bootstrap JS and its dependencies -->

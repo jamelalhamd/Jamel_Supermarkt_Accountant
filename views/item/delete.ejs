@@ -1,0 +1,134 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="form-container">
+        <h2 class="mb-4">Edit Item: <%= data.item.ItemName %></h2>
+        <% const item = data.item; console.log(data.item.ItemID); %>
+
+        <!-- Display user message with dynamic alert style -->
+        <% if (data.msg && data.style) { %>
+          <div class="alert alert-<%= data.style %> mt-4">
+            <%= data.msg %>
+          </div>
+        <% } %>
+
+        <!-- Form for editing item details -->
+        <form action="/updateitem/<%= data.item.ItemID %>" method="POST">
+          <div class="form-group mb-3">
+            <label for="ItemName">Item Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="ItemName"
+              name="ItemName"
+              value="<%= data.item.ItemName %>"
+              required
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="ItemUnit">Item Unit</label>
+            <input
+              type="text"
+              class="form-control"
+              id="ItemUnit"
+              name="ItemUnit"
+              value="<%= data.item.ItemUnit %>"
+              required
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="Barcode">Barcode</label>
+            <input
+              type="text"
+              class="form-control"
+              id="Barcode"
+              name="Barcode"
+              value="<%= data.item.Barcode %>"
+              required
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="ExpiryDate">Expiry Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="ExpiryDate"
+              name="ExpiryDate"
+              value="<%= data.item.ExpiryDate ? new Date(data.item.ExpiryDate).toISOString().split('T')[0] : '' %>"
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="ProductionDate">Production Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="ProductionDate"
+              name="ProductionDate"
+              value="<%= data.item.ProductionDate ? new Date(data.item.ProductionDate).toISOString().split('T')[0] : '' %>"
+            >
+          </div>
+
+          <div class="form-group mb-4">
+            <label for="Price">Price</label>
+            <input
+              type="number"
+              class="form-control"
+              id="Price"
+              name="Price"
+              step="0.01"
+              min="0"
+              value="<%= data.item.Price %>"
+              required
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="State">State</label>
+            <input
+              type="text"
+              class="form-control"
+              id="State"
+              name="State"
+              value="<%= data.item.State %>"
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="Category">Category</label>
+            <input
+              type="text"
+              class="form-control"
+              id="Category"
+              name="Category"
+              value="<%= data.item.Category %>"
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="CountryOfOrigin">Country of Origin</label>
+            <input
+              type="text"
+              class="form-control"
+              id="CountryOfOrigin"
+              name="CountryOfOrigin"
+              value="<%= data.item.CountryOfOrigin %>"
+            >
+          </div>
+
+          <!-- Buttons: Save and Cancel -->
+          <div class="btn-container">
+            <button type="submit" class="btn btn-primary">Update Item</button>
+            <a href="/items" class="btn btn-secondary">Back</a>
+            <form action="/deleteitem/<%= data.item.ItemID %>" method="POST" style="display:inline;">
+              <button type="submit" class="btn btn-danger">Delete Item</button>
+            </form>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

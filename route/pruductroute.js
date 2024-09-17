@@ -18,5 +18,5 @@ router.post('/adduser', productController.addcontroller_post);
 router.post('/edituser', productController.editcontroller_post);
 router.post('/deleteuser/:id', productController.deletecontroller_post);
 router.post('/search',productController.searchcontroller)
-
 module.exports = router;
+

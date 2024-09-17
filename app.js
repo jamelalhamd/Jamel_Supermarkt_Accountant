@@ -52,10 +52,10 @@ liveReloadServer.server.once('connection', () => {
 const productRoutes = require('./route/pruductroute'); // Correct the path if needed
 const userRoutes = require('./route/userrout'); // Correct the path if needed
 const store_item_suppler_Route = require("./route/store_item_suppler_route");
-
+const itemcontroller=require('./route/itemroute');
 const invoice_Route = require("./route/invoceroute");
 const Promotion_Route = require("./route/promationroute");
-
+app.use(itemcontroller);
 app.use(productRoutes);
 app.use(userRoutes);
 app.use(invoice_Route);

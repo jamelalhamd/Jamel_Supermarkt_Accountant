@@ -1,0 +1,182 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="form-container">
+        <h2 class="mb-4">Add New Item</h2>
+
+        <% if (data.msg && data.style) { %>
+          <div class="alert alert-<%= data.style %> mt-4">
+            <%= data.msg %>
+          </div>
+        <% } %>
+        <form action="/additem" method="POST">
+
+
+          <div class="form-group mb-3">
+            <label for="Barcode">Barcode</label>
+            <input
+              type="text"
+              class="form-control"
+              id="Barcode"
+              name="Barcode"
+              placeholder="Enter barcode"
+              required
+            >
+          </div>
+          <div class="form-group mb-3">
+            <label for="ItemName">Item Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="ItemName"
+              name="ItemName"
+              placeholder="Enter item name"
+              required
+            >
+          </div>
+
+
+
+
+       
+
+
+          <div class="form-group mb-3">
+            <label for="ItemUnit">Item Unit</label>
+            <select
+              class="form-select"
+              id="ItemUnit"
+              name="ItemUnit"
+              required
+            >
+              <option value="" disabled selected>Select unit</option>
+              <% data.units.forEach(unit => { %>
+                <option value="<%= unit %>"><%= unit %></option>
+              <% }); %>
+            </select>
+          </div>
+          
+      
+
+          <div class="form-group mb-3">
+            <label for="ExpiryDate">Expiry Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="ExpiryDate"
+              name="ExpiryDate"
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="ProductionDate">Production Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="ProductionDate"
+              name="ProductionDate"
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="Price">Price</label>
+            <input
+              type="number"
+              step="0.01"
+              class="form-control"
+              id="Price"
+              name="Price"
+              placeholder="Enter price"
+              required
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="State">State</label>
+            <select class="form-select" id="State" name="State" required>
+              <option value="" disabled selected>Select state</option>
+              <% data.states.forEach(state => { %>
+                <option value="<%= state %>"><%= state %></option>
+              <% }); %>
+            </select>
+          </div>
+          
+
+          <div class="form-group mb-3">
+            <label for="Category">Category</label>
+            <select
+              class="form-select"
+              id="Category"
+              name="Category"
+              required
+            >
+              <option value="" disabled selected>Select category</option>
+              <% data.categories.forEach(category => { %>
+                <option value="<%= category %>" <%= category === (data.item ? data.item.Category : '') ? 'selected' : '' %>><%= category %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="form-group mb-3">
+            <label for="StoreID">Store</label>
+            <select
+              class="form-select"
+              id="StoreID"
+              name="StoreID"
+              required
+            >
+              <option value="" disabled selected>Select store</option>
+              <% data.stores.forEach(store => { %>
+                <option value="<%= store.StoreID %>" <%= store.StoreID === (data.selectedStoreID ? data.selectedStoreID : '') ? 'selected' : '' %>><%= store.StoreName %></option>
+              <% }); %>
+            </select>
+          </div>
+          
+
+          <div class="form-group mb-3">
+            <label for="PromotionID">Promotion</label>
+            <select
+              class="form-select"
+              id="PromotionID"
+              name="PromotionID"
+              required
+            >
+              <option value="" disabled selected>Select promotion</option>
+              <% data.Promotion.forEach(promotion => { %>
+                <option value="<%= promotion.PromotionID %>" <%= promotion.PromotionID === (data.selectedPromotion ? data.selectedPromotion.PromotionID : '') ? 'selected' : '' %>>
+                  <%= promotion.PromotionName %> - <%= promotion.DiscountPercentage %>%
+                </option>
+              <% }); %>
+            </select>
+        </div>
+        
+
+   
+
+
+          <div class="form-group mb-3">
+            <label for="CountryOfOrigin">Country of Origin</label>
+            <select
+              class="form-select"
+              id="CountryOfOrigin"
+              name="CountryOfOrigin"
+              required
+            >
+              <option value="" disabled selected>Select country</option>
+              <% data.countries.forEach(country => { %>
+                <option value="<%= country %>"><%= country %></option>
+              <% }); %>
+            </select>
+          </div>
+          
+          
+
+          <!-- Buttons: Save and Cancel -->
+          <div class="btn-container">
+            <button type="submit" class="btn btn-primary">Add Item</button>
+            <a href="/items" class="btn btn-secondary">Back</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,448 @@
-const db = require('../controller/db');
+
+const { db ,getStoreData,getPromotionData} = require('../controller/db');
+const util = require('util');
+const fetch = require('node-fetch');
+// Promisify the db.query method to use async/await
+db.query = util.promisify(db.query);
+
+// Function to fetch and render all items
+const itemViewControl = async (req, res) => {
+  try {
+    const Promotion=await getPromotionData();
+    const stores=await getStoreData();
+    const items = await db.query('SELECT * FROM item');
+    const data = { title: "item/dashboard", items: items,stores:stores,promotions:Promotion };
+    console.log(items);
+    res.render('home', { data });
+  } catch (err) {
+    console.error("Error fetching item data:", err);
+    res.status(500).send('Server error');
+  }
+};
+
+// Function to fetch and render a specific item for editing
+const editItem = async (req, res) => {
+  const itemId = req.params.id;
+
+  try {
+    // Fetch promotions and stores
+    const promotions = await getPromotionData();
+    const stores = await getStoreData();
+
+    // Fetch the specific item from the database
+    const sql = 'SELECT * FROM item WHERE ItemID = ?';
+    const itemResults = await new Promise((resolve, reject) => {
+      db.query(sql, [itemId], (err, results) => {
+        if (err) {
+          return reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+
+    // If no item is found, redirect to the items list
+    if (itemResults.length === 0) {
+      return res.redirect('/items');
+    }
+
+    // Get the specific item
+    const item = itemResults[0];
+
+    // Get the selected store and promotion IDs
+    const selectedStoreID = item.StoreID;
+    const selectedPromotionID = item.PromotionID;
+
+    // Prepare data for rendering the edit form
+    const data = {
+        title: 'item/edit',
+      item: item,
+      stores: stores,
+      categories: categoriesArray,units:unitsArray,states:itemStatesArray,
+      promotions: promotions,
+      selectedStoreID: selectedStoreID,
+      selectedPromotionID: selectedPromotionID,
+      csrfToken: req.csrfToken ? req.csrfToken() : "",  // If CSRF is being used
+      msg: "",  // Default empty message
+      style: "" // Optional styling for alerts
+    };
+
+    // Render the 'home' view with the data
+    res.render('home', { data });
+
+  } catch (err) {
+    console.error("Error fetching item data: " + err);
+    // Provide a user-friendly error message and log the error for debugging
+    res.status(500).send('Server error. Please try again later.');
+  }
+};
+
+  
+
+// Function to handle updating an item
+const updateItem =async (req, res) => {
+ 
+    const itemId = req.params.id;
+    const { 
+      ItemName, 
+      ItemUnit, 
+      Barcode, 
+      ExpiryDate, 
+      ProductionDate, 
+      Price, 
+      State, 
+      Category, 
+      CountryOfOrigin, 
+      PromotionID, 
+      StoreID 
+    } = req.body;
+  
+    // Check for required fields
+    if (!ItemName || !ItemUnit || !Barcode || !Price) {
+      const data = {
+        title: 'item/edit',
+        msg: "Please fill in all required fields",
+        style: "danger",
+        item: req.body
+      };
+      return res.render('home', { data });
+    }
+  
+    // SQL query to update item
+    const sql = `
+      UPDATE item 
+      SET 
+        ItemName = ?, 
+        ItemUnit = ?, 
+        Barcode = ?, 
+        ExpiryDate = ?, 
+        ProductionDate = ?, 
+        Price = ?, 
+        State = ?, 
+        Category = ?, 
+        CountryOfOrigin = ?, 
+        promotionID = ?, 
+        StoreID = ? 
+      WHERE ItemID = ?
+    `;
+  
+    db.query(sql, [ 
+      ItemName, 
+      ItemUnit, 
+      Barcode, 
+      ExpiryDate, 
+      ProductionDate, 
+      Price, 
+      State, 
+      Category, 
+      CountryOfOrigin, 
+      PromotionID, 
+      StoreID, 
+      itemId 
+    ], (err) => {
+      if (err) {
+        console.error("Error updating item data:", err);
+        return res.redirect(`/edititem/${itemId}?msg=Item%20not%20updated%20&style=danger`);
+
+      }
+  
+     
+  
+    //  return res.render('home', { data });
+
+
+//=============================
+
+
+return res.redirect(`/items`);
+
+
+
+
+
+    });
+  };
+  
+
+
+//================================================================
+
+
+
+// Define your categories
+const categoriesArray = [
+    "Dairy",
+    "Bakery",
+    "Meat",
+    "Produce",
+    "Canned Goods",
+    "Frozen Foods",
+    "Vegetables",
+    "Fruits",
+    "Beverages",
+    "Snacks",
+    "Condiments",
+    "Seafood",
+    "Grains",
+    "Pasta",
+    "Sauces",
+    "Oils",
+    "Spices",
+    "Breakfast Foods",
+    "Health Foods"
+  ];
+  
+  const unitsArray = [
+    "Kilogram (kg)",
+    "Gram (g)",
+    "Milligram (mg)",
+    "Liter (l)",
+    "Milliliter (ml)",
+    "Piece",
+    "Pack",
+    "Box",
+    "Dozen",
+    "Meter (m)",
+    "Centimeter (cm)",
+    "Inch"
+  ];
+  
+
+  const itemStatesArray = [
+    "Damaged", // Damaged goods
+     // Spoiled
+    "In Store", // Available in the store/warehouse
+    "On Shelf", // Placed on the shelf
+    "Out of Stock", // Temporarily unavailable
+    "Expired", // Expired goods
+    "In Transit", // Being transported
+    "In Inspection", // Under quality control
+    "Reserved", // Reserved for customer
+    "Returned", // Returned by customer
+    "Awaiting Restock" // Waiting for restock
+  ];
+
+
+// Function to fetch country data
+const fetchCountries = async () => {
+  try {
+    const response = await fetch('https://restcountries.com/v3.1/all');
+    const data = await response.json();
+    return data.map(country => country.name.common);
+  } catch (error) {
+    console.error('Error fetching country data:', error);
+    return [];
+  }
+};
+
+// Server-side function to render the page
+const addItemPage = async (req, res) => {
+  try {
+   
+    const stores=await getStoreData();
+const Promotion=await getPromotionData();
+    const countries = await fetchCountries();
+    const data = { title: 'item/add', countries, categories: categoriesArray,units:unitsArray,states:itemStatesArray,stores: stores,Promotion};
+    return res.render('home', { data });
+  } catch (error) {
+    console.error('Error rendering page:', error);
+    return res.status(500).send('Internal Server Error');
+  }
+};
+
+
+
+  //================================================================
+// Function to handle adding a new item
+
+const addItem = async (req, res) => {
+    const countries = await fetchCountries();
+    const stores=await getStoreData();
+const Promotion=await getPromotionData();
+    const { ItemName, ItemUnit, Barcode, ExpiryDate, ProductionDate, Price, State, Category, CountryOfOrigin, StoreID, PromotionID } = req.body;
+  
+    // Validate required fields
+    if (!ItemName || !ItemUnit || !Barcode || !Price || !State || !Category || !StoreID ) {
+
+
+      const data = { title: 'item/add', countries, categories: categoriesArray,units:unitsArray,states:itemStatesArray,stores: stores,Promotion,msg:"All required fields are required." , style:"danger"};
+      return res.render('home', { data });
+    }
+  
+    // SQL query to insert the new item
+    const sql = `
+      INSERT INTO item (
+        ItemName, ItemUnit, Barcode, ExpiryDate, ProductionDate, 
+        Price, State, Category, CountryOfOrigin, StoreID, PromotionID
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  
+    try {
+      db.query(sql, [ItemName, ItemUnit, Barcode, ExpiryDate, ProductionDate, Price, State, Category, CountryOfOrigin, StoreID, PromotionID], (err) => {
+        if (err) {
+          console.error("Error inserting item: " + err);
+
+          const data = { title: 'item/add', countries, categories: categoriesArray,units:unitsArray,states:itemStatesArray,stores: stores,Promotion,msg: "Item has not been added" , style:"danger"};
+          return res.render('home', { data });
+        }
+
+        const data = { title: 'item/add', countries, categories: categoriesArray,units:unitsArray,states:itemStatesArray,stores: stores,Promotion,msg: "Item has been successfully added", style: "success"};
+        return res.render('home', { data });
+      });
+    } catch (err) {
+      console.error("Error handling request: " + err);
+      res.status(500).send("Server error");
+    }
+  };
+
+// Function to render the page for deleting an item
+const deleteItemPage = (req, res) => {
+  const itemId = req.params.id;
+  const sql = 'SELECT * FROM item WHERE ItemID = ?';
+  db.query(sql, [itemId], (err, results) => {
+    if (err) {
+      console.error("Error fetching item data: " + err);
+      return res.redirect('/items');
+    }
+    if (results.length === 0) {
+      return res.redirect('/items');
+    }
+    const data = {
+      title: 'item/delete',
+      item: results[0],
+      msg: ""
+    };
+    res.render('home', { data });
+  });
+};
+
+// Function to handle deleting an item
+const deleteItem = (req, res) => {
+  const itemId = req.params.id;
+
+  if (!itemId) {
+    const data = { title: 'item/delete', msg: 'No item ID provided for deletion' };
+    return res.render('home', { data });
+  }
+
+  const sql = 'DELETE FROM item WHERE ItemID = ?';
+  db.query(sql, [itemId], (err, result) => {
+    if (err) {
+      console.error("Error deleting item: " + err);
+      const data = { title: 'item/delete', msg: 'Error occurred while deleting the item', style: "danger" };
+      return res.render('home', { data });
+    }
+    if (result.affectedRows === 0) {
+      const data = { title: 'item/delete', msg: 'No item found with the given ID', style: "danger" };
+      return res.render('home', { data });
+    }
+    const data = { title: 'item/add', msg: 'Item has been successfully deleted', style: "danger" };
+    res.render('home', { data });
+  });
+};
+
+// Function to render details of a specific item
+const itemViewDetails = async (req, res) => {
+  const { id } = req.params;
+  const sql = 'SELECT * FROM item WHERE ItemID = ?';
+  const promotions=await getPromotionData();
+  const stores=await getStoreData();
+  try {
+    const itemResults = await new Promise((resolve, reject) => {
+      db.query(sql, [id], (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(results);
+      });
+    });
+    if (itemResults.length === 0) {
+        return res.redirect("/items");
+    }
+    const data = {
+      title: 'item/view',promotions:  promotions,stores: stores, 
+      item: itemResults[0]
+    };
+    res.render('home', { data });
+  } catch (err) {
+    console.error("Database error: " + err);
+    return res.redirect("/items");
+  }
+};
+
+// Function to search for items
+
+const searchItemController = async (req, res) => {
+    try {
+      // Fetch promotions and stores
+      const promotions = await getPromotionData();
+      const stores = await getStoreData();
+  
+      // Fetch search term from the request body
+      const searchTerm = req.body.search || '';
+  
+      // Prepare SQL query
+      const sql = `
+        SELECT * FROM item 
+        WHERE ItemID = ? 
+        OR ItemName LIKE ?
+        OR Barcode = ?
+      `;
+      const searchQuery = `%${searchTerm}%`; // Create a pattern for LIKE search
+  
+      // Execute the SQL query
+      const itemResults = await new Promise((resolve, reject) => {
+        db.query(sql, [searchTerm, searchQuery, searchTerm], (err, results) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(results);
+          }
+        });
+      });
+  
+      // Check if items were found
+      if (itemResults.length === 0) {
+        const data = {
+          title: 'item/dashboard',
+          items: [],
+          stores: stores,
+          promotions: promotions,
+          msg: 'No items found'
+        };
+        return res.render('home', { data });
+      }
+  
+      // Prepare data for rendering
+      const data = {
+        title: 'item/dashboard',
+        items: itemResults,
+        stores: stores,
+        promotions: promotions
+      };
+      return res.render('home', { data });
+  
+    } catch (err) {
+      console.error("Error in item search: " + err);
+      const data = {
+        title: 'item/dashboard',
+        items: [],
+        stores: [],
+        promotions: [],
+        msg: "Error retrieving item data"
+      };
+      res.render('home', { data });
+    }
+  };
+  
+// Export all handlers
+module.exports = {
+  deleteItemPage,
+  searchItemController,
+  itemViewControl,
+  editItem,
+  updateItem,
+  addItemPage,
+  addItem,
+  deleteItem,
+  itemViewDetails
+};
