@@ -2,10 +2,8 @@
   <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
       <div class="form-container">
-        <h2 class="mb-4">Edit Item: <%= data.item.ItemName %></h2>
-        <% const item = data.item; console.log(data.item.ItemID); %>
-
-        <!-- Display user message with dynamic alert style -->
+        <h2 class="mb-4">Delete Item: <%= data.item.ItemName %></h2>
+        
         <% if (data.msg && data.style) { %>
           <div class="alert alert-<%= data.style %> mt-4">
             <%= data.msg %>
@@ -13,7 +11,10 @@
         <% } %>
 
         <!-- Form for editing item details -->
-        <form action="/updateitem/<%= data.item.ItemID %>" method="POST">
+        <form action="/deleteitem/<%= data.item.ItemID %>" method="POST">
+          <!-- CSRF Token (if needed for security) -->
+          <input type="hidden" name="_csrf" value="<%= data.csrfToken %>">
+
           <div class="form-group mb-3">
             <label for="ItemName">Item Name</label>
             <input
@@ -28,14 +29,32 @@
 
           <div class="form-group mb-3">
             <label for="ItemUnit">Item Unit</label>
-            <input
-              type="text"
-              class="form-control"
+            <select
+              class="form-select"
               id="ItemUnit"
               name="ItemUnit"
-              value="<%= data.item.ItemUnit %>"
               required
             >
+              <option value="" disabled>Select unit</option>
+              <% data.units.forEach(unit => { %>
+                <option value="<%= unit %>" <%= unit === data.item.ItemUnit ? 'selected' : '' %>><%= unit %></option>
+              <% }); %>
+            </select>
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="State">State</label>
+            <select
+              class="form-select"
+              id="State"
+              name="State"
+              required
+            >
+              <option value="" disabled>Select state</option>
+              <% data.states.forEach(state => { %>
+                <option value="<%= state %>" <%= state === data.item.State ? 'selected' : '' %>><%= state %></option>
+              <% }); %>
+            </select>
           </div>
 
           <div class="form-group mb-3">
@@ -87,17 +106,6 @@
           </div>
 
           <div class="form-group mb-3">
-            <label for="State">State</label>
-            <input
-              type="text"
-              class="form-control"
-              id="State"
-              name="State"
-              value="<%= data.item.State %>"
-            >
-          </div>
-
-          <div class="form-group mb-3">
             <label for="Category">Category</label>
             <input
               type="text"
@@ -119,13 +127,40 @@
             >
           </div>
 
+          <div class="form-group mb-3">
+            <label for="StoreID">Store</label>
+            <select
+              class="form-select"
+              id="StoreID"
+              name="StoreID"
+              required
+            >
+              <option value="" disabled>Select store</option>
+              <% data.stores.forEach(store => { %>
+                <option value="<%= store.StoreID %>" <%= store.StoreID === data.item.StoreID ? 'selected' : '' %>><%= store.StoreName %></option>
+              <% }); %>
+            </select>
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="PromotionID">Promotion</label>
+            <select
+              class="form-select"
+              id="PromotionID"
+              name="PromotionID"
+              required
+            >
+              <option value="" disabled>Select promotion</option>
+              <% data.promotions.forEach(promotion => { %>
+                <option value="<%= promotion.PromotionID %>" <%= promotion.PromotionID === data.item.PromotionID ? 'selected' : '' %>><%= promotion.PromotionName %> - <%= promotion.DiscountPercentage %>%</option>
+              <% }); %>
+            </select>
+          </div>
+
           <!-- Buttons: Save and Cancel -->
           <div class="btn-container">
-            <button type="submit" class="btn btn-primary">Update Item</button>
+            <button type="submit" class="btn btn-danger">Delete The Item</button>
             <a href="/items" class="btn btn-secondary">Back</a>
-            <form action="/deleteitem/<%= data.item.ItemID %>" method="POST" style="display:inline;">
-              <button type="submit" class="btn btn-danger">Delete Item</button>
-            </form>
           </div>
         </form>
       </div>

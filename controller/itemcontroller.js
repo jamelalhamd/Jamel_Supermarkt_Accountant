@@ -77,6 +77,14 @@ const editItem = async (req, res) => {
   }
 };
 
+
+
+
+
+
+
+
+
   
 
 // Function to handle updating an item
@@ -295,48 +303,91 @@ const Promotion=await getPromotionData();
   };
 
 // Function to render the page for deleting an item
-const deleteItemPage = (req, res) => {
-  const itemId = req.params.id;
-  const sql = 'SELECT * FROM item WHERE ItemID = ?';
-  db.query(sql, [itemId], (err, results) => {
-    if (err) {
-      console.error("Error fetching item data: " + err);
-      return res.redirect('/items');
-    }
-    if (results.length === 0) {
-      return res.redirect('/items');
-    }
-    const data = {
-      title: 'item/delete',
-      item: results[0],
-      msg: ""
-    };
-    res.render('home', { data });
-  });
-};
 
+
+//============================================================================
+const deleteItemPage = async(req, res) => {
+    const itemId = req.params.id;
+  
+    try {
+      // Fetch promotions and stores
+      const promotions = await getPromotionData();
+      const stores = await getStoreData();
+  
+      // Fetch the specific item from the database
+      const sql = 'SELECT * FROM item WHERE ItemID = ?';
+      const itemResults = await new Promise((resolve, reject) => {
+        db.query(sql, [itemId], (err, results) => {
+          if (err) {
+            return reject(err);
+          } else {
+            resolve(results);
+          }
+        });
+      });
+  
+      // If no item is found, redirect to the items list
+      if (itemResults.length === 0) {
+        return res.redirect('/items');
+      }
+  
+      // Get the specific item
+      const item = itemResults[0];
+  
+      // Get the selected store and promotion IDs
+      const selectedStoreID = item.StoreID;
+      const selectedPromotionID = item.PromotionID;
+  
+      // Prepare data for rendering the edit form
+      const data = {
+          title: 'item/delete',
+        item: item,
+        stores: stores,
+        categories: categoriesArray,units:unitsArray,states:itemStatesArray,
+        promotions: promotions,
+        selectedStoreID: selectedStoreID,
+        selectedPromotionID: selectedPromotionID,
+        csrfToken: req.csrfToken ? req.csrfToken() : "",  // If CSRF is being used
+        msg: "",  // Default empty message
+        style: "" // Optional styling for alerts
+      };
+  
+      // Render the 'home' view with the data
+      res.render('home', { data });
+  
+    } catch (err) {
+      console.error("Error fetching item data: " + err);
+      // Provide a user-friendly error message and log the error for debugging
+      res.status(500).send('Server error. Please try again later.');
+    }
+  };
+//============================================================================
 // Function to handle deleting an item
 const deleteItem = (req, res) => {
   const itemId = req.params.id;
 
   if (!itemId) {
-    const data = { title: 'item/delete', msg: 'No item ID provided for deletion' };
-    return res.render('home', { data });
+    //  console.log("Item not found: " + itemId);
+   return res.redirect("/items");
+ 
   }
 
   const sql = 'DELETE FROM item WHERE ItemID = ?';
   db.query(sql, [itemId], (err, result) => {
     if (err) {
       console.error("Error deleting item: " + err);
-      const data = { title: 'item/delete', msg: 'Error occurred while deleting the item', style: "danger" };
-      return res.render('home', { data });
+      console.log("Item not found: " + itemId);
+      return res.redirect("/items");
     }
     if (result.affectedRows === 0) {
-      const data = { title: 'item/delete', msg: 'No item found with the given ID', style: "danger" };
-      return res.render('home', { data });
+    
+
+      console.log("'No item found with the given ID'" + itemId);
+      return res.redirect("/items");
     }
-    const data = { title: 'item/add', msg: 'Item has been successfully deleted', style: "danger" };
-    res.render('home', { data });
+   
+    console.log("Item has benn successfully deleted" + itemId);
+    return res.redirect("/items");
   });
 };
 
@@ -436,6 +487,7 @@ const searchItemController = async (req, res) => {
   
 // Export all handlers
 module.exports = {
+    deleteItem,
   deleteItemPage,
   searchItemController,
   itemViewControl,
@@ -443,6 +495,6 @@ module.exports = {
   updateItem,
   addItemPage,
   addItem,
-  deleteItem,
+
   itemViewDetails
 };

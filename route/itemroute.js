@@ -23,9 +23,8 @@ router.get('/edititem/:id', itemViewControl.editItem);
 router.post('/updateitem/:id', itemViewControl.updateItem);
 
 // Route to render delete item page and handle item deletion
-router.get('/deleteitem/:id', itemViewControl.deleteItemPage);
 router.post('/deleteitem/:id', itemViewControl.deleteItem);
-
+router.get('/deleteitempage/:id', itemViewControl.deleteItemPage);
 // Route to render add item page and handle adding a new item
 router.get('/additem', itemViewControl.addItemPage);
 router.post('/additem', itemViewControl.addItem);
