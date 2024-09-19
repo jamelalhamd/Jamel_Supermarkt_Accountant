@@ -91,7 +91,7 @@ app.use(Promotion_Route);
 app.get("/test", (req, res) => {
 
   console.log("error................................................................");
-  res.render('home');
+  res.render('test');
 });
 
 // Basic Error Handling Middleware
