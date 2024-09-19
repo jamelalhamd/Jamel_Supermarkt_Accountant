@@ -1,4 +1,4 @@
-<div class="container mt-5">
+<div class="container-xxl mt-5">
   <!-- Search Form -->
   <div style="width: 25%;" class="d-flex justify-content-center mb-4">
     <form action="/searchitems" method="post" class="d-flex" role="search">
@@ -15,9 +15,9 @@
   </div>
   
   <!-- Item Table -->
-  <div class="table-container">
+  <div class="table-container"  style="width: 100%; margin: 0 auto;">
     <% if (data.items && data.items.length > 0) { %>
-      <table class="text-center mx-auto table mt-5 table-striped table-bordered">
+      <table class="text-center mx-auto table mt-5 table-striped table-bordered" >
         <thead>
           <tr>
             <th scope="col">#</th>

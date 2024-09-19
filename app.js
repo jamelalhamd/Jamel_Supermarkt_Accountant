@@ -12,9 +12,35 @@ const rateLimit = require('express-rate-limit');
 
 // Middleware for Content-Security-Policy
 app.use((req, res, next) => {
-  res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net http://localhost:35729; style-src 'self' https: 'unsafe-inline'; font-src 'self' https: data:;");
+  res.setHeader("Content-Security-Policy", 
+    "default-src 'self'; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:35729; " +
+    "style-src 'self' https: 'unsafe-inline'; " +
+    "font-src 'self' https: data:; " +
+    "img-src 'self' data:; " +  // السماح بتحميل الصور من نوع data:
+    "worker-src 'self' blob:; " +
+    "connect-src 'self' ws://localhost:35729;" // السماح بالاتصالات عبر WebSocket
+  );
   next();
 });
+
+
+
+// Helmet configuration
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "http://localhost:35729","https://cdn.jsdelivr.net"],
+      styleSrc: ["'self'", "https:", "'unsafe-inline'"],
+      fontSrc: ["'self'", "https:", "data:"],
+      imgSrc: ["'self'", "data:"],
+      workerSrc: ["'self'", "blob:"],
+      connectSrc: ["'self'", "ws://localhost:35729"]
+    }
+  }
+}));
+
 
 // Middleware and Static Files
 app.use(express.static(path.join(__dirname, 'public')));
@@ -24,7 +50,6 @@ app.use(methodOverride('_method'));
 app.use(cookieParser());
 
 // Security Middleware
-app.use(helmet());  // Helmet should be used after setting CSP for improved security
 app.use(morgan('dev'));
 
 // Rate Limiting
@@ -52,7 +77,7 @@ liveReloadServer.server.once('connection', () => {
 const productRoutes = require('./route/pruductroute'); // Correct the path if needed
 const userRoutes = require('./route/userrout'); // Correct the path if needed
 const store_item_suppler_Route = require("./route/store_item_suppler_route");
-const itemcontroller=require('./route/itemroute');
+const itemcontroller = require('./route/itemroute');
 const invoice_Route = require("./route/invoceroute");
 const Promotion_Route = require("./route/promationroute");
 app.use(itemcontroller);
@@ -61,11 +86,12 @@ app.use(userRoutes);
 app.use(invoice_Route);
 app.use(store_item_suppler_Route);
 app.use(Promotion_Route);
+
 // Test Route
 app.get("/test", (req, res) => {
-  const data = null;
+
   console.log("error................................................................");
-  res.render('home', { data: data });
+  res.render('home');
 });
 
 // Basic Error Handling Middleware
@@ -76,7 +102,6 @@ app.use((err, req, res, next) => {
 
 // 404 Handler
 app.use((req, res) => {
- 
   res.status(404).render('404');
 });
 

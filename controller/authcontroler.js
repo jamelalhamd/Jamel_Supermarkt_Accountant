@@ -8,7 +8,7 @@ require('dotenv').config();
 const cloudinary = require("cloudinary").v2;
 
 const logincontroler = (req, res) => {
-    console.log("sign in 1111111111111111111111111");
+    console.log("sign in page");
     res.render("authen/signin" ,{currentPage:"signin"});
 };
 
