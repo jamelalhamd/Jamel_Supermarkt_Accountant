@@ -1,18 +1,78 @@
-
-const { db ,getStoreData,getPromotionData} = require('../controller/db');
+const dayjs = require('dayjs');
+const { db ,getStoreData,getPromotionData,getItemData} = require('../controller/db');
 const util = require('util');
 const fetch = require('node-fetch');
 // Promisify the db.query method to use async/await
 db.query = util.promisify(db.query);
 
-// Function to fetch and render all items
+
+ //to calculate the new price for the promotion
+const itemsWithFinalPrices= (items, promotions) => {
+  const now = new Date(); // Current date
+
+  // Helper function to calculate final price for a single item
+  const calculateFinalPrice = (itemPrice, promotion) => {
+    const startDate = new Date(promotion.StartDate);
+    const endDate = new Date(promotion.EndDate);
+    const isPromotionValid = startDate <= now && endDate >= now;
+
+    return isPromotionValid
+      ? (itemPrice - (itemPrice * (promotion.DiscountPercentage || 0) / 100)).toFixed(2)
+      : itemPrice.toFixed(2); // Ensure price is formatted to 2 decimal places
+  };
+
+  // Map items to include final price based on valid promotions
+  return items.map(item => {
+    // Find the corresponding promotion for the item
+    const promotion = promotions.find(p => p.PromotionID === item.promotionID) || {};
+
+    // Calculate final price
+    const finalPrice = calculateFinalPrice(item.Price, promotion);
+    console.log("final price: "+finalPrice);
+    return {
+      ...item,
+      FinalPrice: finalPrice
+    };
+  
+  });
+};
+
+ //to update  the new price for the promotion in database
+const updateFinalPrices = async (itemsWithFinalPrices) => {
+  try {
+    for (let item of itemsWithFinalPrices) {
+      await db.query(
+        'UPDATE item SET FinalPrice = ? WHERE ItemID = ?',
+        [item.FinalPrice, item.ItemID]
+      );
+    }
+    console.log("Final prices updated successfully");
+  } catch (err) {
+    console.error("Error updating final prices:", err);
+  }
+};
+
+
+
+
+
+
 const itemViewControl = async (req, res) => {
   try {
     const Promotion=await getPromotionData();
     const stores=await getStoreData();
-    const items = await db.query('SELECT * FROM item');
-    const data = { title: "item/dashboard", items: items,stores:stores,promotions:Promotion };
-    console.log(items);
+    const itemsdata = await getItemData();
+//================================================================
+
+const newitemwithfinalprice=itemsWithFinalPrices(itemsdata, Promotion);
+
+await updateFinalPrices(newitemwithfinalprice);
+
+ 
+    //================================================================
+    const data = { title: "item/dashboard", items: newitemwithfinalprice,stores:stores,promotions:Promotion };
+ 
+   
     res.render('home', { data });
   } catch (err) {
     console.error("Error fetching item data:", err);
@@ -20,7 +80,7 @@ const itemViewControl = async (req, res) => {
   }
 };
 
-// Function to fetch and render a specific item for editing
+
 const editItem = async (req, res) => {
   const itemId = req.params.id;
 
@@ -277,7 +337,7 @@ const Promotion=await getPromotionData();
       return res.render('home', { data });
     }
   
-    // SQL query to insert the new item
+   
     const sql = `
       INSERT INTO item (
         ItemName, ItemUnit, Barcode, ExpiryDate, ProductionDate, 

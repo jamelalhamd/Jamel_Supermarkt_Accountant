@@ -6,7 +6,7 @@
       <button class="btn btn-outline-success" type="submit">Search</button>
     </form>
   </div>
- 
+ <% console.log("data.items"+JSON.stringify(data.items, null, 2));  %>
   <!-- Add Item Button -->
   <div class="btn-container d-flex justify-content-end mb-4">
     <a href="/additem" class="btn btn-primary">
@@ -21,9 +21,9 @@
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col">Item ID</th>
-            <th scope="col">Item Name</th>
-            <th scope="col">Item Unit</th>
+            <th scope="col"> ID</th>
+            <th scope="col"> Name</th>
+            <th scope="col"> Unit</th>
             <th scope="col">Barcode</th>
             <th scope="col">Exp. Date</th>
             <th scope="col">Pro. Date</th>
@@ -33,6 +33,7 @@
             <th scope="col">Country </th>
             <th scope="col">Branch </th>
             <th scope="col">Promotion %</th>
+            <th scope="col">final price </th>
             <th scope="col">Action</th>
           </tr>
         </thead>
@@ -50,6 +51,7 @@
               <td><%= e.State %></td>
               <td><%= e.Category %></td>
               <td><%= e.CountryOfOrigin %></td>
+             
               <td>
                 <% 
                   const store = data.stores.find(store => store.StoreID === e.StoreID);
@@ -62,6 +64,12 @@
                 const promotionName = promotion ? promotion.DiscountPercentage : 'N/A';
               %>
               <%= promotionName %></td>
+
+              <td>
+                <%= e.FinalPrice %>
+              </td>
+              
+             
               <td>
                 <a
                   data-bs-toggle="tooltip"

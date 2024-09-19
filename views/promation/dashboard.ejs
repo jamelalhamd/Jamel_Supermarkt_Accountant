@@ -37,8 +37,10 @@
               <td><%= e.PromotionID %></td>
               <td><%= e.PromotionName %></td>
               <td><%= e.Description %></td>
-              <td><%= e.StartDate.toISOString().split('T')[0] %></td>
-              <td><%= e.EndDate.toISOString().split('T')[0] %></td>
+              <td><%= e.StartDate ? new Date(e.StartDate).toISOString().split('T')[0] : 'N/A' %></td>
+              <td><%= e.EndDate ? new Date(e.EndDate).toISOString().split('T')[0] : 'N/A' %></td>
+              
+              
               <td><%= e.DiscountPercentage %></td>
               <td>
                 <a

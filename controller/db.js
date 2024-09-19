@@ -79,6 +79,20 @@ const getUser = (req, res) => {
 
 
 
+const getItemData = () => {
+  return new Promise((resolve, reject) => {
+    const itemQuery = 'SELECT * FROM item'; // Query to fetch items
+    db.query(itemQuery, (err, itemResults) => {
+      if (err) {
+        console.error("Error fetching item data: " + err);
+        return reject("Error fetching item data: " + err); 
+      }
+      resolve(itemResults); // Resolve with the results from the database
+    });
+  });
+};
+
+
 const getPromotionData = () => {
   return new Promise((resolve, reject) => {
     const promotionQuery = 'SELECT * FROM promotion'; 
@@ -98,7 +112,7 @@ const getPromotionData = () => {
 
 module.exports = {
   db,getPromotionData,
-  getUser,
+  getUser,getItemData,
   getStoreData,
   getSupplierData
 };
