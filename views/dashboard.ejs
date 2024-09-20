@@ -1,13 +1,17 @@
 <% const employees = data.employees; %>
 <% const storedetail = data.stores;  %>
 
-<div style="width: 25%;" class="d-flex justify-content-center">
+<div style="width: 25%;" class="d-flex justify-content-center mt-5">
   <form action="/search" method="post" class="d-flex" role="search">
-    <input class="form-control me-2" name="search" type="search" placeholder="Search" aria-label="Search">
+    <input  required class="form-control me-2" name="search" type="search" placeholder="Search" aria-label="Search">
     <button class="btn btn-outline-success" type="submit">Search</button>
   </form>
 </div>
-
+<div class="btn-container d-flex justify-content-end mb-4">
+  <a href="/add" class="btn btn-primary">
+    <i class="bi bi-plus-circle"></i> Add New Employee
+  </a>
+</div>
 <table
   style="width: 99%;"
   class="text-center mx-auto table mt-5 table-striped table-bordered"

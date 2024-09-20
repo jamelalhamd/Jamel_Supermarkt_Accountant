@@ -181,6 +181,8 @@ const covercontroller = (req, res) => {
 };
 
 const dashcontroller = async (req, res) => {
+
+
   try {
     const [employeeResults, storeResults] = await Promise.all([
       new Promise((resolve, reject) => {
@@ -200,7 +202,8 @@ const dashcontroller = async (req, res) => {
     const data = {
       title: 'dashboard',
       employees: employeeResults,
-      stores: storeResults
+      stores: storeResults,
+   
     };
     console.log("store data: " + JSON.stringify(storeResults, null, 2));
     res.render('home', { data });

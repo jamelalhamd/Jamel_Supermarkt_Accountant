@@ -4,31 +4,33 @@ const router = express.Router();
 const storecontroller = require("../controller/storecontrol");
 const supplierController = require("../controller/supplercontroler");
 const itemcontroller = require("../controller/itemcontroller");
+const authcontroler = require("../controller/authcontroler");
 
-
-router.get('/storeview', storecontroller.storeviewcontrol);
+router.get('/storeview',authcontroler.checkAuthAndFetchUser, storecontroller.storeviewcontrol);
 
 // Route for handling search functionality for stores
-router.post('/searchstore', storecontroller.searchcontroller);
-router.get('/editstore/:id',storecontroller.editStore);
+router.post('/searchstore',authcontroler.checkAuthAndFetchUser, storecontroller.searchcontroller);
+router.get('/editstore/:id',authcontroler.checkAuthAndFetchUser,storecontroller.editStore);
 
 
-router.post('/editstore/:id', storecontroller.updateStore);
-router.post('/deletestore/:id', storecontroller.deleteStore);
-router.post('/addstore', storecontroller.addStore);
-router.get('/addstore', storecontroller.addStorepage);
+router.post('/editstore/:id',authcontroler.checkAuthAndFetchUser, storecontroller.updateStore);
+router.post('/deletestore/:id',authcontroler.checkAuthAndFetchUser, storecontroller.deleteStore);
+router.post('/addstore',authcontroler.checkAuthAndFetchUser, storecontroller.addStore);
+router.get('/addstore', authcontroler.checkAuthAndFetchUser,storecontroller.addStorepage);
 
 
 
-router.get('/supplierview/:id', supplierController.supplierViewControl);
-router.get('/supplierdash', supplierController.supplierdashcontrol);
-router.post('/searchsupplier', supplierController.searchSupplierController);
-router.get('/editsupplier/:id', supplierController.editSupplier);
-router.post('/updatesupplier/:id', supplierController.updateSupplier);
-router.post('/deletesupplier/:id', supplierController.deleteSupplier);
-router.post('/addsupplier', supplierController.addSupplier);
-router.get('/deletesupplier/:id', supplierController.deleteSupplie_get);
-router.get('/addsupplier', supplierController.addSupplierPage);
+router.get('/supplierview/:id',authcontroler.checkAuthAndFetchUser, supplierController.supplierViewControl);
+router.get('/supplierdash',authcontroler.checkAuthAndFetchUser, supplierController.supplierdashcontrol);
+router.post('/searchsupplier',authcontroler.checkAuthAndFetchUser, supplierController.searchSupplierController);
+router.get('/editsupplier/:id',authcontroler.checkAuthAndFetchUser, supplierController.editSupplier);
+router.post('/updatesupplier/:id',authcontroler.checkAuthAndFetchUser, supplierController.updateSupplier);
+router.post('/deletesupplier/:id',authcontroler.checkAuthAndFetchUser, supplierController.deleteSupplier);
+router.post('/addsupplier',authcontroler.checkAuthAndFetchUser, supplierController.addSupplier);
+router.get('/deletesupplier/:id',authcontroler.checkAuthAndFetchUser, supplierController.deleteSupplie_get);
+router.get('/addsupplier', authcontroler.checkAuthAndFetchUser,supplierController.addSupplierPage);
+
+
 module.exports = router;
 
 
