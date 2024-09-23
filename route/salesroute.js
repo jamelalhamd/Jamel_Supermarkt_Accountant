@@ -9,7 +9,7 @@ router.get("/salesinvoice",authcontroler.checkAuthAndFetchUser,salesinvoice.sale
 router.get("/addsalesinvoice",authcontroler.checkAuthAndFetchUser,salesinvoice.addsalesinvocepage);
 router.post("/searchIteminvoice",authcontroler.checkAuthAndFetchUser,salesinvoice.searchItemController);
 router.post("/editvoiceitem", authcontroler.checkAuthAndFetchUser, salesinvoice.updateSalesInvoiceItem);
-
+router.post("/deletevoiceitem", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteSalesInvoiceItem);
 
 
 module.exports = router;

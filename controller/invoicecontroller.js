@@ -242,6 +242,64 @@ console.log("invoiceItemsbeforadd ==00"+invoiceItemsbeforadd);
     });
 };
 
+const deleteSalesInvoiceItem = async (req, res) => {
+    const { invoiceid, salesinvoiceitemID } = req.body; 
+    console.log("Deleting item with invoiceid: " + invoiceid + " and salesinvoiceitemID: " + salesinvoiceitemID);
+
+    // SQL query to delete the sales invoice item
+    const sql = `DELETE FROM salesinvoiceitem WHERE salesinvoiceitemID = ?`;
+    
+    db.query(sql, [salesinvoiceitemID], async (err, result) => {
+        if (err) {
+            console.error("Error deleting sales invoice item:", err);
+            return res.status(500).send("Error deleting sales invoice item.");
+        }
+
+        // If no rows were affected, show a warning message
+        if (result.affectedRows === 0) {
+            console.log("No item found to delete.");
+
+            // Fetch the updated list of items after the deletion attempt
+            const sqlFetchItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ?`;
+            const invoiceItems = await new Promise((resolve, reject) => {
+                db.query(sqlFetchItems, [invoiceid], (err, results) => {
+                    if (err) return reject(err);
+                    resolve(results);
+                });
+            });
+
+            const data = {
+                title: "sales/addinvoice",
+                msg: "No item found to delete.",
+                style: 'warning',
+                items: invoiceItems,
+                salesinvoiceID: invoiceid
+            };
+            return res.render('home', { data });
+        }
+
+        // Fetch the updated list of items after the successful deletion
+        const sqlFetchItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ?`;
+        const invoiceItems = await new Promise((resolve, reject) => {
+            db.query(sqlFetchItems, [invoiceid], (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
+
+        console.log("Successfully deleted item and fetched updated items.");
+
+        // Render the page with updated data after deletion
+        const data = {
+            title: "sales/addinvoice",
+            msg: "Item successfully deleted.",
+            style: 'success',
+            items: invoiceItems,
+            salesinvoiceID: invoiceid
+        };
+        return res.render('home', { data });
+    });
+};
 
 
   
@@ -250,4 +308,4 @@ console.log("invoiceItemsbeforadd ==00"+invoiceItemsbeforadd);
 
 
 
-module.exports = {salesinvocepage,addsalesinvocepage,searchItemController,updateSalesInvoiceItem}
+module.exports = {salesinvocepage,addsalesinvocepage,searchItemController,updateSalesInvoiceItem,deleteSalesInvoiceItem}
