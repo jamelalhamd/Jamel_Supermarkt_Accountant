@@ -107,11 +107,18 @@ const getPromotionData = () => {
   });
 };
 
+const fetchInvoiceItems = async (invoiceid) => {
+  const sqlFetchItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ?`;
+  return new Promise((resolve, reject) => {
+    db.query(sqlFetchItems, [invoiceid], (err, results) => {
+      if (err) return reject(err);
+      resolve(results);
+    });
+  });
+};
 
 
-
-
-module.exports = {
+module.exports = {fetchInvoiceItems,
   db,getPromotionData,
   getUser,getItemData,
   getStoreData,

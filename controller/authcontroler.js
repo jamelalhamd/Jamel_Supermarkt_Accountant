@@ -171,7 +171,7 @@ const requireAuth = (req, res, next) => {
 
 
 
-const checkAuthAndFetchUser = (req, res, next) => {
+const checkAuthAndFetchUser =async (req, res, next) => {
     const token = req.cookies.jwt;
 console.log("0");
     if (token) {
@@ -186,7 +186,7 @@ console.log("0");
             const email = decoded.email;
             const sql = 'SELECT * FROM employees WHERE employee_email = ?';
             console.log(" db.query");
-            db.query(sql, [email], (err, results) => {
+            db.query(sql, [email], async (err, results) => {
                 if (err) {   console.log(" db.query err");
                     console.error("Error fetching employee data: " + err);
                     res.locals.user = null;
@@ -198,7 +198,10 @@ console.log("0");
                     res.locals.user = null;
                     return res.redirect("/login"); // إعادة التوجيه إذا لم يتم العثور على المستخدم
                 } else {
+                    const stores=await getStoreData();
                     res.locals.user = results[0];
+                      const store = stores.find(store => store.StoreID === results[0].storeID);
+                      res.locals.store = store;
                     console.log("User found and authenticated:", res.locals.user);
                     next(); // تابع التنفيذ إذا تم التحقق بنجاح
                 }

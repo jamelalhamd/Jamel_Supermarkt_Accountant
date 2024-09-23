@@ -248,7 +248,7 @@
   <div id="sidebar" class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px; transition: width 0.3s;">
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
       <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
-      <span class="fs-4">Sidebar</span>
+      <span class="fs-4"> <strong><%= user ?store.StoreName : " " %></strong> </span>
       <button id="toggle-btn" class="btn" type="button"><i class="bi bi-x-circle" style="font-size: 2rem;"></i></button>
     </a>
     <hr>
@@ -259,15 +259,16 @@
           Dashboard
         </a>
       </li>
-      <li style="display:<%= user.employee_role == 'Store' ? 'block' : 'block' %>;">
-        <a href="/add" class="nav-link text-white">
+      <li style=`display:<%= user.employee_role == 'Store' ? 'none' : 'none' %>;`>
+
+        <a href="/addsalesinvoice" class="nav-link text-white">
             <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"/></svg>
             Add User
         </a>
     </li>
     
       <li>
-        <a href="edit" class="nav-link text-white">
+        <a href="/salesinvoice" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"/></svg>
           Orders
         </a>
@@ -285,6 +286,7 @@
         </a>
       </li>
     </ul>
+     <strong><%= user ?store.StoreName : " " %></strong> 
     <hr>
     <div class="dropdown">
       <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -297,7 +299,7 @@
         <li><a class="dropdown-item" href="#">Settings</a></li>
         <li><a class="dropdown-item" href="#">Profile</a></li>
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="/cover">Sign out</a></li>
+        <li><a class="dropdown-item" href="/signout">Sign out</a></li>
       </ul>
     </div>
   </div>
@@ -342,8 +344,12 @@
                     <li class="nav-item">
                         <a class="nav-link disabled" aria-disabled="true">Disabled</a>
                     </li>
-             
+                    <li class="nav-item">
+                     
+                  </li>
                 </ul>
+            
+              
                 <h5> <%= user ? user.employee_name +" "+user.employee_lastname : "Guest" %></h5>
             </div>
         </div>

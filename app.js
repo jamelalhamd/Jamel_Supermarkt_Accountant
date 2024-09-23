@@ -80,6 +80,9 @@ const store_item_suppler_Route = require("./route/store_item_suppler_route");
 const itemcontroller = require('./route/itemroute');
 const invoice_Route = require("./route/invoceroute");
 const Promotion_Route = require("./route/promationroute");
+const Sales_Route = require("./route/salesroute");
+
+app.use(Sales_Route);
 app.use(itemcontroller);
 app.use(productRoutes);
 app.use(userRoutes);
