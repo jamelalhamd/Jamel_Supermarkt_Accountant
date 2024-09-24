@@ -163,11 +163,11 @@ const updateItem =async (req, res) => {
       Category, 
       CountryOfOrigin, 
       PromotionID, 
-      StoreID 
+      StoreID ,quantity
     } = req.body;
   
     // Check for required fields
-    if (!ItemName || !ItemUnit || !Barcode || !Price) {
+    if (!ItemName || !ItemUnit || !Barcode || !Price || !quantity) {
       const data = {
         title: 'item/edit',
         msg: "Please fill in all required fields",
@@ -191,7 +191,8 @@ const updateItem =async (req, res) => {
         Category = ?, 
         CountryOfOrigin = ?, 
         promotionID = ?, 
-        StoreID = ? 
+        StoreID = ? ,
+        quantity=?
       WHERE ItemID = ?
     `;
   
@@ -207,6 +208,7 @@ const updateItem =async (req, res) => {
       CountryOfOrigin, 
       PromotionID, 
       StoreID, 
+      quantity,
       itemId 
     ], (err) => {
       if (err) {
@@ -217,10 +219,7 @@ const updateItem =async (req, res) => {
   
      
   
-    //  return res.render('home', { data });
 
-
-//=============================
 
 
 return res.redirect(`/items`);
@@ -328,10 +327,10 @@ const addItem = async (req, res) => {
     const countries = await fetchCountries();
     const stores=await getStoreData();
 const Promotion=await getPromotionData();
-    const { ItemName, ItemUnit, Barcode, ExpiryDate, ProductionDate, Price, State, Category, CountryOfOrigin, StoreID, PromotionID } = req.body;
+    const { ItemName, ItemUnit, Barcode, ExpiryDate, ProductionDate, Price, State, Category, CountryOfOrigin, StoreID, PromotionID,quantity } = req.body;
   
     // Validate required fields
-    if (!ItemName || !ItemUnit || !Barcode || !Price || !State || !Category || !StoreID ) {
+    if (!ItemName || !ItemUnit || !Barcode || !Price || !State || !Category || !StoreID || !quantity) {
 
 
       const data = { title: 'item/add', countries, categories: categoriesArray,units:unitsArray,states:itemStatesArray,stores: stores,Promotion,msg:"All required fields are required." , style:"danger"};
@@ -342,11 +341,11 @@ const Promotion=await getPromotionData();
     const sql = `
       INSERT INTO item (
         ItemName, ItemUnit, Barcode, ExpiryDate, ProductionDate, 
-        Price, State, Category, CountryOfOrigin, StoreID, PromotionID
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        Price, State, Category, CountryOfOrigin, StoreID, PromotionID,quantity
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)`;
   
     try {
-      db.query(sql, [ItemName, ItemUnit, Barcode, ExpiryDate, ProductionDate, Price, State, Category, CountryOfOrigin, StoreID, PromotionID], (err) => {
+      db.query(sql, [ItemName, ItemUnit, Barcode, ExpiryDate, ProductionDate, Price, State, Category, CountryOfOrigin, StoreID, PromotionID,quantity], (err) => {
         if (err) {
           console.error("Error inserting item: " + err);
 

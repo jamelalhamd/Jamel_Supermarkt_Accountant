@@ -82,6 +82,7 @@
                 data-bs-target="#editModal"
                 data-salesinvoiceitemID="<%= element.salesinvoiceitemID %>" 
                 data-itemid="<%= element.itemid %>" 
+                data-price="<%= element.price %>" 
                 data-invoiceid="<%= element.salesinvoiceID %>" 
                 data-quantity="<%= element.Quantity %>">
             <i class="bi bi-pen"></i>
@@ -137,6 +138,7 @@
           <input type="hidden" name="invoiceid" id="edit-invoiceid">
           <input type="hidden" name="salesinvoiceitemID" id="edit-salesinvoiceitemID">
           <input type="hidden" name="itemid" id="edit-itemid">
+          <input type="hidden" name="price" id="edit-price">
           <div class="mb-3">
             <label for="edit-quantity" class="form-label">Quantity</label>
             <input type="number" class="form-control" id="edit-quantity" name="quantity" required>
@@ -161,20 +163,24 @@
   editModal.addEventListener('show.bs.modal', function (event) {
       var button = event.relatedTarget; // Button that triggered the modal
       var itemid = button.getAttribute('data-itemid');
+      var price = button.getAttribute('data-price');
       var quantity = button.getAttribute('data-quantity');
       var invoiceid = button.getAttribute('data-invoiceid');
       var salesinvoiceitemID = button.getAttribute('data-salesinvoiceitemID'); // Correct the attribute name
 
       var modalItemid = editModal.querySelector('#edit-itemid');
+      var modalprice = editModal.querySelector('#edit-price');
       var modalQuantity = editModal.querySelector('#edit-quantity');
       var modalInvoiceid = editModal.querySelector('#edit-invoiceid');
       var modalsalesinvoiceitemID = editModal.querySelector('#edit-salesinvoiceitemID');
       var modalItemIdLabel = editModal.querySelector('#modalItemId');
 
       modalItemid.value = itemid; 
+      modalprice.value = price; 
       modalQuantity.value = quantity; 
       modalInvoiceid.value = invoiceid; 
       modalsalesinvoiceitemID.value = salesinvoiceitemID; // Assign the salesinvoiceitemID correctly
+      modalItemIdLabel.textContent = itemid; 
       modalItemIdLabel.textContent = itemid; 
   });
 </script>
