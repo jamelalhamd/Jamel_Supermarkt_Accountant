@@ -333,33 +333,53 @@ const Promotion=await getPromotionData();
     if (!ItemName || !ItemUnit || !Barcode || !Price || !State || !Category || !StoreID || !quantity) {
 
 
-      const data = { title: 'item/add', countries, categories: categoriesArray,units:unitsArray,states:itemStatesArray,stores: stores,Promotion,msg:"All required fields are required." , style:"danger"};
+      const data = { title: 'item/add',
+         countries, categories: categoriesArray,units:unitsArray,states:itemStatesArray,stores: stores,Promotion,msg:"All required fields are required." , style:"danger"};
       return res.render('home', { data });
     }
+  //=======================================
   
-   
-    const sql = `
-      INSERT INTO item (
-        ItemName, ItemUnit, Barcode, ExpiryDate, ProductionDate, 
-        Price, State, Category, CountryOfOrigin, StoreID, PromotionID,quantity
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)`;
-  
-    try {
-      db.query(sql, [ItemName, ItemUnit, Barcode, ExpiryDate, ProductionDate, Price, State, Category, CountryOfOrigin, StoreID, PromotionID,quantity], (err) => {
-        if (err) {
-          console.error("Error inserting item: " + err);
-
-          const data = { title: 'item/add', countries, categories: categoriesArray,units:unitsArray,states:itemStatesArray,stores: stores,Promotion,msg: "Item has not been added" , style:"danger"};
-          return res.render('home', { data });
-        }
-
-        const data = { title: 'item/add', countries, categories: categoriesArray,units:unitsArray,states:itemStatesArray,stores: stores,Promotion,msg: "Item has been successfully added", style: "success"};
-        return res.render('home', { data });
+  const storeid = res.locals.user.storeID;
+  const sqlCheck = `SELECT * FROM item WHERE Barcode = ? AND StoreID = ?`;
+      const itemResults = await new Promise((resolve, reject) => {
+          db.query(sqlCheck, [Barcode, storeid], (err, results) => {
+              if (err) return reject(err);
+              resolve(results);
+          });
       });
-    } catch (err) {
-      console.error("Error handling request: " + err);
-      res.status(500).send("Server error");
+
+      if (itemResults.length === 0) {
+        const sqlInsert = `
+            INSERT INTO item (
+                ItemName, ItemUnit, Barcode, ExpiryDate, ProductionDate, 
+                Price, State, Category, CountryOfOrigin, StoreID, PromotionID, quantity
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        await new Promise((resolve, reject) => {
+            db.query(sqlInsert, [ItemName, ItemUnit, Barcode, ExpiryDate, ProductionDate, Price, State, Category, CountryOfOrigin, StoreID, PromotionID, quantity], (err) => {
+                if (err) return reject(err);
+                resolve();
+            });
+        });
+
+        const data = { title: 'item/add',
+          countries, categories: categoriesArray,units:unitsArray,states:itemStatesArray,stores: stores,Promotion,msg:"Item hass been Added Successfully to This Store NO:"+storeid , style:"success"};
+       return res.render('home', { data });
+    } else {
+        // If item already exists, update its quantity
+        const sqlUpdate = "UPDATE item SET quantity = quantity + ? WHERE Barcode = ? AND StoreID = ?";
+        await new Promise((resolve, reject) => {
+            db.query(sqlUpdate, [quantity, Barcode, storeid], (err) => {
+                if (err) return reject(err);
+                resolve();
+            });
+        });
+
+        const data = { title: 'item/add',
+          countries, categories: categoriesArray,units:unitsArray,states:itemStatesArray,stores: stores,Promotion,msg:"Quanitity For this Item has been Updeted in The Store "+storeid , style:"success"};
+       return res.render('home', { data });
     }
+
   };
 
 // Function to render the page for deleting an item

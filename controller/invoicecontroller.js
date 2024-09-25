@@ -50,7 +50,11 @@ const addsalesinvocepage=(req, res) => {
    }
 
 
+ //================================================================
  
+ //================================================================
+ 
+ //================================================================
    const searchItemController = async (req, res) => {
     try {
       // Extract form data
@@ -81,15 +85,15 @@ const addsalesinvocepage=(req, res) => {
         return res.render('home', { data });
       }
   
-      // SQL query to search for the item by barcode
+      const storeid=res.locals.user.storeID;
       const sql = `
         SELECT * FROM item 
-        WHERE Barcode = ?
+        WHERE Barcode = ? AND StoreID =?
       `;
-  
+    
       // Fetch item by barcode
       const itemResults = await new Promise((resolve, reject) => {
-        db.query(sql, [searchTerm], (err, results) => {
+        db.query(sql, [searchTerm,storeid], (err, results) => {
           if (err) return reject(err);
           resolve(results);
         });
@@ -99,7 +103,7 @@ const addsalesinvocepage=(req, res) => {
       if (itemResults.length === 0) {
         const data = {
           title: "sales/addinvoice",
-          msg: `No items found for the search term: "${searchTerm}".`,
+          msg: `No items found for the search term in this Store  "${searchTerm}".`,
           style: 'danger',
           items: invoiceItemsbeforadd,
           salesinvoiceID: invoiceid
@@ -115,38 +119,60 @@ const addsalesinvocepage=(req, res) => {
       const itemid = foundItem.ItemID;
   
       // SQL to insert the item into the invoice
-      const sqlAdd = `
-        INSERT INTO SalesInvoiceItem (Quantity, price, total, salesinvoiceID, itemid,item_name,baracode)
-        VALUES (?, ?, ?, ?, ?,?,?)
-      `;
-  
-      // Insert item into SalesInvoiceItem table
-      await new Promise((resolve, reject) => {
-        db.query(sqlAdd, [parsedQuantity, price, total, invoiceid, itemid,foundItem.ItemName,foundItem.Barcode], (err, result) => {
-          if (err) return reject(err);
-          resolve(result);
+    if (foundItem.quantity>quantity &&quantity>0 ) {
+        const sqlAdd = `
+          INSERT INTO SalesInvoiceItem (Quantity, price, total, salesinvoiceID, itemid,item_name,baracode)
+          VALUES (?, ?, ?, ?, ?,?,?)
+        `;
+    
+        // Insert item into SalesInvoiceItem table
+        await new Promise((resolve, reject) => {
+          db.query(sqlAdd, [parsedQuantity, price, total, invoiceid, itemid,foundItem.ItemName,foundItem.Barcode], (err, result) => {
+            if (err) return reject(err);
+            resolve(result);
+          });
         });
-      });
+
+      await updatequanity(itemid,quantity);
+
+        const sqlFetchItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ? `;
   
-      // Fetch updated items for the sales invoice, join with item table to get more info
-      const sqlFetchItems = `  SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ?  `;
-  
-      const invoiceItems = await new Promise((resolve, reject) => {
-        db.query(sqlFetchItems, [invoiceid], (err, results) => {
-          if (err) return reject(err);
-          resolve(results);
+        const invoiceItems = await new Promise((resolve, reject) => {
+          db.query(sqlFetchItems, [invoiceid], (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+          });
         });
-      });
-  
-      // Success: Render the updated list of items with a success message
+    
+        // Success: Render the updated list of items with a success message
+        const data = {
+          title: "sales/addinvoice",
+          msg: `Item "${foundItem.ItemName}" (ID: ${foundItem.ItemID}) successfully added to invoice.`,
+          style: 'success',
+          items: invoiceItems, // Updated list of items
+          salesinvoiceID: invoiceid
+        };
+        return res.render('home', { data });
+    }
+    else{
+         console.log("(foundItem.quantity>quantity &&quantity>0 )"+(foundItem.quantity>quantity &&quantity>0 ));
       const data = {
         title: "sales/addinvoice",
-        msg: `Item "${foundItem.ItemName}" (ID: ${foundItem.ItemID}) successfully added to invoice.`,
+        msg: `there is no enough Item in this Store.`,
         style: 'success',
         items: invoiceItems, // Updated list of items
         salesinvoiceID: invoiceid
       };
       return res.render('home', { data });
+
+    }
+  //================================================================
+
+
+
+  //================================================================
+      // Fetch updated items for the sales invoice, join with item table to get more info
+    
   
     } catch (err) {
       console.error("Error in item search:", err);
@@ -163,6 +189,20 @@ const addsalesinvocepage=(req, res) => {
   };
   
   
+
+ //================================================================
+ 
+ //================================================================
+ 
+ //================================================================
+
+
+
+
+
+
+
+
   const updateSalesInvoiceItem = async (req, res) => {
     const { quantity, invoiceid, salesinvoiceitemID, price } = req.body; 
     const total = quantity * price;
@@ -236,69 +276,189 @@ const fetchInvoiceItems = async (invoiceid) => {
 
 
 const deleteSalesInvoiceItem = async (req, res) => {
-    const { invoiceid, salesinvoiceitemID } = req.body; 
-    console.log("Deleting item with invoiceid: " + invoiceid + " and salesinvoiceitemID: " + salesinvoiceitemID);
+  const { invoiceid, salesinvoiceitemID, itemid, quantity } = req.body;
 
-    // SQL query to delete the sales invoice item
-    const sql = `DELETE FROM salesinvoiceitem WHERE salesinvoiceitemID = ?`;
+  console.log("itemid: " + itemid);
+  console.log("quantity: " + quantity);
+  console.log("Deleting item with invoiceid: " + invoiceid + " and salesinvoiceitemID: " + salesinvoiceitemID);
+  console.log("req.body: " + JSON.stringify(req.body));
+
+  // SQL query to delete the sales invoice item
+  const sql = `DELETE FROM salesinvoiceitem WHERE salesinvoiceitemID = ?`;
+  
+  db.query(sql, [salesinvoiceitemID], async (err, result) => {
+      if (err) {
+          console.error("Error deleting sales invoice item:", err);
+          return res.status(500).send("Error deleting sales invoice item.");
+      }
+
+      // If no rows were affected, show a warning message
+      if (result.affectedRows === 0) {
+          console.log("No item found to delete.");
+
+          // Fetch the updated list of items after the deletion attempt
+          const sqlFetchItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ?`;
+          const invoiceItems = await new Promise((resolve, reject) => {
+              db.query(sqlFetchItems, [invoiceid], (err, results) => {
+                  if (err) return reject(err);
+                  resolve(results);
+              });
+          });
+
+          const data = {
+              title: "sales/addinvoice",
+              msg: "No item found to delete.",
+              style: 'warning',
+              items: invoiceItems,
+              salesinvoiceID: invoiceid
+          };
+          return res.render('home', { data });
+      }
+
+      // Fetch the updated list of items after successful deletion
+      const sqlFetchItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ?`;
+      const invoiceItems = await new Promise((resolve, reject) => {
+          db.query(sqlFetchItems, [invoiceid], (err, results) => {
+              if (err) return reject(err);
+              resolve(results);
+          });
+      });
+
+      //================================================================
     
-    db.query(sql, [salesinvoiceitemID], async (err, result) => {
-        if (err) {
-            console.error("Error deleting sales invoice item:", err);
-            return res.status(500).send("Error deleting sales invoice item.");
-        }
+      await updatequanity(itemid,-quantity);
+      //================================================================
 
-        // If no rows were affected, show a warning message
-        if (result.affectedRows === 0) {
-            console.log("No item found to delete.");
+      const data = {
+        title: "sales/addinvoice",
+        msg: "Item deleted Successfully", 
+        style: 'success',
+        items: invoiceItems,
+        salesinvoiceID: invoiceid
+    };
+    return res.render('home', { data });
+  });
+};
 
-            // Fetch the updated list of items after the deletion attempt
-            const sqlFetchItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ?`;
-            const invoiceItems = await new Promise((resolve, reject) => {
-                db.query(sqlFetchItems, [invoiceid], (err, results) => {
-                    if (err) return reject(err);
-                    resolve(results);
-                });
-            });
 
-            const data = {
-                title: "sales/addinvoice",
-                msg: "No item found to delete.",
-                style: 'warning',
-                items: invoiceItems,
-                salesinvoiceID: invoiceid
-            };
-            return res.render('home', { data });
-        }
 
-        // Fetch the updated list of items after the successful deletion
-        const sqlFetchItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ?`;
-        const invoiceItems = await new Promise((resolve, reject) => {
-            db.query(sqlFetchItems, [invoiceid], (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
-        });
+const updateItemQuantityAfterDeletion = async (itemid, quantity, invoiceItems, invoiceid, db, res) => {
+  try {
+    // Query to get the original item details
+    const sqlOriginalItem = `SELECT * FROM item WHERE ItemID = ?`;
+    const originalItemResult = await new Promise((resolve, reject) => {
+      db.query(sqlOriginalItem, [itemid], (err, results) => {
+        if (err) return reject(err);
+        resolve(results);
+      });
+    });
 
-        console.log("Successfully deleted item and fetched updated items.");
+    if (originalItemResult.length === 0) {
+      console.error("No original item found.");
+      const data = {
+        title: "sales/addinvoice",
+        msg: `there  original item found null."`,
+        style: 'danger',
+        items: invoiceItems,
+        salesinvoiceID: invoiceid
+      };
+  
+      return res.render('home', { data });
+    }
 
-        // Render the page with updated data after deletion
-        const data = {
+    // Extract the current quantity from the original item
+    const originalItem = originalItemResult[0]; // Assuming first result
+    const currentQuantity = originalItem.quantity; // Assuming 'quantity' column exists
+
+    // Calculate the new quantity after deletion
+    const newQuantity = currentQuantity + parseInt(quantity, 10); // Ensure quantity is integer
+
+    // Query to update the item with the new quantity
+    const sqlUpdateItem = `UPDATE item SET quantity = ? WHERE ItemID = ?`;
+    await new Promise((resolve, reject) => {
+      db.query(sqlUpdateItem, [newQuantity, itemid], (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      });
+    });
+
+    // Render the page with a success message after updating
+    const data = {
+      title: "sales/addinvoice",
+      msg: "Item successfully deleted.",
+      style: 'success',
+      items: invoiceItems,
+      salesinvoiceID: invoiceid
+    };
+
+    return res.render('home', { data });
+
+  } catch (err) {
+    console.error("Error updating item quantity:", err);
+
+    const data = {
+      title: "sales/addinvoice",
+      msg: `Error updating item quantity: ${err.message}`,
+      style: 'danger',
+      items: invoiceItems,
+      salesinvoiceID: invoiceid
+    };
+
+    return res.render('home', { data });
+  }
+};
+
+
+
+const updatequanity=async(itemid,quantity)=>{
+
+  const sqlOriginalItem = `SELECT * FROM item WHERE ItemID = ?`;
+  const originalItemResult = await new Promise((resolve, reject) => {
+      db.query(sqlOriginalItem, [itemid], (err, results) => {
+          if (err) return reject(err);
+          resolve(results);
+      });
+  });
+
+  if (originalItemResult.length === 0) {
+      console.error("No original item found.");
+      return res.status(500).send("Original item not found.");
+  }
+
+  // Extract current quantity from the original item
+  const originalItem = originalItemResult[0]; // First result
+  const currentQuantity = originalItem.quantity; // Assuming the column name is 'Quantity'
+
+  // Calculate the new quantity after deletion
+  const newQuantity = currentQuantity - parseInt(quantity, 10); // Convert quantity to an integer if necessary
+
+  // Update the item with the new quantity
+  const sqlUpdateItem = `UPDATE item SET quantity = ? WHERE ItemID = ?`;
+  db.query(sqlUpdateItem, [newQuantity, itemid], (err, result) => {
+      if (err) {
+        console.log(object)
+          console.error("Error updating item quantity:", err);
+          const data = {
             title: "sales/addinvoice",
-            msg: "Item successfully deleted.",
-            style: 'success',
+            msg: "Error updating item quantity:", err,
+            style: 'danger',
             items: invoiceItems,
             salesinvoiceID: invoiceid
         };
         return res.render('home', { data });
-    });
-};
+      }
+
+      // Render the updated page with success message
+     
+  });
 
 
-  
 
-
-
+}
 
 
 module.exports = {salesinvocepage,addsalesinvocepage,searchItemController,updateSalesInvoiceItem,deleteSalesInvoiceItem}
+
+
+
+

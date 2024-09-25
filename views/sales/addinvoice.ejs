@@ -90,12 +90,16 @@
         
 
                 <!-- Delete Item Button -->
+
+             
                 <button 
                 type="button" 
                 class="btn btn-danger btn-sm" 
                 data-bs-toggle="modal" 
                 data-bs-target="#deleteModal"
+                data-quantity="<%= element.Quantity %>"
                 data-invoiceid="<%= element.salesinvoiceID %>" 
+                data-itemid="<%= element.itemid %>" 
                 data-salesinvoiceitemID="<%= element.salesinvoiceitemID %>" 
             >
                 <i class="bi bi-trash"></i>
@@ -186,9 +190,6 @@
 </script>
 
 
-
-<!-- Delete Item Modal -->
-<!-- Delete Item Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -200,6 +201,10 @@
         <p>Are you sure you want to delete this item?</p>
         <form id="deleteForm" method="post" action="/deletevoiceitem">
           <input type="hidden" name="invoiceid" id="delete-invoiceid">
+         
+          <input type="number" class="form-control" id="delete-quantity" name="quantity" hidden>
+        
+          <input type="hidden" name="itemid" id="delete-itemid">
           <input type="hidden" name="salesinvoiceitemID" id="delete-salesinvoiceitemID">
           <button type="submit" class="btn btn-danger">Delete</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -209,6 +214,7 @@
   </div>
 </div>
 
+
 <script>
   // Script to populate Delete Modal with data from the button
   var deleteModal = document.getElementById('deleteModal');
@@ -217,16 +223,22 @@
       // Button that triggered the modal
       var button = event.relatedTarget;
 
-      // Extract data from attributes
+      // Extract data from button's data attributes
       var invoiceid = button.getAttribute('data-invoiceid');
+      var itemid = button.getAttribute('data-itemid');
+      var quantity = button.getAttribute('data-quantity');
       var salesinvoiceitemID = button.getAttribute('data-salesinvoiceitemID');
       
       // Populate the hidden inputs in the modal form
       var modalInvoiceid = deleteModal.querySelector('#delete-invoiceid');
+      var modalItemid = deleteModal.querySelector('#delete-itemid');
+      var modalQuantity = deleteModal.querySelector('#delete-quantity');
       var modalSalesinvoiceitemID = deleteModal.querySelector('#delete-salesinvoiceitemID');
-
+      
       // Set values for hidden inputs
       modalInvoiceid.value = invoiceid;
+      modalItemid.value = itemid;
+      modalQuantity.value = quantity;
       modalSalesinvoiceitemID.value = salesinvoiceitemID;
   });
 </script>
