@@ -207,6 +207,20 @@ const addsalesinvocepage=(req, res) => {
     const { quantity, invoiceid, salesinvoiceitemID, price } = req.body; 
     const total = quantity * price;
 
+    const invoiceItems = await fetchInvoiceItems(invoiceid);
+    const itemid=invoiceItems[0].itemid ;
+
+const altequanittiy=invoiceItems[0].Quantity;
+const  updatedquanity=altequanittiy-quantity;
+ const deltaqunitity=quantity-altequanittiy;//to calculte the new quanitity to update qunitity in store
+//==============================
+
+console.log("newquanitity"+quantity);
+console.log("altquanitity"+altequanittiy);
+console.log("itemid"+invoiceItems[0].itemid);
+
+console.log("deltaqunitity"+deltaqunitity);
+
     const sqlUpdate = `UPDATE salesinvoiceitem SET Quantity = ?, Total = ? WHERE salesinvoiceitemID = ?`;
     console.log(`Executing SQL: ${sqlUpdate}`);
 
@@ -237,6 +251,14 @@ const addsalesinvocepage=(req, res) => {
 
         // Fetch updated items after the update
         const invoiceItems = await fetchInvoiceItems(invoiceid);
+//================================================================
+
+
+    await updatequanity(itemid,deltaqunitity);
+
+
+//===========================================================
+
 
         const data = {
             title: "sales/addinvoice",
@@ -342,71 +364,7 @@ const deleteSalesInvoiceItem = async (req, res) => {
 
 
 
-const updateItemQuantityAfterDeletion = async (itemid, quantity, invoiceItems, invoiceid, db, res) => {
-  try {
-    // Query to get the original item details
-    const sqlOriginalItem = `SELECT * FROM item WHERE ItemID = ?`;
-    const originalItemResult = await new Promise((resolve, reject) => {
-      db.query(sqlOriginalItem, [itemid], (err, results) => {
-        if (err) return reject(err);
-        resolve(results);
-      });
-    });
 
-    if (originalItemResult.length === 0) {
-      console.error("No original item found.");
-      const data = {
-        title: "sales/addinvoice",
-        msg: `there  original item found null."`,
-        style: 'danger',
-        items: invoiceItems,
-        salesinvoiceID: invoiceid
-      };
-  
-      return res.render('home', { data });
-    }
-
-    // Extract the current quantity from the original item
-    const originalItem = originalItemResult[0]; // Assuming first result
-    const currentQuantity = originalItem.quantity; // Assuming 'quantity' column exists
-
-    // Calculate the new quantity after deletion
-    const newQuantity = currentQuantity + parseInt(quantity, 10); // Ensure quantity is integer
-
-    // Query to update the item with the new quantity
-    const sqlUpdateItem = `UPDATE item SET quantity = ? WHERE ItemID = ?`;
-    await new Promise((resolve, reject) => {
-      db.query(sqlUpdateItem, [newQuantity, itemid], (err, result) => {
-        if (err) return reject(err);
-        resolve(result);
-      });
-    });
-
-    // Render the page with a success message after updating
-    const data = {
-      title: "sales/addinvoice",
-      msg: "Item successfully deleted.",
-      style: 'success',
-      items: invoiceItems,
-      salesinvoiceID: invoiceid
-    };
-
-    return res.render('home', { data });
-
-  } catch (err) {
-    console.error("Error updating item quantity:", err);
-
-    const data = {
-      title: "sales/addinvoice",
-      msg: `Error updating item quantity: ${err.message}`,
-      style: 'danger',
-      items: invoiceItems,
-      salesinvoiceID: invoiceid
-    };
-
-    return res.render('home', { data });
-  }
-};
 
 
 
