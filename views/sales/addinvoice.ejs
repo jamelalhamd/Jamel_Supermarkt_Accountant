@@ -113,11 +113,53 @@
       <p class="text-center mt-5">No items found for this invoice.</p>
     <% } %>
 
-    <div class="btn-container d-flex justify-content-end mb-4 mt-xl-5">
-      <a href="/addsalesinvoice" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Create the Invoice
-      </a>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-4">
+          <form class="mb-4 mt-xl-5" action="/createthevoice" method="post">
+            <div class="mb-3">
+              <label for="barcode-input" class="form-label">Name of Client</label>
+              <input 
+              
+                name="NameClient" 
+                type="text" 
+                id="NameClient" 
+                class="form-control form-control-lg" 
+                placeholder="Name of Client"
+                aria-label="Name of Client"
+              >
+            </div>
+    
+            <div class="mb-4">
+              <label for="quantity-input" class="form-label">Total Price</label>
+              <input 
+               value="<%= data.totalPrice %>"
+                readonly
+                name="totalprice" 
+                type="number" 
+                id="totalprice" 
+                class="form-control form-control-lg" 
+                placeholder="Total Price"
+                aria-label="totalprice"
+              >
+            </div>
+    
+            <!-- Hidden Sales Invoice ID and Employee ID -->
+            
+            <input hidden name="employee_id" value="<%= user.employee_id %>">
+            <input hidden name="invoiceid" value="<%= data.salesinvoiceID %>">
+    
+            <div class="d-grid">
+              <button id="search-btn" class="btn btn-primary btn-lg" type="submit">  <i class="bi bi-plus-circle"></i> Create the Invoice</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
+    
+
+
+   
   </div>
 </div>
 
@@ -143,6 +185,7 @@
           <input type="hidden" name="salesinvoiceitemID" id="edit-salesinvoiceitemID">
           <input type="hidden" name="itemid" id="edit-itemid">
           <input type="hidden" name="price" id="edit-price">
+  
           <div class="mb-3">
             <label for="edit-quantity" class="form-label">Quantity</label>
             <input type="number" class="form-control" id="edit-quantity" name="quantity" required>

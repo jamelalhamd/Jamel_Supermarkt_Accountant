@@ -10,6 +10,15 @@ router.get("/addsalesinvoice",authcontroler.checkAuthAndFetchUser,salesinvoice.a
 router.post("/searchIteminvoice",authcontroler.checkAuthAndFetchUser,salesinvoice.searchItemController);
 router.post("/editvoiceitem", authcontroler.checkAuthAndFetchUser, salesinvoice.updateSalesInvoiceItem);
 router.post("/deletevoiceitem", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteSalesInvoiceItem);
+router.post("/createthevoice", authcontroler.checkAuthAndFetchUser, salesinvoice.createthevoicecontroller);
+
+
+
+
+
+router.get("/viewinvoicepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.viewinvoicepagecontroller);
+router.get("/editinvoicepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.editinvoicepagecontroller);
+router.get("/deleteinvoicepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteinvoicecontroller);
 
 
 module.exports = router;

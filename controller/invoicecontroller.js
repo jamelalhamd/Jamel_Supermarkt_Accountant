@@ -1,10 +1,24 @@
-const { db,getPromotionData ,getStoreData,fetchIteminvoice} = require('../controller/db');
+const { db,getPromotionData ,getStoreData,fetchIteminvoice,getUser} = require('../controller/db');
 
-const salesinvocepage=(req, res) => { 
- console.log("invoceitem");
-    const data = { title: "sales/salesinvoice",}
+const salesinvocepage=async(req, res) => { 
+  const sqlvoices = `SELECT * FROM salesinvoice`;
+  const invoices = await new Promise((resolve, reject) => {
+      db.query(sqlvoices, (err, results) => {
+          if (err) return reject(err);
+          resolve(results);
+      });
+  });
+  
 
-res.render('home', { data });
+       
+        const data = {
+          title: "sales/salesinvoice",
+   
+          style: 'danger',
+          items: invoices,
+        
+      };
+      return res.render('home', { data });
 }
 
 
@@ -37,7 +51,7 @@ const addsalesinvocepage=(req, res) => {
   
       console.log("result:", result);
   
-      // Success: Render the success page
+ 
       const data = {
         title: "sales/addinvoice",
         msg: "Sales invoice created successfully.",
@@ -119,7 +133,7 @@ const addsalesinvocepage=(req, res) => {
       const itemid = foundItem.ItemID;
   
       // SQL to insert the item into the invoice
-    if (foundItem.quantity>quantity &&quantity>0 ) {
+    if (foundItem.quantity>=quantity &&quantity>0 ) {
         const sqlAdd = `
           INSERT INTO SalesInvoiceItem (Quantity, price, total, salesinvoiceID, itemid,item_name,baracode)
           VALUES (?, ?, ?, ?, ?,?,?)
@@ -143,9 +157,19 @@ const addsalesinvocepage=(req, res) => {
             resolve(results);
           });
         });
+    //================================================================
+    let totalPrice = 0;
+    invoiceItems.forEach(item => {
+      totalPrice += item.total; // Assuming 'total' is the field in the database for each item’s total price
+    });
     
+    console.log("Final Total Price:", totalPrice);
+
+
+    //===================================================
         // Success: Render the updated list of items with a success message
         const data = {
+          totalPrice:totalPrice,
           title: "sales/addinvoice",
           msg: `Item "${foundItem.ItemName}" (ID: ${foundItem.ItemID}) successfully added to invoice.`,
           style: 'success',
@@ -155,10 +179,20 @@ const addsalesinvocepage=(req, res) => {
         return res.render('home', { data });
     }
     else{
+
+      const sqlFetchItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ? `;
+  
+      const invoiceItems = await new Promise((resolve, reject) => {
+        db.query(sqlFetchItems, [invoiceid], (err, results) => {
+          if (err) return reject(err);
+          resolve(results);
+        });
+      });
+
          console.log("(foundItem.quantity>quantity &&quantity>0 )"+(foundItem.quantity>quantity &&quantity>0 ));
       const data = {
         title: "sales/addinvoice",
-        msg: `there is no enough Item in this Store.`,
+        msg: `there is no enough Item in this Store. only { `+foundItem.quantity +" }in the Store",
         style: 'success',
         items: invoiceItems, // Updated list of items
         salesinvoiceID: invoiceid
@@ -259,8 +293,16 @@ console.log("deltaqunitity"+deltaqunitity);
 
 //===========================================================
 
+let totalPrice = 0;
+invoiceItems.forEach(item => {
+  totalPrice += item.total; // Assuming 'total' is the field in the database for each item’s total price
+});
 
+console.log("Final Total Price:", totalPrice);
+
+//=====================================
         const data = {
+          totalPrice:totalPrice,
             title: "sales/addinvoice",
             msg: "Quantity has been updated successfully.",
             style: 'success',
@@ -347,11 +389,15 @@ const deleteSalesInvoiceItem = async (req, res) => {
       });
 
       //================================================================
-    
+      let totalPrice = 0;
+      invoiceItems.forEach(item => {
+        totalPrice += item.total; // Assuming 'total' is the field in the database for each item’s total price
+      });
       await updatequanity(itemid,-quantity);
       //================================================================
 
       const data = {
+        totalPrice:totalPrice,
         title: "sales/addinvoice",
         msg: "Item deleted Successfully", 
         style: 'success',
@@ -415,7 +461,150 @@ const updatequanity=async(itemid,quantity)=>{
 }
 
 
-module.exports = {salesinvocepage,addsalesinvocepage,searchItemController,updateSalesInvoiceItem,deleteSalesInvoiceItem}
+const createthevoicecontroller = async (req, res) => {
+  const { NameClient, totalprice, employee_id, invoiceid } = req.body;
+
+  console.log(req.body);
+
+  // SQL query to update the salesinvoice
+  const sqlUpdateInvoice = `
+    UPDATE salesinvoice 
+    SET salesinvoiceDate = ?, 
+        totalprice = ?, 
+        employee_id = ?, 
+        NameClient = ? 
+    WHERE salesinvoiceID = ?
+  `;
+
+//================================================================
+
+const sqlvoices = `SELECT * FROM salesinvoice`;
+const invoices = await new Promise((resolve, reject) => {
+    db.query(sqlvoices, [invoiceid], (err, results) => {
+        if (err) return reject(err);
+        resolve(results);
+    });
+});
+
+const data=new Date();
+
+//==============================================
+  db.query(sqlUpdateInvoice, [data, totalprice, employee_id, NameClient, invoiceid], async (err, result) => {
+    if (err) {
+     
+      const data = {
+        title: "sales/salesinvoice",
+        msg: "Failed to update the invoice."+err,
+        style: 'danger',
+        items: invoices,
+      
+    };
+    return res.render('home', { data });
+
+
+    }
+
+    // If update is successful, fetch all invoices
+    const sqlvoicesafter = `SELECT * FROM salesinvoice`;
+    const invoicesafter = await new Promise((resolve, reject) => {
+        db.query(sqlvoicesafter, [invoiceid], (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+
+    const data = {
+      title: "sales/salesinvoice",
+      msg: "inoice has been updated successfully",
+      style: 'success',
+      items: invoices,
+    
+  };
+  return res.render('home', { data });
+
+  });
+};
+
+
+const viewinvoicepagecontroller = async (req, res) => {
+
+
+  const id = req.params.id;
+ 
+console.log("id: " + id);
+
+  try {
+    // Query for the sales invoice
+    const sqlInvoice = `SELECT * FROM salesinvoice WHERE salesinvoiceID = ?`;
+    const invoicedata = await new Promise((resolve, reject) => {
+      db.query(sqlInvoice, [id], (err, results) => {
+        if (err) return reject(err);
+        resolve(results[0]); // Assuming only one invoice is returned
+      });
+    });
+   console.log( sqlInvoice);
+    // Query for the related items in the sales invoice
+    const sqlInvoiceItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ?`;
+    const invoiceitemdata = await new Promise((resolve, reject) => {
+      db.query(sqlInvoiceItems, [id], (err, results) => {
+        if (err) return reject(err);
+        resolve(results);
+      });
+    });
+    console.log( sqlInvoice);
+    // Calculate the total price of the invoice items
+    let totalPrice = 0;
+    invoiceitemdata.forEach(item => {
+      totalPrice += item.total || 0; // Ensure the 'total' exists and is not null
+    });
+
+    // Prepare data for the view
+    const data = {
+      totalPrice: totalPrice,
+      title: "sales/invoiceview",
+      style: 'success',
+      items: invoiceitemdata,
+      salesinvoiceID: id,
+      invoice: invoicedata, // Pass invoice data if needed in the template
+    };
+ 
+    console.log("invoice.data: " + data.invoice.NameClient);
+    // Render the view with the invoice data
+    return res.render('home', { data });
+
+  } catch (error) {
+    console.error("Error fetching invoice data: ", error);
+    const data = {
+   
+      title: "404",
+     // Pass invoice data if needed in the template
+    };
+
+    // Render the view with the invoice data
+    return res.render('home', { data });
+  }
+};
+
+
+
+
+  const editinvoicepagecontroller=(req, res) => {} ;
+
+
+
+  const deleteinvoicecontroller=(req, res) => {} ;
+
+
+
+module.exports = {salesinvocepage,
+  addsalesinvocepage,
+  searchItemController,
+  updateSalesInvoiceItem,deleteinvoicecontroller,editinvoicepagecontroller,
+  deleteSalesInvoiceItem,
+  createthevoicecontroller,
+  viewinvoicepagecontroller
+
+}
 
 
 

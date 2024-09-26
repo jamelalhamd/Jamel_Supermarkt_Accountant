@@ -28,14 +28,17 @@
               </tr>
             </thead>
             <tbody>
+              <% data.items.forEach((element, index) => { %>
+              
             
                 <tr>
-                    <th scope="row">1</th>
-                    <th scope="row">1</th>
-                    <th scope="row">1</th>
-                    <th scope="row">25</th>
-                    <th scope="row">120</th>
-                    <th scope="row">120</th>
+                    <th scope="row"><%= index %></th>
+                    <th scope="row"><%= element.salesinvoiceID %><%=  %></th>
+                    <th scope="row"><%= element.NameClient %></th>
+                    <th scope="row"> <%= element.salesinvoiceDate.toISOString().split('T')[0] %> 
+                      <%= element.salesinvoiceDate.toISOString().split('T')[1].slice(0, 4) %></th>
+                    <th scope="row"><%=element.employee_id   %></th>
+                    <th scope="row"><%=element.totalprice  %></th>
                 
                  
             
@@ -47,7 +50,7 @@
                       data-bs-title="View details"
                       data-bs-placement="top"
                       class="btn btn-info btn-sm"
-                      href="/viewitem/ %>"
+                      href="/viewinvoicepage/<%= element.salesinvoiceID %> %>"
                     >
                       <i class="bi bi-eye"></i>
                     </a>
@@ -57,7 +60,7 @@
                       data-bs-title="Edit item"
                       data-bs-placement="top"
                       class="btn btn-primary btn-sm"
-                      href="/edititem/"
+                      href="/editinvoicepage/<%=element.salesinvoiceID  %>"
                     >
                       <i class="bi bi-pencil"></i>
                     </a>
@@ -67,7 +70,7 @@
                       data-bs-title="Delete item"
                       data-bs-placement="top"
                       class="btn btn-danger btn-sm"
-                      href="/deleteItemPage/"
+                      href="/deleteinvoicepage/<%=element.salesinvoiceID  %>"
                     >
                       <i class="bi bi-trash"></i>
                     </a>
@@ -75,97 +78,11 @@
                 </tr>
             
  
-                <tr>
-                    <th scope="row">1</th>
-                    <th scope="row">1</th>
-                    <th scope="row">1</th>
-                    <th scope="row">25</th>
-                    <th scope="row">120</th>
-                    <th scope="row">120</th>
-                  
-                   
-              
-                    
-                   
-                    <td>
-                      <a
-                        data-bs-toggle="tooltip"
-                        data-bs-title="View details"
-                        data-bs-placement="top"
-                        class="btn btn-info btn-sm"
-                        href="/viewitem/ %>"
-                      >
-                        <i class="bi bi-eye"></i>
-                      </a>
-      
-                      <a
-                        data-bs-toggle="tooltip"
-                        data-bs-title="Edit item"
-                        data-bs-placement="top"
-                        class="btn btn-primary btn-sm"
-                        href="/edititem/"
-                      >
-                        <i class="bi bi-pencil"></i>
-                      </a>
-      
-                      <a
-                        data-bs-toggle="tooltip"
-                        data-bs-title="Delete item"
-                        data-bs-placement="top"
-                        class="btn btn-danger btn-sm"
-                        href="/deleteItemPage/"
-                      >
-                        <i class="bi bi-trash"></i>
-                      </a>
-                    </td>
-                  </tr>
+                <% }) %>
 
 
                    
-                <tr>
-                    <th scope="row">1</th>
-                    <th scope="row">1</th>
-                    <th scope="row">1</th>
-                    <th scope="row">25</th>
-                    <th scope="row">120</th>
-                    <th scope="row">120</th>
-                  
-                   
               
-                    
-                   
-                    <td>
-                      <a
-                        data-bs-toggle="tooltip"
-                        data-bs-title="View details"
-                        data-bs-placement="top"
-                        class="btn btn-info btn-sm"
-                        href="/viewitem/ %>"
-                      >
-                        <i class="bi bi-eye"></i>
-                      </a>
-      
-                      <a
-                        data-bs-toggle="tooltip"
-                        data-bs-title="Edit item"
-                        data-bs-placement="top"
-                        class="btn btn-primary btn-sm"
-                        href="/edititem/"
-                      >
-                        <i class="bi bi-pencil"></i>
-                      </a>
-      
-                      <a
-                        data-bs-toggle="tooltip"
-                        data-bs-title="Delete item"
-                        data-bs-placement="top"
-                        class="btn btn-danger btn-sm"
-                        href="/deleteItemPage/"
-                      >
-                        <i class="bi bi-trash"></i>
-                      </a>
-                    </td>
-                  </tr>
 
             </tbody>
           </table>
