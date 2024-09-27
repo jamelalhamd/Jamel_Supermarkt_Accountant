@@ -1,91 +1,56 @@
 <div class="container">
-  
-    
-  
-      <div class="btn-container d-flex justify-content-end mb-4 mt-xl-5">
-        <a href="/addsalesinvoice" class="btn btn-primary">
-          <i class="bi bi-plus-circle"></i> Add New Invoce
-        </a>
-      </div>
-   
-    
-      <h3>List of Invoice</h3>
-    <div class="table-container"  style="width: 100%; margin: 0 auto;">
-      
-          <table class="text-center mx-auto table mt-5 table-striped table-bordered" >
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col"> ID</th>
-                <th scope="col">  Name Client</th>
-               
-                <th scope="col"> Date </th>
-                <th scope="col"> Price</th>
-                <th scope="col"> Employee</th>
-                
-                <th scope="col">Action</th>
-            
-              </tr>
-            </thead>
-            <tbody>
-              <% data.items.forEach((element, index) => { %>
-              
-            
-                <tr>
-                    <th scope="row"><%= index %></th>
-                    <th scope="row"><%= element.salesinvoiceID %><%=  %></th>
-                    <th scope="row"><%= element.NameClient %></th>
-                    <th scope="row"> <%= element.salesinvoiceDate.toISOString().split('T')[0] %> 
-                      <%= element.salesinvoiceDate.toISOString().split('T')[1].slice(0, 4) %></th>
-                    <th scope="row"><%=element.employee_id   %></th>
-                    <th scope="row"><%=element.totalprice  %></th>
-                
-                 
-            
-                  
-                 
-                  <td>
-                    <a
-                      data-bs-toggle="tooltip"
-                      data-bs-title="View details"
-                      data-bs-placement="top"
-                      class="btn btn-info btn-sm"
-                      href="/viewinvoicepage/<%= element.salesinvoiceID %> %>"
-                    >
-                      <i class="bi bi-eye"></i>
-                    </a>
-    
-                    <a
-                      data-bs-toggle="tooltip"
-                      data-bs-title="Edit item"
-                      data-bs-placement="top"
-                      class="btn btn-primary btn-sm"
-                      href="/editinvoicepage/<%=element.salesinvoiceID  %>"
-                    >
-                      <i class="bi bi-pencil"></i>
-                    </a>
-    
-                    <a
-                      data-bs-toggle="tooltip"
-                      data-bs-title="Delete item"
-                      data-bs-placement="top"
-                      class="btn btn-danger btn-sm"
-                      href="/deleteinvoicepage/<%=element.salesinvoiceID  %>"
-                    >
-                      <i class="bi bi-trash"></i>
-                    </a>
-                  </td>
-                </tr>
-            
- 
-                <% }) %>
+  <div class="btn-container d-flex justify-content-end mb-4 mt-xl-5">
+    <a href="/addsalesinvoice" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> Add New Invoice
+    </a>
+  </div>
 
-
-                   
-              
-
-            </tbody>
-          </table>
-          
-      
+  <h3>List of Invoices</h3>
+  <div class="table-container" style="width: 100%; margin: 0 auto;">
+    <table class="text-center mx-auto table mt-5 table-striped table-bordered">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">ID</th>
+          <th scope="col">Name Client</th>
+          <th scope="col">Date</th>
+          <th scope="col">Price</th>
+          <th scope="col">Employee</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (data.items && data.items.length > 0) { %>
+          <% data.items.forEach((element, index) => { %>
+            <tr>
+              <th scope="row"><%= index + 1 %></th>
+              <td><%= element.salesinvoiceID %></td>
+              <td><%= element.NameClient %></td>
+              <td>
+                <%= element.salesinvoiceDate.toISOString().split('T')[0] %> 
+                <%= element.salesinvoiceDate.toISOString().split('T')[1].slice(0, 5) %>
+              </td>
+              <td><%= element.totalprice %></td>
+              <td><%= element.employee_id %></td>
+              <td>
+                <a data-bs-toggle="tooltip" data-bs-title="View details" data-bs-placement="top" class="btn btn-info btn-sm" href="/viewinvoicepage/<%= element.salesinvoiceID %>">
+                  <i class="bi bi-eye"></i>
+                </a>
+                <a data-bs-toggle="tooltip" data-bs-title="Edit item" data-bs-placement="top" class="btn btn-primary btn-sm" href="/editinvoicepage/<%= element.salesinvoiceID %>">
+                  <i class="bi bi-pencil"></i>
+                </a>
+                <a data-bs-toggle="tooltip" data-bs-title="Delete item" data-bs-placement="top" class="btn btn-danger btn-sm" href="/deleteinvoicepage/<%= element.salesinvoiceID %>">
+                  <i class="bi bi-trash"></i>
+                </a>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="7">No invoices found.</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
 </div>

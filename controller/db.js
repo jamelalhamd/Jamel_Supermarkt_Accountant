@@ -118,8 +118,68 @@ const fetchInvoiceItems = async (invoiceid) => {
 };
 
 
-module.exports = {fetchInvoiceItems,
-  db,getPromotionData,
+
+const getInvoiceById = async (id) => {
+  const sqlInvoice = `SELECT * FROM salesinvoice WHERE salesinvoiceID = ?`;
+
+  try {
+    const invoicedata = await new Promise((resolve, reject) => {
+      db.query(sqlInvoice, [id], (err, results) => {
+        if (err) return reject(err);
+        resolve(results[0]); // Assuming only one invoice is returned
+      });
+    });
+
+    return invoicedata;
+  } catch (error) {
+    throw new Error(`Error fetching invoice with ID ${id}: ${error.message}`);
+  }
+};
+
+
+
+
+const getInvoice = async (id) => {
+  const sqlInvoice = `SELECT * FROM salesinvoice `;
+
+  try {
+    const invoicedata = await new Promise((resolve, reject) => {
+      db.query(sqlInvoice, [id], (err, results) => {
+        if (err) return reject(err);
+        resolve(results); // Assuming only one invoice is returned
+      });
+    });
+
+    return invoicedata;
+  } catch (error) {
+    throw new Error(`Error fetching invoice with ID ${id}: ${error.message}`);
+  }
+};
+
+
+
+const getInvoiceItemsById = async (id) => {
+  const sqlInvoiceItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ?`;
+
+  try {
+    const invoiceitemdata = await new Promise((resolve, reject) => {
+      db.query(sqlInvoiceItems, [id], (err, results) => {
+        if (err) return reject(err);
+        resolve(results); // Return all invoice items
+      });
+    });
+
+    return invoiceitemdata;
+  } catch (error) {
+    throw new Error(`Error fetching invoice items for invoice ID ${id}: ${error.message}`);
+  }
+};
+
+
+
+
+module.exports = {fetchInvoiceItems,getInvoiceById,getInvoiceItemsById,
+  db,getPromotionData,getInvoice,
   getUser,getItemData,
   getStoreData,
   getSupplierData

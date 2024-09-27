@@ -1,4 +1,4 @@
-const { db,getPromotionData ,getStoreData,fetchIteminvoice,getUser} = require('../controller/db');
+const { db,getPromotionData ,getStoreData,fetchIteminvoice,getUser,getInvoiceById,getInvoiceItemsById,getInvoice} = require('../controller/db');
 
 const salesinvocepage=async(req, res) => { 
   const sqlvoices = `SELECT * FROM salesinvoice`;
@@ -517,7 +517,7 @@ const data=new Date();
       title: "sales/salesinvoice",
       msg: "inoice has been updated successfully",
       style: 'success',
-      items: invoices,
+      items: invoicesafter ,
     
   };
   return res.render('home', { data });
@@ -592,11 +592,127 @@ console.log("id: " + id);
 
 
 
-  const deleteinvoicecontroller=(req, res) => {} ;
+  const deleteinvoicecontroller=async(req, res) => {
+    const id = req.params.id;
+   
+
+   
+
+
+  
+    try {
+    const invoices=await  getInvoiceById(id);
+
+    const invoiceitem=await  getInvoiceItemsById(id);
+
+
+    let totalPrice = 0;
+    invoiceitem.forEach(item => {
+      totalPrice += item.total || 0; // Ensure the 'total' exists and is not null
+    });
 
 
 
-module.exports = {salesinvocepage,
+   
+        
+
+    const data = {
+      totalPrice: totalPrice,
+      title: "sales/invoicedelete",
+      style: 'success',
+      items: invoiceitem,
+      salesinvoiceID: id,
+      invoice: invoices, // Pass invoice data if needed in the template
+    };
+ 
+  
+    
+    return res.render('home', { data });
+
+
+  
+    } catch (error) {
+      console.error("Error fetching invoice data: ", error);
+      const data = {
+     
+        title: "404",
+       // Pass invoice data if needed in the template
+      };
+  
+      // Render the view with the invoice data
+      return res.render('home', { data });
+    }} ;
+
+
+
+    const deleteinvoice = async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+    
+      try {
+        // Fetch the invoice items first before deleting
+        const invoiceitems = await getInvoiceItemsById(id);
+        console.log("Invoice Items:", JSON.stringify(invoiceitems, null, 2));
+    
+        // Update quantities for each item before deletion
+
+       
+        await Promise.all(invoiceitems.map(item =>    updatequanity(item.itemid, item.Quantity *(-1))));
+    
+        // Check if the invoice exists
+      
+    
+        // Delete invoice items
+        const sqlDeleteItems = "DELETE FROM salesinvoiceitem WHERE salesinvoiceID = ?";
+        await new Promise((resolve, reject) => {
+          db.query(sqlDeleteItems, [id], (err, result) => {
+            if (err) return reject(err);
+            resolve(result);
+          });
+        });
+    
+        // Delete the invoice
+        const sqlDeleteInvoice = "DELETE FROM salesinvoice WHERE salesinvoiceID = ?";
+        await new Promise((resolve, reject) => {
+          db.query(sqlDeleteInvoice, [id], (err, result) => {
+            if (err) return reject(err);
+            resolve(result);
+          });
+        });
+    
+        // Fetch updated invoices
+        const sqlvoices = `SELECT * FROM salesinvoice`;
+        const invoices = await new Promise((resolve, reject) => {
+          db.query(sqlvoices, (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+          });
+        });
+    
+       
+        const data = {
+          title: "sales/salesinvoice",
+          msg: "Invoice has been deleted successfully",
+          style: 'success',
+          items: invoices,
+        };
+    
+        return res.render('home', { data });
+    
+      } catch (error) {
+        console.log(error);
+        return res.status(500).send("Server Error");
+      }
+    };
+    
+    
+    
+
+
+
+
+
+module.exports = {salesinvocepage,deleteinvoice,
   addsalesinvocepage,
   searchItemController,
   updateSalesInvoiceItem,deleteinvoicecontroller,editinvoicepagecontroller,

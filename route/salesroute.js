@@ -21,4 +21,7 @@ router.get("/editinvoicepage/:id", authcontroler.checkAuthAndFetchUser, salesinv
 router.get("/deleteinvoicepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteinvoicecontroller);
 
 
+router.post("/deleteinvoice/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteinvoice);
+
+
 module.exports = router;
