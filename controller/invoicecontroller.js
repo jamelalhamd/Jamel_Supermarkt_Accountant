@@ -588,18 +588,30 @@ console.log("id: " + id);
 
 
 
-  const editinvoicepagecontroller=(req, res) => {} ;
+  const editinvoicepage=async(req, res) => { 
+    const id = req.params.id;
+    const employee_id = res.locals.user.employee_id; // Employee ID from session
+    const invoice=await getInvoiceById(id);
+    const items=await getInvoiceItemsById(id);
+  
+      const data = {
+        title: "sales/invoiceedite",
+        msg: "Sales invoice created successfully.",
+        style: 'success',
+        invoice: invoice,
+        items:items // Correctly access the insertId from the result
+      };
+ 
+      return res.render('home', { data });
+    
+   }
+ ;
 
 
 
   const deleteinvoicecontroller=async(req, res) => {
     const id = req.params.id;
    
-
-   
-
-
-  
     try {
     const invoices=await  getInvoiceById(id);
 
@@ -707,21 +719,278 @@ console.log("id: " + id);
     
     
     
+const editvoiceitems2=async(req, res) => {updateSalesInvoiceItem(req, res, "sales/invoiceedite");}
 
+const addvoiceitems2=async(req, res) => {additem(req, res, "sales/invoiceedite");}
+
+const deletevoiceitems2=async(req, res) => {deleteInvoiceItem(req, res, "sales/invoiceedite");}
 
 
 
 
 module.exports = {salesinvocepage,deleteinvoice,
   addsalesinvocepage,
-  searchItemController,
-  updateSalesInvoiceItem,deleteinvoicecontroller,editinvoicepagecontroller,
+  searchItemController,editinvoicepage,
+  updateSalesInvoiceItem,deleteinvoicecontroller,
   deleteSalesInvoiceItem,
   createthevoicecontroller,
-  viewinvoicepagecontroller
+  viewinvoicepagecontroller,
 
 }
 
 
 
 
+const updateitemainvoice = async (req, res, title = "sales/addinvoice") => {
+  const { quantity, invoiceid, salesinvoiceitemID, price } = req.body;
+  const total = quantity * price;
+
+  try {
+      // Fetch invoice items for the given invoice ID
+      const invoiceItems = await fetchInvoiceItems(invoiceid);
+      if (!invoiceItems.length) {
+          console.log("No invoice items found.");
+          return res.render('home', {
+              data: {
+                  title,
+                  msg: "No invoice items found.",
+                  style: 'warning',
+                  items: [],
+                  salesinvoiceID: invoiceid
+              }
+          });
+      }
+
+      const itemid = invoiceItems[0].itemid;
+      const altequanittiy = invoiceItems[0].Quantity;
+      const updatedquanity = altequanittiy - quantity;
+      const deltaqunitity = quantity - altequanittiy; // Calculate the delta quantity
+
+      console.log("New quantity: " + quantity);
+      console.log("Old quantity: " + altequanittiy);
+      console.log("Item ID: " + itemid);
+      console.log("Delta quantity: " + deltaqunitity);
+
+      // SQL query to update the sales invoice item
+      const sqlUpdate = `UPDATE salesinvoiceitem SET Quantity = ?, Total = ? WHERE salesinvoiceitemID = ?`;
+      console.log(`Executing SQL: ${sqlUpdate}`);
+
+      // Perform the update
+      const result = await new Promise((resolve, reject) => {
+          db.query(sqlUpdate, [quantity, total, salesinvoiceitemID], (err, result) => {
+              if (err) {
+                  console.error("Error updating sales invoice item:", err);
+                  return reject(err);
+              }
+              resolve(result);
+          });
+      });
+
+      if (result.affectedRows === 0) {
+          console.log("No item was updated.");
+          const updatedItems = await fetchInvoiceItems(invoiceid); // Fetch updated items after no change
+          return res.render('home', {
+              data: {
+                  title,
+                  msg: "No item was updated.",
+                  style: 'warning',
+                  items: updatedItems,
+                  salesinvoiceID: invoiceid
+              }
+          });
+      }
+
+      // Fetch updated items after the successful update
+      const updatedInvoiceItems = await fetchInvoiceItems(invoiceid);
+
+      // Update the item quantity in the store
+      await updatequanity(itemid, deltaqunitity);
+
+      // Calculate the total price of all invoice items
+      let totalPrice = 0;
+      updatedInvoiceItems.forEach(item => {
+          totalPrice += item.total; // Assuming 'total' is a field in the database for each item's total price
+      });
+
+      console.log("Final Total Price:", totalPrice);
+
+      // Render the response with success message
+      return res.render('home', {
+          data: {
+              totalPrice,
+              title,
+              msg: "Quantity has been updated successfully.",
+              style: 'success',
+              items: updatedInvoiceItems,
+              salesinvoiceID: invoiceid
+          }
+      });
+
+  } catch (err) {
+      console.error("An error occurred:", err);
+      // Render the response with an error message
+      return res.render('home', {
+          data: {
+              title,
+              msg: "An error occurred while updating the item.",
+              style: 'danger',
+              items: [], // You can refetch items if needed
+              salesinvoiceID: invoiceid
+          }
+      });
+  }
+};
+
+
+const additem = async (req, res,title="sales/salesinvoice") => {
+  try {
+    // Extract form data
+    const { invoiceid, search, quantity } = req.body;
+    const searchTerm = search ? search.trim() : '';
+    const employeeID = req.body.employee_id || res.locals.user.employee_id;
+//=====================
+const sqlFetchItemsbeforadd = `  SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ?  `;
+
+const invoiceItemsbeforadd = await new Promise((resolve, reject) => {
+  db.query(sqlFetchItemsbeforadd, [invoiceid], (err, results) => {
+    if (err) return reject(err);
+    resolve(results);
+  });
+});
+
+//======================
+    // Validate required fields
+    if (!invoiceid || !searchTerm || !quantity || isNaN(quantity) || quantity <= 0) {
+      const data = {
+        title: "sales/addinvoice",
+        msg: "Please enter valid search details (barcode and quantity).",
+        style: 'warning',
+        items: invoiceItemsbeforadd,
+        salesinvoiceID: invoiceid
+        
+      };
+      return res.render('home', { data });
+    }
+
+    const storeid=res.locals.user.storeID;
+    const sql = `
+      SELECT * FROM item 
+      WHERE Barcode = ? AND StoreID =?
+    `;
+  
+    // Fetch item by barcode
+    const itemResults = await new Promise((resolve, reject) => {
+      db.query(sql, [searchTerm,storeid], (err, results) => {
+        if (err) return reject(err);
+        resolve(results);
+      });
+    });
+
+    // Handle case where no item was found
+    if (itemResults.length === 0) {
+      const data = {
+        title: "sales/addinvoice",
+        msg: `No items found for the search term in this Store  "${searchTerm}".`,
+        style: 'danger',
+        items: invoiceItemsbeforadd,
+        salesinvoiceID: invoiceid
+      };
+      return res.render('home', { data });
+    }
+
+    // Extract the first found item
+    const foundItem = itemResults[0];
+    const parsedQuantity = parseInt(quantity, 10);
+    const price = foundItem.Price;
+    const total = parsedQuantity * price;
+    const itemid = foundItem.ItemID;
+
+    // SQL to insert the item into the invoice
+  if (foundItem.quantity>=quantity &&quantity>0 ) {
+      const sqlAdd = `
+        INSERT INTO SalesInvoiceItem (Quantity, price, total, salesinvoiceID, itemid,item_name,baracode)
+        VALUES (?, ?, ?, ?, ?,?,?)
+      `;
+  
+      // Insert item into SalesInvoiceItem table
+      await new Promise((resolve, reject) => {
+        db.query(sqlAdd, [parsedQuantity, price, total, invoiceid, itemid,foundItem.ItemName,foundItem.Barcode], (err, result) => {
+          if (err) return reject(err);
+          resolve(result);
+        });
+      });
+
+    await updatequanity(itemid,quantity);
+
+      const sqlFetchItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ? `;
+
+      const invoiceItems = await new Promise((resolve, reject) => {
+        db.query(sqlFetchItems, [invoiceid], (err, results) => {
+          if (err) return reject(err);
+          resolve(results);
+        });
+      });
+  //================================================================
+  let totalPrice = 0;
+  invoiceItems.forEach(item => {
+    totalPrice += item.total; // Assuming 'total' is the field in the database for each item’s total price
+  });
+  
+  console.log("Final Total Price:", totalPrice);
+
+
+  //===================================================
+      // Success: Render the updated list of items with a success message
+      const data = {
+        totalPrice:totalPrice,
+        title,
+        msg: `Item "${foundItem.ItemName}" (ID: ${foundItem.ItemID}) successfully added to invoice.`,
+        style: 'success',
+        items: invoiceItems, // Updated list of items
+        salesinvoiceID: invoiceid
+      };
+      return res.render('home', { data });
+  }
+  else{
+
+    const sqlFetchItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ? `;
+
+    const invoiceItems = await new Promise((resolve, reject) => {
+      db.query(sqlFetchItems, [invoiceid], (err, results) => {
+        if (err) return reject(err);
+        resolve(results);
+      });
+    });
+
+       console.log("(foundItem.quantity>quantity &&quantity>0 )"+(foundItem.quantity>quantity &&quantity>0 ));
+    const data = {
+      title,
+      msg: `there is no enough Item in this Store. only { `+foundItem.quantity +" }in the Store",
+      style: 'success',
+      items: invoiceItems, // Updated list of items
+      salesinvoiceID: invoiceid
+    };
+    return res.render('home', { data });
+
+  }
+//================================================================
+
+
+
+//================================================================
+    // Fetch updated items for the sales invoice, join with item table to get more info
+  
+
+  } catch (err) {
+    console.error("Error in item search:", err);
+
+    // Render error message in case of failure
+    const data = {
+      title: "sales/addinvoice",
+      msg: "An error occurred while searching for or adding items.",
+      style: 'danger',
+      salesinvoiceID: req.body.invoiceid || ''
+    };
+    return res.render('home', { data });
+  }
+};

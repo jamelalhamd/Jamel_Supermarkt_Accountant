@@ -17,11 +17,20 @@ router.post("/createthevoice", authcontroler.checkAuthAndFetchUser, salesinvoice
 
 
 router.get("/viewinvoicepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.viewinvoicepagecontroller);
-router.get("/editinvoicepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.editinvoicepagecontroller);
+router.get("/editinvoicepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.editinvoicepage);
 router.get("/deleteinvoicepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteinvoicecontroller);
 
 
 router.post("/deleteinvoice/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteinvoice);
+router.post("/editvoiceitems/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.editvoiceitems);
+
+
+router.post("/deleteinvoice/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteinvoice);
+router.post("/editvoiceitems/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.editvoiceitems);
+
+const editvoiceitems=async(req, res) => {updateSalesInvoiceItem(req, res, "sales/invoiceedite");}
+
+const addvoiceitems=async(req, res) => {updateSalesInvoiceItem(req, res, "sales/invoiceedite");}
 
 
 module.exports = router;

@@ -6,7 +6,7 @@
     <!-- Invoice ID and Client Name -->
     <div class="row mb-3">
       <div class="col">
-        <h4>Invoice ID: <%= data.salesinvoiceID %></h4>
+        <h4>Invoice ID: <%= data.invoice.salesinvoiceID %></h4>
       </div>
       <div class="col text-end">
         <h4>Client Name: <%= data.invoice.NameClient %></h4>
@@ -16,7 +16,8 @@
     <!-- Employee Info -->
     <div class="row mb-3">
       <div class="col">
-        <h5>Employee: <%= user.employee_name %> <%= user.employee_lastname %> (ID: <%= user.employee_id %>)</h5>
+        <h5>Employee: <%= user.employee_name %> <%= user.employee_lastname %> </h5>
+        <h5> ID: <%= user.employee_id %></h5>
       </div>
       <div class="col text-end">
         <h6>Date: <%= data.invoice.salesinvoiceDate.toISOString().split('T')[0] %></h6>
@@ -26,7 +27,7 @@
     <!-- Total Price and Number of Items -->
     <div class="row mb-3">
       <div class="col">
-        <h5>Total Price: $<%= data.totalPrice.toFixed(2) %></h5>
+        <h5>Total Price :  <%= data.invoice.totalprice %> $</h5>
       </div>
       <div class="col text-end">
         <h5>Number of Items: <%= data.items.length %></h5>
