@@ -22,6 +22,8 @@
           <th scope="col">Date</th>
           <th scope="col">Price</th>
           <th scope="col">Employee</th>
+          <th scope="col">Edited by</th>
+          <th scope="col">Date of Edit</th>
           <th scope="col">Action</th>
         </tr>
       </thead>
@@ -38,6 +40,11 @@
               </td>
               <td><%= element.totalprice %></td>
               <td><%= element.employee_id %></td>
+              <td><%= element.edited_by %></td>
+              <td>
+                <%= element.date_edit ? element.date_edit.toISOString().split('T')[0] : "" %> 
+                <%= element.date_edit ? element.date_edit.toISOString().split('T')[1].slice(0, 5) : "" %>
+              </td>
               <td>
                 <a data-bs-toggle="tooltip" data-bs-title="View details" data-bs-placement="top" class="btn btn-info btn-sm" href="/viewinvoicepage/<%= element.salesinvoiceID %>">
                   <i class="bi bi-eye"></i>
@@ -53,10 +60,11 @@
           <% }); %>
         <% } else { %>
           <tr>
-            <td colspan="7">No invoices found.</td>
+            <td colspan="8">No invoices found.</td>
           </tr>
         <% } %>
       </tbody>
+      
     </table>
   </div>
 </div>

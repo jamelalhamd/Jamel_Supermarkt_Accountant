@@ -33,6 +33,25 @@
           <h5>Number of Items: <%= data.items.length %></h5>
         </div>
       </div>
+      <div class="row mb-3">
+        <div class="col">
+          <% if (data.date_edit) { %>
+            <h5>Edited Date: <%= new Date(data.date_edit).toLocaleString() %></h5>
+          <% } else { %>
+            <h5></h5>
+          <% } %>
+        </div>
+        
+        <div class="col text-end">
+          <% if (data.edited_by) { %>
+            <h5>Edited by: <%= data.edited_by %></h5>
+          <% } else { %>
+         
+          <% } %>
+        </div>
+      </div>
+      
+
     </div>
   
     <!-- List of Invoice Items -->
