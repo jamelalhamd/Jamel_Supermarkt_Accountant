@@ -6,6 +6,12 @@
   </div>
 
   <h3>List of Invoices</h3>
+  <% if (data.msg &&data.style) { %>
+    <div class="alert alert-<%= data.style %> mt-4">
+      <%= data.msg %>
+    </div>
+  <% } %>
+
   <div class="table-container" style="width: 100%; margin: 0 auto;">
     <table class="text-center mx-auto table mt-5 table-striped table-bordered">
       <thead>

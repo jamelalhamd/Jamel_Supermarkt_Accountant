@@ -704,7 +704,7 @@ console.log("id: " + id);
        
         const data = {
           title: "sales/salesinvoice",
-          msg: "Invoice has been deleted successfully",
+          msg: `Invoice   has been deleted successfully`,
           style: 'success',
           items: invoices,
         };
@@ -746,33 +746,35 @@ module.exports = {salesinvocepage,deleteinvoice,addedite,editedite,deleteedite,
 
 const updateitemainvoice = async (req, res, title = "sales/addinvoice") => {
   const { quantity, invoiceid, salesinvoiceitemID, price } = req.body;
+  const id = req.params.id;
   const total = quantity * price;
+
+
+  const invoice = await getInvoiceById(id);
+  const items = await getInvoiceItemsById(id);
 
   try {
       // Fetch invoice items for the given invoice ID
-      const invoiceItems = await fetchInvoiceItems(invoiceid);
-      if (!invoiceItems.length) {
+     
+      if (!items.length!=0) {
           console.log("No invoice items found.");
           return res.render('home', {
               data: {
                   title,
                   msg: "No invoice items found.",
                   style: 'warning',
-                  items: [],
-                  salesinvoiceID: invoiceid
+                  items: items,
+                  invoice: invoice
               }
           });
       }
 
-      const itemid = invoiceItems[0].itemid;
-      const altequanittiy = invoiceItems[0].Quantity;
+      const itemid = items[0].itemid;
+      const altequanittiy = items[0].Quantity;
       const updatedquanity = altequanittiy - quantity;
       const deltaqunitity = quantity - altequanittiy; // Calculate the delta quantity
 
-      console.log("New quantity: " + quantity);
-      console.log("Old quantity: " + altequanittiy);
-      console.log("Item ID: " + itemid);
-      console.log("Delta quantity: " + deltaqunitity);
+  
 
       // SQL query to update the sales invoice item
       const sqlUpdate = `UPDATE salesinvoiceitem SET Quantity = ?, Total = ? WHERE salesinvoiceitemID = ?`;
@@ -804,14 +806,14 @@ const updateitemainvoice = async (req, res, title = "sales/addinvoice") => {
       }
 
       // Fetch updated items after the successful update
-      const updatedInvoiceItems = await fetchInvoiceItems(invoiceid);
+      const itemsafter = await getInvoiceItemsById(id);
 
       // Update the item quantity in the store
       await updatequanity(itemid, deltaqunitity);
 
       // Calculate the total price of all invoice items
       let totalPrice = 0;
-      updatedInvoiceItems.forEach(item => {
+      itemsafter.forEach(item => {
           totalPrice += item.total; // Assuming 'total' is a field in the database for each item's total price
       });
 
@@ -824,8 +826,8 @@ const updateitemainvoice = async (req, res, title = "sales/addinvoice") => {
               title,
               msg: "Quantity has been updated successfully.",
               style: 'success',
-              items: updatedInvoiceItems,
-              salesinvoiceID: invoiceid
+              items:  itemsafter,
+              invoice: invoice
           }
       });
 
@@ -838,7 +840,7 @@ const updateitemainvoice = async (req, res, title = "sales/addinvoice") => {
               msg: "An error occurred while updating the item.",
               style: 'danger',
               items: [], // You can refetch items if needed
-              salesinvoiceID: invoiceid
+              invoice:invoice
           }
       });
   }
@@ -970,12 +972,11 @@ const additem = async (req, res, title = "sales/salesinvoice") => {
 
 
 const deleteitem= async (req, res,title="sales/salesinvoice") => {
+
+  const id = req.params.id; 
   const { invoiceid, salesinvoiceitemID, itemid, quantity } = req.body;
 
-  console.log("itemid: " + itemid);
-  console.log("quantity: " + quantity);
-  console.log("Deleting item with invoiceid: " + invoiceid + " and salesinvoiceitemID: " + salesinvoiceitemID);
-  console.log("req.body: " + JSON.stringify(req.body));
+ 
 
   // SQL query to delete the sales invoice item
   const sql = `DELETE FROM salesinvoiceitem WHERE salesinvoiceitemID = ?`;
@@ -986,53 +987,46 @@ const deleteitem= async (req, res,title="sales/salesinvoice") => {
           return res.status(500).send("Error deleting sales invoice item.");
       }
 
-      // If no rows were affected, show a warning message
+      const invoice = await getInvoiceById(id);
+      const items = await getInvoiceItemsById(id);
       if (result.affectedRows === 0) {
           console.log("No item found to delete.");
 
           // Fetch the updated list of items after the deletion attempt
-          const sqlFetchItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ?`;
-          const invoiceItems = await new Promise((resolve, reject) => {
-              db.query(sqlFetchItems, [invoiceid], (err, results) => {
-                  if (err) return reject(err);
-                  resolve(results);
-              });
-          });
-
+         
+          console.log("Invoice:", JSON.stringify(invoice, null, 2));
+          console.log("Invoice Items Before Add:", JSON.stringify(items, null, 2));
           const data = {
               title,
               msg: "No item found to delete.",
               style: 'warning',
-              items: invoiceItems,
-              salesinvoiceID: invoiceid
+              items: items,
+              invoice:  invoice
           };
           return res.render('home', { data });
       }
 
       // Fetch the updated list of items after successful deletion
-      const sqlFetchItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ?`;
-      const invoiceItems = await new Promise((resolve, reject) => {
-          db.query(sqlFetchItems, [invoiceid], (err, results) => {
-              if (err) return reject(err);
-              resolve(results);
-          });
-      });
+
 
       //================================================================
       let totalPrice = 0;
-      invoiceItems.forEach(item => {
+      items.forEach(item => {
         totalPrice += item.total; // Assuming 'total' is the field in the database for each item’s total price
       });
       await updatequanity(itemid,-quantity);
       //================================================================
 
+      console.log("Invoice:", JSON.stringify(invoice, null, 2));
+      console.log("Invoice Items Before Add:", JSON.stringify(items, null, 2));
+
       const data = {
         totalPrice:totalPrice,
         title,
-        msg: "Item deleted Successfully", 
-        style: 'success',
-        items: invoiceItems,
-        salesinvoiceID: invoiceid
+        msg: `Item ${itemid}  has been deleted Successfully`, 
+        style: 'danger',
+        items: items,
+        invoice:  invoice
     };
     return res.render('home', { data });
   });

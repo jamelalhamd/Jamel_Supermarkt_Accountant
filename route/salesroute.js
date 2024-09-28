@@ -20,9 +20,10 @@ router.get("/viewinvoicepage/:id", authcontroler.checkAuthAndFetchUser, salesinv
 router.get("/editinvoicepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.editinvoicepage);
 router.get("/deleteinvoicepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteinvoicecontroller);
 
+router.post("/deleteinvoice/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteinvoice);
 
-router.post("/deleteeditepage", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteedite);
-router.post("/editeditepage", authcontroler.checkAuthAndFetchUser, salesinvoice.editedite);
+router.post("/deleteeditepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteedite);
+router.post("/editeditepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.editedite);
 router.post("/addeditepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.addedite);
 
 
