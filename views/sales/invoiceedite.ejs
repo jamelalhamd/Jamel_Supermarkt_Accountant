@@ -20,8 +20,14 @@
         <h5> ID: <%= user.employee_id %></h5>
       </div>
       <div class="col text-end">
-        <h6>Date: <%= data.invoice.salesinvoiceDate.toISOString().split('T')[0] %></h6>
+        <% if (data.invoice && data.invoice.salesinvoiceDate) { %>
+          <h6>Date: <%= data.invoice.salesinvoiceDate.toLocaleDateString() %></h6>
+          <h6>Time: <%= data.invoice.salesinvoiceDate.toLocaleTimeString() %></h6>
+        <% } else { %>
+          <h6>Date and Time: Not available</h6>
+        <% } %>
       </div>
+      
     </div>
 
     <!-- Total Price and Number of Items -->
@@ -94,7 +100,13 @@
   <!-- Add New Item Form -->
   <div class="add-item-section mt-5">
     <h4 class="text-center">Add Item to Invoice</h4>
-    <form action="/searchIteminvoice" method="post" class="mt-3">
+
+    <% if (data.msg &&data.style) { %>
+      <div class="alert alert-<%= data.style %> mt-4">
+        <%= data.msg %>
+      </div>
+    <% } %>
+    <form action="/addeditepage/<%= data.invoice.salesinvoiceID %>" method="post" class="mt-3">
       <div class="mb-3">
         <label for="barcode-input" class="form-label">Scan or Enter Barcode</label>
         <input name="search" type="text" id="barcode-input" class="form-control" placeholder="Enter Barcode or Item Name" required>
@@ -103,7 +115,7 @@
         <label for="quantity-input" class="form-label">Quantity</label>
         <input name="quantity" type="number" id="quantity-input" class="form-control" placeholder="Enter Quantity" required>
       </div>
-      <input type="hidden" name="invoiceid" value="<%= data.salesinvoiceID %>">
+      <input type="hidden" name="invoiceid" >
       <input type="hidden" name="employee_id" value="<%= user.employee_id %>">
       <div class="d-grid">
         <button class="btn btn-success" type="submit">Add Item</button>
@@ -123,7 +135,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <form id="editForm" method="post" action="/editvoiceitem">
+        <form id="editForm" method="post" action="/editeditepage">
           <input type="hidden" name="invoiceid" id="edit-invoiceid">
           <input type="hidden" name="salesinvoiceitemID" id="edit-salesinvoiceitemID">
           <input type="hidden" name="itemid" id="edit-itemid">
@@ -149,7 +161,7 @@
       </div>
       <div class="modal-body">
         <p>Are you sure you want to delete this item?</p>
-        <form id="deleteForm" method="post" action="/deletevoiceitem">
+        <form id="deleteForm" method="post" action="/deleteeditepage">
           <input type="hidden" name="invoiceid" id="delete-invoiceid">
           <input type="hidden" name="salesinvoiceitemID" id="delete-salesinvoiceitemID">
           <input type="hidden" name="itemid" id="delete-itemid">

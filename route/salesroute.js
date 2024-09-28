@@ -21,16 +21,16 @@ router.get("/editinvoicepage/:id", authcontroler.checkAuthAndFetchUser, salesinv
 router.get("/deleteinvoicepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteinvoicecontroller);
 
 
-router.post("/deleteinvoice/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteinvoice);
-router.post("/editvoiceitems/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.editvoiceitems);
+router.post("/deleteeditepage", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteedite);
+router.post("/editeditepage", authcontroler.checkAuthAndFetchUser, salesinvoice.editedite);
+router.post("/addeditepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.addedite);
 
 
-router.post("/deleteinvoice/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.deleteinvoice);
-router.post("/editvoiceitems/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.editvoiceitems);
 
-const editvoiceitems=async(req, res) => {updateSalesInvoiceItem(req, res, "sales/invoiceedite");}
 
-const addvoiceitems=async(req, res) => {updateSalesInvoiceItem(req, res, "sales/invoiceedite");}
+
+
+
 
 
 module.exports = router;
