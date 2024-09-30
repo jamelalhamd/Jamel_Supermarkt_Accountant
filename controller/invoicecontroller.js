@@ -1,4 +1,4 @@
-const { db,getPromotionData ,getStoreData,fetchIteminvoice,getUser,getInvoiceById,getInvoiceItemsById,getInvoice} = require('../controller/db');
+const { db,getPromotionData ,getStoreData,fetchIteminvoice,getUser,getInvoiceById,getInvoiceItemsById,getInvoice,updatequanity} = require('../controller/db');
 
 const salesinvocepage=async(req, res) => { 
   const sqlvoices = `SELECT * FROM salesinvoice`;
@@ -414,51 +414,7 @@ const deleteSalesInvoiceItem = async (req, res) => {
 
 
 
-const updatequanity=async(itemid,quantity)=>{
 
-  const sqlOriginalItem = `SELECT * FROM item WHERE ItemID = ?`;
-  const originalItemResult = await new Promise((resolve, reject) => {
-      db.query(sqlOriginalItem, [itemid], (err, results) => {
-          if (err) return reject(err);
-          resolve(results);
-      });
-  });
-
-  if (originalItemResult.length === 0) {
-      console.error("No original item found.");
-      return res.status(500).send("Original item not found.");
-  }
-
-  // Extract current quantity from the original item
-  const originalItem = originalItemResult[0]; // First result
-  const currentQuantity = originalItem.quantity; // Assuming the column name is 'Quantity'
-
-  // Calculate the new quantity after deletion
-  const newQuantity = currentQuantity - parseInt(quantity, 10); // Convert quantity to an integer if necessary
-
-  // Update the item with the new quantity
-  const sqlUpdateItem = `UPDATE item SET quantity = ? WHERE ItemID = ?`;
-  db.query(sqlUpdateItem, [newQuantity, itemid], (err, result) => {
-      if (err) {
-        console.log(object)
-          console.error("Error updating item quantity:", err);
-          const data = {
-            title: "sales/addinvoice",
-            msg: "Error updating item quantity:", err,
-            style: 'danger',
-            items: invoiceItems,
-            salesinvoiceID: invoiceid
-        };
-        return res.render('home', { data });
-      }
-
-      // Render the updated page with success message
-     
-  });
-
-
-
-}
 
 
 const createthevoicecontroller = async (req, res) => {
@@ -730,6 +686,104 @@ const deleteedite=async(req, res) => {deleteitem(req, res, "sales/invoiceedite")
 
 
 
+const pdf = require('html-pdf');
+
+
+
+
+
+
+
+
+
+
+// Assuming getInvoiceById and getInvoiceItemsById are defined elsewhere
+
+
+
+
+
+
+
+const puppeteer = require('puppeteer');
+const ejs = require('ejs');
+const fs = require('fs');
+const path = require('path');
+
+const pdfsalesinvoic = async (req, res) => {
+  console.log("Generating PDF for invoice...");
+  
+  try {
+    const id = req.params.id;
+    const employee_id = res.locals.user.employee_id;
+
+    // Read EJS Template
+    const ejsTemplatePath = path.join(__dirname, '../views/sales/pdftamplet.ejs');
+    const ejsTemplate = fs.readFileSync(ejsTemplatePath, 'utf8');
+
+    // Fetch invoice and items
+    const invoice = await getInvoiceById(id); 
+    const items = await getInvoiceItemsById(id); 
+
+    // Prepare data for EJS
+    const data = {
+      totalPrice: invoice.totalprice,
+      user: res.locals.user,
+      date_edit: invoice.date_edit,
+      edited_by: invoice.edited_by,
+      salesinvoiceID: id,
+      invoice: invoice,
+      items: items
+    };
+    console.log("Data for EJS:", JSON.stringify(data, null, 2));
+
+    // Render HTML
+    const htmlContent = ejs.render(ejsTemplate, { data });
+    fs.writeFileSync('output.html', htmlContent); // For debugging
+
+    const browser = await puppeteer.launch({ headless: false }); // Use headless: true for production
+    const page = await browser.newPage();
+
+    // Set content and wait for it to load
+    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+
+    // Generate PDF
+    const pdfBuffer = await page.pdf({ 
+      format: 'A4',
+      printBackground: true,
+      margin: { 
+          top: '10mm', 
+          right: '10mm', 
+          bottom: '10mm', 
+          left: '10mm' 
+      }
+    });
+
+    // Close browser
+    await browser.close();
+
+    // Send PDF response
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename=invoice_${id}.pdf`,
+    });
+
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error('Error generating PDF:', err);
+    res.status(500).send('An error occurred while generating the invoice.');
+  }
+};
+
+
+
+
+
+
+
+
+
+
 
 module.exports = {salesinvocepage,deleteinvoice,addedite,editedite,deleteedite,
   addsalesinvocepage,
@@ -737,7 +791,7 @@ module.exports = {salesinvocepage,deleteinvoice,addedite,editedite,deleteedite,
   updateSalesInvoiceItem,deleteinvoicecontroller,
   deleteSalesInvoiceItem,
   createthevoicecontroller,
-  viewinvoicepagecontroller,
+  viewinvoicepagecontroller,pdfsalesinvoic
 
 }
 

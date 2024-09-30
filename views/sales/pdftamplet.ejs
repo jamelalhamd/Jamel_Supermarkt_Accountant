@@ -1,0 +1,43 @@
+<!-- views/template.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+</head>
+<body>
+    <h1>Invoice for {{data.salesinvoiceID}}</h1>
+    <p>Date: {{data.date_edit}}</p>
+    <p>Edited by: {{data.edited_by}}</p>
+    
+    <h2>Products</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Unit</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each data.prodlist}}
+            <tr>
+                <td>{{this.name}}</td>
+                <td>{{this.description}}</td>
+                <td>{{this.unit}}</td>
+                <td>{{this.quantity}}</td>
+                <td>{{this.price}}</td>
+                <td>{{this.total}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <h3>Subtotal: {{data.subtotal}}</h3>
+    <h3>Tax: {{data.tax}}</h3>
+    <h3>Grand Total: {{data.gtotal}}</h3>
+</body>
+</html>

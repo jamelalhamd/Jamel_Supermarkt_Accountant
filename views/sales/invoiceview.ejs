@@ -89,7 +89,8 @@
  
       <div class="text-center mt-4">
         <a href="/salesinvoice" id="save-pdf" class="btn btn-success">Back</a>
-        <button   id="save-pdf" class="btn btn-primary">Save as PDF</button>
+        <a href="/pdfsalesinvoice/<%= data.salesinvoiceID %>" id="save-pdf" class="btn btn-primary">Save as PDF</a>
+        
       
         <button class="btn btn-primary mx-4" onclick="window.print()">Print</button>
         
@@ -101,20 +102,5 @@
       <p class="text-center">No items found for this invoice.</p>
       <% } %>
     </div>
-    <script>
-        document.getElementById("save-pdf").addEventListener("click", function () {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // إعداد محتويات الفاتورة التي تريد حفظها
-            doc.text("رقم الفاتورة: <%= data.salesinvoiceID %>", 10, 10);
-            doc.text("اسم العميل: <%= data.invoice.NameClient %>", 10, 20);
-            doc.text("اسم الموظف: <%= user.employee_name %> <%= user.employee_lastname %>", 10, 30);
-            doc.text("السعر الإجمالي: $<%= data.totalPrice.toFixed(2) %>", 10, 40);
-            doc.text("عدد العناصر: <%= data.items.length %>", 10, 50);
-    
-            // حفظ الملف كـ PDF
-            doc.save("invoice_<%= data.salesinvoiceID %>.pdf");
-        });
-    </script>
+
     

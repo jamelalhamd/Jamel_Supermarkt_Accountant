@@ -32,6 +32,22 @@ router.post("/addeditepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoi
 
 
 
+router.get("/pdfsalesinvoice/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.pdfsalesinvoic);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 module.exports = router;

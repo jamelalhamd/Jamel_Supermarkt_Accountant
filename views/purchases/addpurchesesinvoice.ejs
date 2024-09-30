@@ -1,0 +1,373 @@
+<!-- views/sales/invoice.ejs -->
+<div class="container">
+  <!-- Invoice Details Section -->
+  <div class="invoice-details-section p-4 rounded shadow-sm" style="max-width: 800px; margin: 20px auto;">
+    <h2 class="text-center">Invoice Details</h2>
+    
+    <!-- Invoice ID and Client Name -->
+    <div class="row mb-3">
+      <div class="col">
+        <h4>Invoice ID: <%= data.PurchaseID %></h4>
+      </div>
+    
+    </div>
+    
+    <!-- Employee Info -->
+    <div class="row mb-3">
+      <div class="col">
+        <h5>Employee: <%= user.employee_name %> <%= user.employee_lastname %></h5>
+        <h5>Employee ID: <%= user.employee_id %></h5>
+      </div>
+      <div class="col text-end">
+        <h6>
+          <%= data.invoice.PurchaseDate ? `Date: ${data.invoice.PurchaseDate}` : '' %>
+        </h6>
+      </div>
+    </div>
+
+    <!-- Total Price and Number of Items -->
+    <div class="row mb-3">
+      <div class="col">
+        <h5>Total Price: $<%= data.invoice.Price %></h5>
+      </div>
+      <div class="col text-end">
+        <h5>Number of Items: <%= (data.items && data.items.length > 0)? data.items.length :0 %></h5>
+      </div>
+    </div>
+
+    <!-- Edited Info (if applicable) -->
+    <div class="row mb-3">
+      <div class="col">
+        <% if (data.date_edit) { %>
+          <h5>Edited Date: <%= new Date(data.invoice.date_edit).toLocaleString() %></h5>
+        <% } %>
+      </div>
+      <div class="col text-end">
+        <% if (data.edited_by) { %>
+          <h5>Edited by: <%= data.invoice.edited_by %></h5>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Item to Invoice Section -->
+  <div class="search-section p-4 rounded shadow-sm" style="max-width: 600px; margin: 20px auto;">
+
+
+    <h3 class="text-center mb-4">Add Item to Invoice</h3>
+    <form action="/addpurchesitem" method="post">
+      <div class="mb-3">
+        <label for="barcode-input" class="form-label">Scan or Enter Barcode</label>
+        <input 
+          required 
+          name="search" 
+          type="text" 
+          id="barcode-input" 
+          class="form-control form-control-lg" 
+          placeholder="Enter Barcode  Item"
+          aria-label="Barcode or Item Name"
+        >
+      </div>
+
+      <div class="mb-4">
+        <label for="quantity-input" class="form-label">Quantity</label>
+        <input 
+          required 
+          name="quantity" 
+          type="number" 
+          id="quantity-input" 
+          class="form-control form-control-lg" 
+          placeholder="Enter Quantity"
+          aria-label="Quantity"
+        >
+      </div>
+
+      <div class="mb-4">
+        <label for="quantity-input" class="form-label">Price</label>
+        <input 
+          required 
+          name="purcheseprice" 
+          type="number" 
+          id="price-input" 
+          class="form-control form-control-lg" 
+          placeholder="Enter Purchase Price"
+          aria-label="Price"
+        >
+      </div>
+      <div class="form-group mb-3">
+        <label for="StoreID">Store</label>
+        <select
+          class="form-select"
+          id="StoreID"
+          name="StoreID"
+          required
+        >
+          <option value="" disabled selected>Select store</option>
+          <% data.store.forEach(store => { %>
+            <option value="<%= store.StoreID %>" <%= store.StoreID === (data.selectedStoreID ? data.selectedStoreID : '') ? 'selected' : '' %>><%= store.StoreName %></option>
+          <% }); %>
+        </select>
+      </div>
+      
+      <!-- Hidden Sales Invoice ID and Employee ID -->
+      <input hidden name="purchaseID" value="<%= data.PurchaseID %>">
+      <input hidden name="employee_id" value="<%= user.employee_id %>">
+    
+      <div class="d-grid">
+        <button id="search-btn" class="btn btn-success btn-lg" type="submit">Add Item to Bill</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- List of Invoice Items -->
+  <h3>List of Items</h3>
+
+  <!-- Message Section -->
+  <% if (data.msg && data.style) { %>
+    <div class="alert alert-<%= data.style %> mt-4">
+      <%= data.msg %>
+    </div>
+  <% } %>
+  
+  <% if (data.showadd==false) { %>
+    <div class="d-flex  flex-column  justify-content-center align-items-center">
+      <p class="text-center mt-5">No item with this barcode found in this store. You must add this barcode to the items.</p>
+      <a href="/additem" class="btn btn-success btn-lg ms-3" type="button">Add New Barcode</a>
+  </div>
+  
+   
+  <% } %>
+
+  <div class="table-container" style="width: 100%; margin: 0 auto;">
+    <% if (data.items && data.items.length > 0) { %>
+      <table class="text-center mx-auto table mt-5 table-striped table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Item ID</th>
+            <th scope="col">Item Barcode</th>
+            <th scope="col">Item Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
+            <th scope="col">Total</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% data.items.forEach((element, index) => { %>
+            <tr>
+              <td scope="row"><%= index + 1 %></td>
+              <td><%= element.itemID %></td>
+              <td><%= element.baracode %></td>
+              <td><%= element.item_name %></td>
+              <td><%= element.Quantity %></td>
+              <td>$<%= (element.Price ? parseFloat(element.Price).toFixed(2) : "0.00") %></td>
+              <td>$<%= (element.totalprice ? element.totalprice.toFixed(2) : "0.00") %></td>
+              
+              <td>
+                <!-- Edit Item Button -->
+                <button type="button" 
+                        class="btn btn-primary" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#editModal"
+                        data-salesinvoiceitemID="<%= element.salesinvoiceitemID %>" 
+                        data-itemid="<%= element.itemid %>" 
+                        data-price="<%= element.price %>" 
+                        data-invoiceid="<%= element.salesinvoiceID %>" 
+                        data-quantity="<%= element.Quantity %>">
+                  <i class="bi bi-pen"></i>
+                </button>
+
+                <!-- Delete Item Button -->
+                <button type="button" 
+                        class="btn btn-danger btn-sm" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#deleteModal"
+                        data-quantity="<%= element.Quantity %>"
+                        data-invoiceid="<%= element.salesinvoiceID %>" 
+                        data-itemid="<%= element.itemid %>" 
+                        data-salesinvoiceitemID="<%= element.salesinvoiceitemID %>">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <!-- Action Buttons -->
+      <div class="text-center mt-4">
+        <a href="/salesinvoice" id="back-btn" class="btn btn-success">Back</a>
+        <a href="/pdfsalesinvoice/<%= data.salesinvoiceID %>" id="save-pdf" class="btn btn-primary">Save as PDF</a>
+        <button class="btn btn-primary mx-4" onclick="window.print()">Print</button>
+      </div>
+    <% } else { %>
+      <p class="text-center mt-5">No items found for this invoice.</p>
+
+    
+      <div class="d-grid">
+        
+      </div>
+
+
+    <% } %>
+   
+
+   
+
+    <!-- Create Invoice Form -->
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-4">
+          <form class="mb-4 mt-xl-5" action="/createthevoice" method="post">
+          
+
+            <div class="mb-4">
+              <label for="totalprice" class="form-label">Total Price</label>
+              <input 
+                value="<%= data.totalPrice %>"
+                
+                name="totalprice" 
+                type="number" 
+                id="totalprice" 
+                class="form-control form-control-lg" 
+                placeholder="Total Price"
+                aria-label="Total Price"
+              >
+            </div>
+
+
+            <div class="form-group mb-3">
+              <label for="supplierID">Supplier</label>
+              <select
+                class="form-select"
+                id="supplierID"
+                name="supplierID"
+                required
+              >
+                <option value="" disabled selected>Select Supplier</option>
+                <% data. supplier.forEach( supplier => { %>
+                  <option value="<%=  supplier.SupplierID %>" ><%=  supplier.SupplierName %></option>
+                <% }); %>
+              </select>
+            </div>
+
+            <!-- Hidden Sales Invoice ID and Employee ID -->
+            <input hidden name="employee_id" value="<%= user.employee_id %>">
+            <input hidden name="invoiceid" value="<%= data.salesinvoiceID %>">
+
+            <div class="d-grid">
+              <button id="create-invoice-btn" class="btn btn-primary btn-lg" type="submit">
+                <i class="bi bi-plus-circle"></i> Create the Invoice
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel">Edit Item ID: <span id="modalItemId"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editForm" method="post" action="/editvoiceitem">
+          <input type="hidden" name="invoiceid" id="edit-invoiceid">
+          <input type="hidden" name="salesinvoiceitemID" id="edit-salesinvoiceitemID">
+          <input type="hidden" name="itemid" id="edit-itemid">
+          <input type="hidden" name="price" id="edit-price">
+
+          <div class="mb-3">
+            <label for="edit-quantity" class="form-label">Quantity</label>
+            <input type="number" class="form-control" id="edit-quantity" name="quantity" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Delete Item ID: <span id="deleteModalItemId"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this item?</p>
+        <form id="deleteForm" method="post" action="/deletevoiceitem">
+          <input type="hidden" name="invoiceid" id="delete-invoiceid">
+          <input type="hidden" name="quantity" id="delete-quantity">
+          <input type="hidden" name="itemid" id="delete-itemid">
+          <input type="hidden" name="salesinvoiceitemID" id="delete-salesinvoiceitemID">
+          <button type="submit" class="btn btn-danger">Delete</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts to Populate Modals -->
+<script>
+  // Script to populate Edit Modal with data
+  var editModal = document.getElementById('editModal');
+  editModal.addEventListener('show.bs.modal', function (event) {
+      var button = event.relatedTarget; // Button that triggered the modal
+      var itemid = button.getAttribute('data-itemid');
+      var price = button.getAttribute('data-price');
+      var quantity = button.getAttribute('data-quantity');
+      var invoiceid = button.getAttribute('data-invoiceid');
+      var salesinvoiceitemID = button.getAttribute('data-salesinvoiceitemID'); // Correct the attribute name
+
+      var modalItemid = editModal.querySelector('#edit-itemid');
+      var modalprice = editModal.querySelector('#edit-price');
+      var modalQuantity = editModal.querySelector('#edit-quantity');
+      var modalInvoiceid = editModal.querySelector('#edit-invoiceid');
+      var modalsalesinvoiceitemID = editModal.querySelector('#edit-salesinvoiceitemID');
+      var modalItemIdLabel = editModal.querySelector('#modalItemId');
+
+      modalItemid.value = itemid; 
+      modalprice.value = price; 
+      modalQuantity.value = quantity; 
+      modalInvoiceid.value = invoiceid; 
+      modalsalesinvoiceitemID.value = salesinvoiceitemID; // Assign the salesinvoiceitemID correctly
+      modalItemIdLabel.textContent = itemid; 
+  });
+
+  // Script to populate Delete Modal with data from the button
+  var deleteModal = document.getElementById('deleteModal');
+  
+  deleteModal.addEventListener('show.bs.modal', function (event) {
+      // Button that triggered the modal
+      var button = event.relatedTarget;
+
+      // Extract data from button's data attributes
+      var invoiceid = button.getAttribute('data-invoiceid');
+      var itemid = button.getAttribute('data-itemid');
+      var quantity = button.getAttribute('data-quantity');
+      var salesinvoiceitemID = button.getAttribute('data-salesinvoiceitemID');
+      
+      // Populate the hidden inputs in the modal form
+      var modalInvoiceid = deleteModal.querySelector('#delete-invoiceid');
+      var modalItemid = deleteModal.querySelector('#delete-itemid');
+      var modalQuantity = deleteModal.querySelector('#delete-quantity');
+      var modalSalesinvoiceitemID = deleteModal.querySelector('#delete-salesinvoiceitemID');
+      
+      // Set values for hidden inputs
+      modalInvoiceid.value = invoiceid;
+      modalItemid.value = itemid;
+      modalQuantity.value = quantity;
+      modalSalesinvoiceitemID.value = salesinvoiceitemID;
+  });
+</script>

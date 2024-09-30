@@ -1,0 +1,70 @@
+<div class="container">
+  <div class="btn-container d-flex justify-content-end mb-4 mt-xl-5">
+    <a href="/addpurchaseinvoce" class="btn btn-success">
+      <i class="bi bi-plus-circle"></i> Add New Invoice
+    </a>
+  </div>
+
+  <h3>List of  Purcheses Invoices</h3>
+  <% if (data.msg &&data.style) { %>
+    <div class="alert alert-<%= data.style %> mt-4">
+      <%= data.msg %>
+    </div>
+  <% } %>
+
+  <div class="table-container" style="width: 100%; margin: 0 auto;">
+    <table class="text-center mx-auto table mt-5 table-striped table-bordered">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">ID</th>
+          <th scope="col">Name Supplier</th>
+          <th scope="col">Date</th>
+          <th scope="col">Price</th>
+          <th scope="col">Employee</th>
+          <th scope="col">Edited by</th>
+          <th scope="col">Date of Edit</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (data.items && data.items.length > 0) { %>
+          <% data.items.forEach((element, index) => { %>
+            <tr>
+              <th scope="row"><%= index + 1 %></th>
+              <td><%= element.PurchaseID %></td>
+              <td><%= element.supplierID %></td>
+              <td>
+                <%= element.PurchaseDate.toISOString().split('T')[0] %> 
+                <%= element.PurchaseDate.toISOString().split('T')[1].slice(0, 5) %>
+              </td>
+              <td><%= element.Price %></td>
+              <td><%= element.employee_id %></td>
+              <td><%= element.edited_by %></td>
+              <td>
+                <%= element.date_edit ? element.date_edit.toISOString().split('T')[0] : "" %> 
+                <%= element.date_edit ? element.date_edit.toISOString().split('T')[1].slice(0, 5) : "" %>
+              </td>
+              <td>
+                <a data-bs-toggle="tooltip" data-bs-title="View details" data-bs-placement="top" class="btn btn-info btn-sm" href="/viewinvoicepage/<%= element.salesinvoiceID %>">
+                  <i class="bi bi-eye"></i>
+                </a>
+                <a data-bs-toggle="tooltip" data-bs-title="Edit item" data-bs-placement="top" class="btn btn-primary btn-sm" href="/editinvoicepage/<%= element.salesinvoiceID %>">
+                  <i class="bi bi-pencil"></i>
+                </a>
+                <a data-bs-toggle="tooltip" data-bs-title="Delete item" data-bs-placement="top" class="btn btn-danger btn-sm" href="/deleteinvoicepage/<%= element.salesinvoiceID %>">
+                  <i class="bi bi-trash"></i>
+                </a>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="8">No invoices found.</td>
+          </tr>
+        <% } %>
+      </tbody>
+      
+    </table>
+  </div>
+</div>

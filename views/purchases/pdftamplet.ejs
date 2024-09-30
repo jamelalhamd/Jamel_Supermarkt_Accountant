@@ -1,0 +1,75 @@
+<!-- views/sales/pdftamplet.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice <%= data.salesinvoiceID %></title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+        }
+        table, th, td {
+            border: 1px solid #000;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+        .totals {
+            margin-top: 20px;
+            float: right;
+            width: 50%;
+        }
+        .totals h3 {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Invoice for <%= data.salesinvoiceID %></h1>
+    <p>Date: <%= data.date_edit %></p>
+    <p>Edited by: <%= data.edited_by %></p>
+    
+    <h2>Products</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Unit</th>
+                <th>Quantity</th>
+                <th>Price ($)</th>
+                <th>Total ($)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% data.prodlist.forEach(function(item) { %>
+                <tr>
+                    <td><%= item.name %></td>
+                    <td><%= item.description %></td>
+                    <td><%= item.unit %></td>
+                    <td><%= item.quantity %></td>
+                    <td><%= item.price.toFixed(2) %></td>
+                    <td><%= item.total.toFixed(2) %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+    
+    <div class="totals">
+        <h3>Subtotal: $<%= data.subtotal %></h3>
+        <h3>Tax (20%): $<%= data.tax %></h3>
+        <h3>Grand Total: $<%= data.gtotal %></h3>
+    </div>
+</body>
+</html>

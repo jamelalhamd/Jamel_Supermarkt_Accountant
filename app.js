@@ -1,5 +1,13 @@
 const express = require('express');
 const path = require('path');
+const puppeteer = require('puppeteer');
+const ejs = require('ejs');
+const fs = require('fs');
+
+const html_to_pdf = require('html-pdf-node');
+
+
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -41,7 +49,13 @@ app.use(helmet({
     }
   }
 }));
+//================================================================
 
+
+const expressLayouts = require('express-ejs-layouts');
+
+
+//================================================================
 
 // Middleware and Static Files
 app.use(express.static(path.join(__dirname, 'public')));
@@ -83,6 +97,8 @@ const itemcontroller = require('./route/itemroute');
 const Promotion_Route = require("./route/promationroute");
 const Sales_Route = require("./route/salesroute");
 
+const purchesese_Route = require("./route/purchesesroute");
+app.use(purchesese_Route);
 app.use(Sales_Route);
 app.use(itemcontroller);
 app.use(productRoutes);

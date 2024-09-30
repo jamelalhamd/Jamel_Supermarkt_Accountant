@@ -176,11 +176,133 @@ const getInvoiceItemsById = async (id) => {
 };
 
 
+const getpurchesesinvoice= async () => {
+  try {
+    const sqlvoices = `SELECT * FROM purchase`;
+    const invoices = await new Promise((resolve, reject) => {
+      db.query(sqlvoices, (err, results) => {
+        if (err) return reject(err);
+        resolve(results);
+      });
+    });
+
+ 
+    return invoices ;
+    // Alternatively, if you want to return JSON:
+    // return res.json(invoices);
+  } catch (error) {
+    console.error("Error fetching purchases:", error);
+    return null;
+  }
+};
 
 
-module.exports = {fetchInvoiceItems,getInvoiceById,getInvoiceItemsById,
+
+
+const getpurchaseitem = async (id) => {
+  try {
+    const sqlQuery = `SELECT * FROM purchaseitem WHERE purchaseID=?`;
+    const items = await new Promise((resolve, reject) => {
+      db.query(sqlQuery, [id], (err, results) => {
+        if (err) {
+          console.error(`Error fetching purchase items for purchaseID ${id}:`, err);
+          return reject(err);
+        }
+        resolve(results);
+      });
+    });
+
+    return items; // Return the retrieved items
+  } catch (error) {
+    console.error("Error fetching purchases:", error);
+    return []; // Return an empty array instead of null
+  }
+};
+
+
+const updatequanity=async(itemid,quantity)=>{
+
+  const sqlOriginalItem = `SELECT * FROM item WHERE ItemID = ?`;
+  const originalItemResult = await new Promise((resolve, reject) => {
+      db.query(sqlOriginalItem, [itemid], (err, results) => {
+          if (err) return reject(err);
+          resolve(results);
+      });
+  });
+
+  if (originalItemResult.length === 0) {
+      console.error("No original item found.");
+      return res.status(500).send("Original item not found.");
+  }
+
+  // Extract current quantity from the original item
+  const originalItem = originalItemResult[0]; // First result
+  const currentQuantity = originalItem.quantity; // Assuming the column name is 'Quantity'
+
+  // Calculate the new quantity after deletion
+  const newQuantity = currentQuantity - parseInt(quantity, 10); // Convert quantity to an integer if necessary
+
+  // Update the item with the new quantity
+  const sqlUpdateItem = `UPDATE item SET quantity = ? WHERE ItemID = ?`;
+  db.query(sqlUpdateItem, [newQuantity, itemid], (err, result) => {
+      if (err) {
+        console.log(object)
+          console.error("Error updating item quantity:", err);
+          const data = {
+            title: "sales/addinvoice",
+            msg: "Error updating item quantity:", err,
+            style: 'danger',
+            items: invoiceItems,
+            salesinvoiceID: invoiceid
+        };
+        return res.render('home', { data });
+      }
+
+      // Render the updated page with success message
+     
+  });
+
+
+
+}
+
+
+
+
+
+const getpurcheseitem = async (purchaseID) => {
+  try {
+    const sqlFetchItemsBeforeAdd = `SELECT * FROM purchaseitem WHERE purchaseID = ?`;
+    
+    const invoiceItemsBeforeAdd = await new Promise((resolve, reject) => {
+      db.query(sqlFetchItemsBeforeAdd, [purchaseID], (err, results) => {
+        if (err) return reject(err);
+        resolve(results);
+      });
+    });
+
+    return invoiceItemsBeforeAdd; // Returns the fetched items
+  } catch (error) {
+    console.error("Error fetching items before adding:", error);
+    throw error; // Optionally throw the error to handle it later
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports = {fetchInvoiceItems,getInvoiceById,getInvoiceItemsById,getpurchesesinvoice,getpurchaseitem,
   db,getPromotionData,getInvoice,
-  getUser,getItemData,
+  getUser,getItemData,updatequanity,getpurcheseitem,
   getStoreData,
   getSupplierData
 };
