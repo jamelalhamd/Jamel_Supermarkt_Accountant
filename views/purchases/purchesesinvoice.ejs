@@ -35,15 +35,17 @@
               <td><%= element.PurchaseID %></td>
               <td><%= element.supplierID %></td>
               <td>
-                <%= element.PurchaseDate.toISOString().split('T')[0] %> 
-                <%= element.PurchaseDate.toISOString().split('T')[1].slice(0, 5) %>
+                <%= new Date(element.PurchaseDate).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.') %>
+               
+                
               </td>
               <td><%= element.Price %></td>
               <td><%= element.employee_id %></td>
               <td><%= element.edited_by %></td>
               <td>
-                <%= element.date_edit ? element.date_edit.toISOString().split('T')[0] : "" %> 
-                <%= element.date_edit ? element.date_edit.toISOString().split('T')[1].slice(0, 5) : "" %>
+                <%=  element.date_edit?    new Date(element.date_edit).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.'): " " %>
+       
+                
               </td>
               <td>
                 <a data-bs-toggle="tooltip" data-bs-title="View details" data-bs-placement="top" class="btn btn-info btn-sm" href="/viewinvoicepage/<%= element.salesinvoiceID %>">

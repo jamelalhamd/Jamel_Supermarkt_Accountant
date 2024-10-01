@@ -1,4 +1,4 @@
-const { db,getPromotionData ,getStoreData,fetchIteminvoice,getUser,getInvoiceById,getInvoiceItemsById,getInvoice,updatequanity} = require('../controller/db');
+const { db,getPromotionData ,getStoreData,fetchIteminvoice,getUser,getInvoiceById,getInvoiceItemsById,getInvoice} = require('../controller/db');
 
 const salesinvocepage=async(req, res) => { 
   const sqlvoices = `SELECT * FROM salesinvoice`;
@@ -414,7 +414,51 @@ const deleteSalesInvoiceItem = async (req, res) => {
 
 
 
+const updatequanity=async(itemid,quantity)=>{
 
+  const sqlOriginalItem = `SELECT * FROM item WHERE ItemID = ?`;
+  const originalItemResult = await new Promise((resolve, reject) => {
+      db.query(sqlOriginalItem, [itemid], (err, results) => {
+          if (err) return reject(err);
+          resolve(results);
+      });
+  });
+
+  if (originalItemResult.length === 0) {
+      console.error("No original item found.");
+      return res.status(500).send("Original item not found.");
+  }
+
+  // Extract current quantity from the original item
+  const originalItem = originalItemResult[0]; // First result
+  const currentQuantity = originalItem.quantity; // Assuming the column name is 'Quantity'
+
+  // Calculate the new quantity after deletion
+  const newQuantity = currentQuantity - parseInt(quantity, 10); // Convert quantity to an integer if necessary
+
+  // Update the item with the new quantity
+  const sqlUpdateItem = `UPDATE item SET quantity = ? WHERE ItemID = ?`;
+  db.query(sqlUpdateItem, [newQuantity, itemid], (err, result) => {
+      if (err) {
+        console.log(object)
+          console.error("Error updating item quantity:", err);
+          const data = {
+            title: "sales/addinvoice",
+            msg: "Error updating item quantity:", err,
+            style: 'danger',
+            items: invoiceItems,
+            salesinvoiceID: invoiceid
+        };
+        return res.render('home', { data });
+      }
+
+      // Render the updated page with success message
+     
+  });
+
+
+
+}
 
 
 const createthevoicecontroller = async (req, res) => {

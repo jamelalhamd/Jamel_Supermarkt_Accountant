@@ -197,9 +197,31 @@ const getpurchesesinvoice= async () => {
 };
 
 
+const getpurchesesinvoicebyid= async (id) => {
+  try {
+    const sqlvoices = `SELECT * FROM purchase WHERE PurchaseID=? `;
+    const invoices = await new Promise((resolve, reject) => {
+      db.query(sqlvoices,[id], (err, results) => {
+        if (err) return reject(err);
+        resolve(results);
+      });
+    });
+
+ 
+    return invoices ;
+    // Alternatively, if you want to return JSON:
+    // return res.json(invoices);
+  } catch (error) {
+    console.error("Error fetching purchases:", error);
+    return null;
+  }
+};
 
 
-const getpurchaseitem = async (id) => {
+
+
+        
+const getpurcheseitem = async (id) => {
   try {
     const sqlQuery = `SELECT * FROM purchaseitem WHERE purchaseID=?`;
     const items = await new Promise((resolve, reject) => {
@@ -270,12 +292,12 @@ const updatequanity=async(itemid,quantity)=>{
 
 
 
-const getpurcheseitem = async (purchaseID) => {
+const getpurcheseitembyid = async (PurchaseItemid ) => {
   try {
-    const sqlFetchItemsBeforeAdd = `SELECT * FROM purchaseitem WHERE purchaseID = ?`;
+    const sqlFetchItemsBeforeAdd = `SELECT * FROM purchaseitem WHERE PurchaseItemid = ?`;
     
     const invoiceItemsBeforeAdd = await new Promise((resolve, reject) => {
-      db.query(sqlFetchItemsBeforeAdd, [purchaseID], (err, results) => {
+      db.query(sqlFetchItemsBeforeAdd, [PurchaseItemid], (err, results) => {
         if (err) return reject(err);
         resolve(results);
       });
@@ -292,6 +314,14 @@ const getpurcheseitem = async (purchaseID) => {
 
 
 
+const runQuery = (sql, params) => {
+  return new Promise((resolve, reject) => {
+    db.query(sql, params, (err, result) => {
+      if (err) return reject(err);
+      resolve(result);
+    });
+  });
+};
 
 
 
@@ -299,10 +329,9 @@ const getpurcheseitem = async (purchaseID) => {
 
 
 
-
-module.exports = {fetchInvoiceItems,getInvoiceById,getInvoiceItemsById,getpurchesesinvoice,getpurchaseitem,
-  db,getPromotionData,getInvoice,
-  getUser,getItemData,updatequanity,getpurcheseitem,
-  getStoreData,
+module.exports = {fetchInvoiceItems,getInvoiceById,getInvoiceItemsById,getpurchesesinvoice,getpurcheseitem,runQuery,
+  db,getPromotionData,getInvoice ,
+  getUser,getItemData,updatequanity,getpurcheseitembyid ,
+  getStoreData, getpurchesesinvoicebyid,
   getSupplierData
 };
