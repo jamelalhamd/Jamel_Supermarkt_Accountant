@@ -1,5 +1,4 @@
-const { db,  getStoreData,  getUser, getpurchesesinvoice,getSupplierData, getpurchesesinvoicebyid,runQuery ,updatequanity,getpurcheseitem ,getpurcheseitembyid} = require('./db');
-                                                                                                                 
+const { db,  getStoreData, getSupplierbyid , getUser, getpurchesesinvoice,getSupplierData, getpurchesesinvoicebyid,runQuery ,updatequanity,getpurcheseitem ,getpurcheseitembyid} = require('./db');                                                                                                               
 const purchaseInvoicePage = async (req, res) =>  { 
  
   const invoices = await getpurchesesinvoice();
@@ -333,12 +332,54 @@ console.log("date: " + date);
   });
 };
 
+   
+
+const viewpurchesinvoice = async (req, res) => { 
+  try {
+    const invoiceid = req.params.id;
+
+    // Logging the invoice ID for debugging
+    console.log("Invoice ID: " + invoiceid);
+  
+    // Fetch the necessary data
+    const invoice = await getpurchesesinvoicebyid(invoiceid);
+    const supplier = await getSupplierData();
+    const store = await getStoreData();
+    const items = await getpurcheseitem(invoiceid);
+    const supplierdata=await getSupplierbyid(invoice[0].supplierID);
+    // Log the retrieved data for debugging
+
+    console.log("supplierdata", JSON.stringify(supplierdata));
+
+    
+    if (!invoice) {
+      return res.status(404).send("Invoice not found");
+    }
+
+    const data = {
+      title: "purchases/viewpurchesinvoice",
+      supplier: supplier || {},  // Provide default empty object if supplier data is not found
+      store: store || {},        // Provide default empty object if store data is not found
+      invoice:invoice[0],
+      items: items || [], 
+      supplierdata:  supplierdata[0] ,   // Provide an empty array if no items found
+      PurchaseID: invoiceid
+    };
+
+    // Render the view with the fetched data
+    return res.render('home', { data });
+  } catch (error) {
+    console.error("Error fetching invoice data:", error);
+    return res.status(500).send("An error occurred while fetching the invoice data.");
+  }
+};
+
 
 
 
 
 module.exports = { purchaseInvoicePage ,updatepurchesitem,
-  addpurchaseinvocepage,addourchesItemController,deletePurchasesitem,createthevoicepurchesecontroller
+  addpurchaseinvocepage,addourchesItemController,deletePurchasesitem,createthevoicepurchesecontroller,viewpurchesinvoice
 
 };
 

@@ -46,6 +46,22 @@ const getSupplierData = () => {
 
 
 
+const getSupplierbyid = (id) => {
+  return new Promise((resolve, reject) => {
+    const supplierQuery = 'SELECT * FROM supplier where SupplierID=?'; // Query to fetch all suppliers
+    db.query(supplierQuery, [id],(err, supplierResults) => {
+      if (err) {
+        console.error("Error fetching supplier data: " + err);
+        return reject("Error fetching supplier data: " + err);
+      }
+      resolve(supplierResults);
+    });
+  });
+};
+
+
+
+
 const getUser = (req, res) => {
   const token = req.cookies.jwt;
 
@@ -329,7 +345,7 @@ const runQuery = (sql, params) => {
 
 
 
-module.exports = {fetchInvoiceItems,getInvoiceById,getInvoiceItemsById,getpurchesesinvoice,getpurcheseitem,runQuery,
+module.exports = {fetchInvoiceItems,getInvoiceById,getInvoiceItemsById,getpurchesesinvoice,getpurcheseitem,runQuery,getSupplierbyid ,
   db,getPromotionData,getInvoice ,
   getUser,getItemData,updatequanity,getpurcheseitembyid ,
   getStoreData, getpurchesesinvoicebyid,

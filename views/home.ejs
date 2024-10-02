@@ -262,35 +262,36 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="/dash" class="nav-link active" aria-current="page">
+        <a href="/items" class="nav-link active" aria-current="page">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"/></svg>
-          Dashboard
+          Items
         </a>
       </li>
       <li style=`display:<%= user.employee_role == 'Store' ? 'none' : 'none' %>;`>
 
-        <a href="/addsalesinvoice" class="nav-link text-white">
+        <a href="/promotions" class="nav-link text-white">
             <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"/></svg>
-            Add User
+            Promotions
         </a>
     </li>
     
       <li>
+        <a href="/dash" class="nav-link text-white">
+     
+          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
+          Employees
+        </a>
+      </li>
+      <li>
+        <a href="/purchesesinvoce" class="nav-link text-white">
+          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"/></svg>
+          Purcheses
+        </a>
+      </li>
+      <li>
         <a href="/salesinvoice" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"/></svg>
-          Orders
-        </a>
-      </li>
-      <li>
-        <a href="view" class="nav-link text-white">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"/></svg>
-          Products
-        </a>
-      </li>
-      <li>
-        <a href="404" class="nav-link text-white">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
-          Customers
+          Sales
         </a>
       </li>
     </ul>
@@ -333,12 +334,15 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link active" aria-current="page" href="storeview">Branches</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/signin">Sign in</a>
                     </li>
-                    <li class="nav-item dropdown">
+                    <li class="nav-item">
+                      <a class="nav-link" href="/supplierdash">Supplier</a>
+                  </li>
+                    <li  style="display: hidden;" class="nav-item dropdown ">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Dropdown
                         </a>

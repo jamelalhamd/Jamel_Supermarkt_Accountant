@@ -17,4 +17,7 @@ router.post("/updatepurchesitem",authcontroler.checkAuthAndFetchUser,purchesesin
 router.post("/createpurchesinvoice",authcontroler.checkAuthAndFetchUser,purchesesinvoice.createthevoicepurchesecontroller );
 
 
+router.get("/viewpurchesinvoice/:id",authcontroler.checkAuthAndFetchUser,purchesesinvoice.viewpurchesinvoice );
+
+
 module.exports = router;
