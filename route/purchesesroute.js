@@ -18,6 +18,18 @@ router.post("/createpurchesinvoice",authcontroler.checkAuthAndFetchUser,purchese
 
 
 router.get("/viewpurchesinvoice/:id",authcontroler.checkAuthAndFetchUser,purchesesinvoice.viewpurchesinvoice );
+router.get("/deletepurchesinvoice/:id",authcontroler.checkAuthAndFetchUser,purchesesinvoice.deletepurchesinvoice );
+router.get("/editpurchesinvoice/:id",authcontroler.checkAuthAndFetchUser,purchesesinvoice.editpurchesinvoice );
+
+
+router.post("/deletepurchesinvoiceedititem",authcontroler.checkAuthAndFetchUser,purchesesinvoice.deletePurchasesitemedit);
+//================================================
+router.post("/updatepurchesedititem",authcontroler.checkAuthAndFetchUser,purchesesinvoice.updatepurchesitemedit );
+
+
+router.post("/addPourchesItemforeditController",authcontroler.checkAuthAndFetchUser,purchesesinvoice.addPourchesItemforeditController);
 
 
 module.exports = router;
+
+//addPourchesItemforeditController

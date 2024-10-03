@@ -1,75 +1,76 @@
 <div class="container mt-5">
     <!-- Invoice Header -->
-    <div class="invoice-header p-4 rounded shadow-sm  mb-4" style="max-width: 900px; margin: 0 auto;">
-      <h2 class="text-center mb-4">Invoice Details</h2>
-  
-      <!-- Invoice and Employee Information -->
-      <div class="row">
-        <div class="col">
-          <h4>Invoice ID: <strong><%= data.PurchaseID %></strong></h4>
+    <div class="invoice-header p-4 rounded shadow-sm mb-4" style="max-width: 900px; margin: 0 auto;">
+        <h2 class="text-center mb-4">Invoice Details</h2>
+    
+        <!-- Invoice and Employee Information -->
+        <div class="row">
+          <div class="col">
+            <h4>Invoice ID: <strong><%= data.PurchaseID %></strong></h4>
+          </div>
+          <div class="col text-end">
+            <h6>Date: 
+              <strong><%= data.invoice.PurchaseDate 
+                ? new Date(data.invoice.PurchaseDate).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.') 
+                : 'N/A' %></strong>
+            </h6>
+          </div>
         </div>
-        <div class="col text-end">
-          <h6>Date: 
-            <strong><%= data.invoice.PurchaseDate 
-              ? new Date(data.invoice.PurchaseDate).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.') 
-              : 'N/A' %></strong>
-          </h6>
+    
+        <!-- Employee Details -->
+        <div class="row mb-3">
+          <div class="col">
+            <h5>Employee: <strong><%= user.employee_name %> <%= user.employee_lastname %></strong></h5>
+            <h5>Employee ID: <strong><%= user.employee_id %></strong></h5>
+          </div>
         </div>
-      </div>
-  
-      <!-- Employee Details -->
-      <div class="row mb-3">
-        <div class="col">
-          <h5>Employee: <strong><%= user.employee_name %> <%= user.employee_lastname %></strong></h5>
-          <h5>Employee ID: <strong><%= user.employee_id %></strong></h5>
-        </div>
-      </div>
-  
-      <!-- Supplier Information -->
-      <div class="row">
-        <div class="col">
-          <h5>Supplier No: <strong><%= data.supplierdata.SupplierID %></strong></h5>
-          <h5>Supplier Email: <strong><%= data.supplierdata.email %></strong></h5>
-        </div>
-       
-        <div class="col text-end">
-          <h5>Supplier Name: <strong><%= data.supplierdata.SupplierName %></strong></h5>
-        </div>
-     
-      </div>
-  
-      <!-- Invoice Summary -->
-      <div class="row mt-4">
-        <div class="col">
-          <h5>Total Price: <strong>$<%= data.invoice.Price %></strong></h5>
-        </div>
-        <div class="col text-end">
-          <h5>Number of Items: <strong><%= (data.items && data.items.length > 0) ? data.items.length : 0 %></strong></h5>
-        </div>
-     
-      </div>
-      <div class="col text-end">
-        <h6>Supplier Address: <%=  data.supplierdata.address %>
-         
-        </h6>
-      </div>
-  
-      <!-- Edited Information (if applicable) -->
-      <% if (data.date_edit || data.edited_by) { %>
-      <div class="row mt-3">
-        <div class="col">
-          <% if (data.date_edit) { %>
-            <h6>Edited Date: <strong><%= new Date(data.invoice.date_edit).toLocaleString() %></strong></h6>
+    
+        <!-- Supplier Information -->
+        <div class="row">
+          <% if (data.supplierdata) { %>
+            <div class="col">
+              <h5>Supplier No: <strong><%= data.supplierdata.SupplierID %></strong></h5>
+              <h5>Supplier Email: <strong><%= data.supplierdata.email %></strong></h5>
+            </div>
+            <div class="col text-end">
+              <h5>Supplier Name: <strong><%= data.supplierdata.SupplierName %></strong></h5>
+            </div>
+            <div class="col text-end">
+              <h6>Supplier Address: <strong><%= data.supplierdata.address %></strong></h6>
+            </div>
+          <% } else { %>
+            <div class="col">
+              <h5>Supplier details not available</h5>
+            </div>
           <% } %>
         </div>
-        <div class="col text-end">
-          <% if (data.edited_by) { %>
-            <h6>Edited by: <strong><%= data.invoice.edited_by %></strong></h6>
-          <% } %>
+    
+        <!-- Invoice Summary -->
+        <div class="row mt-4">
+          <div class="col">
+            <h5>Total Price: <strong>$<%= data.invoice.Price %></strong></h5>
+          </div>
+          <div class="col text-end">
+            <h5>Number of Items: <strong><%= (data.items && data.items.length > 0) ? data.items.length : 0 %></strong></h5>
+          </div>
         </div>
+    
+        <!-- Edited Information (if applicable) -->
+        <% if (data.date_edit || data.edited_by) { %>
+          <div class="row mt-3">
+            <div class="col">
+              <% if (data.date_edit) { %>
+                <h6>Edited Date: <strong><%= new Date(data.invoice.date_edit).toLocaleString() %></strong></h6>
+              <% } %>
+            </div>
+            <div class="col text-end">
+              <% if (data.edited_by) { %>
+                <h6>Edited by: <strong><%= data.invoice.edited_by %></strong></h6>
+              <% } %>
+            </div>
+          </div>
+        <% } %>
       </div>
-      <% } %>
-    </div>
   
     <!-- List of Items -->
     <div class="invoice-items mt-5">
@@ -86,6 +87,7 @@
       <% if (!data.items || data.items.length === 0) { %>
         <div class="text-center my-5">
           <p>No items found for this invoice.</p>
+          <a href="/purchesesinvoce" class="btn btn-success">Back</a>
           <% if (!data.showadd) { %>
     
           

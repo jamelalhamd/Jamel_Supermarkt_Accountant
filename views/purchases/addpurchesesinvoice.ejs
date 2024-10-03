@@ -20,7 +20,9 @@
       </div>
       <div class="col text-end">
         <h6>
-          <%= data.invoice.PurchaseDate ? `Date: ${data.invoice.PurchaseDate}` : '' %>
+          <%= data.invoice.PurchaseDate 
+          ? `Date: ${new Date(data.invoice.PurchaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '.')}` 
+          : '' %>
         </h6>
       </div>
     </div>
@@ -28,7 +30,7 @@
     <!-- Total Price and Number of Items -->
     <div class="row mb-3">
       <div class="col">
-        <h5>Total Price: $<%= data.invoice.Price %></h5>
+        <h5>Total Price: $<%= data.totalPrice %></h5>
       </div>
       <div class="col text-end">
         <h5>Number of Items: <%= (data.items && data.items.length > 0)? data.items.length :0 %></h5>

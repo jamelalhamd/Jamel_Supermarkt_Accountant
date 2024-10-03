@@ -73,7 +73,194 @@ const addpurchaseinvocepage=async(req, res) => {
 
 
 
- const addourchesItemController = async (req, res) => {
+ const addPourchesItemforeditController = async (req, res) => {
+
+  const { purchaseID, search, quantity,StoreID,purcheseprice,employee_id } = req.body;
+ 
+  console.log(req.body);
+  const searchTerm = search ? search.trim() : '';
+  const invoices = await getpurchesesinvoice();
+  const supplier=await getSupplierData();
+ const store=await getStoreData();
+ const invoice=await getpurchesesinvoicebyid(purchaseID);
+ const supplierdata=await getSupplierbyid(invoice[0].supplierID);
+
+ const invoiceItemsbeforadd = await getpurcheseitem(purchaseID);
+ let totalprice  = invoiceItemsbeforadd.reduce((sum, item) => sum + item.totalprice, 0);
+  try {
+    // Extract form data
+  
+//=====================
+
+                                   
+
+
+console.log("0");
+    // Validate required fields
+    if (!purchaseID|| !searchTerm || !quantity || isNaN(quantity) || quantity <= 0) {
+      const data = {
+        title: "purchases/editrpurchesinvoice",
+      msg:"please fill all required fields",
+        style: 'warning',
+        supplier,totalprice ,
+        store,
+        invoice:invoice[0],
+        items:invoiceItemsbeforadd,
+        supplierdata: supplierdata[0],
+        PurchaseID : purchaseID  // Correctly access the insertId from the result
+      };
+  
+      return res.render('home', { data });
+    }
+    
+    const sql = `
+      SELECT * FROM item 
+      WHERE Barcode = ? AND StoreID =?
+    `;
+    console.log(sql);
+    // Fetch item by barcode
+    const itemResults = await new Promise((resolve, reject) => {
+      db.query(sql, [searchTerm,StoreID], (err, results) => {
+        if (err) return reject(err);
+        resolve(results);
+      });
+    });
+
+    // Handle case where no item was found
+    if (itemResults.length === 0) {
+     
+      const data = {
+        title: "purchases/editrpurchesinvoice",
+      msg:"There is no item with this code in this Store",
+        style: 'warning',
+        supplier, totalprice,
+        store,
+        invoice:invoice[0],
+        items:invoiceItemsbeforadd,
+        supplierdata: supplierdata[0],
+        PurchaseID : purchaseID  // Correctly access the insertId from the result
+      };
+  
+      return res.render('home', { data });
+    }
+
+    // Extract the first found item
+    const foundItem = itemResults[0];
+    const parsedQuantity = parseInt(quantity, 10);
+  
+    const total = parsedQuantity * purcheseprice;
+    const itemid = foundItem.ItemID;
+
+    console.log("itemid"+itemid);
+    console.log("total"+total);
+   
+
+  if (foundItem.quantity>=quantity &&quantity>0 ) {
+      const sqlAdd = `
+        INSERT INTO purchaseitem (itemID, purchaseID, Quantity, Price, item_name,baracode,totalprice)
+        VALUES (?, ?, ?, ?, ?,?,?)
+      `;
+     console.log(sqlAdd );
+      await new Promise((resolve, reject) => {
+        db.query(sqlAdd, [itemid, purchaseID, quantity, purcheseprice,foundItem.ItemName,foundItem.Barcode,total], (err, result) => {
+          if (err) return reject(err);
+          resolve(result);
+        });
+      });
+
+      console.log("updating quanity price");
+    await updatequanity(itemid,-quantity);
+
+    console.log("updating quanity price after");
+    const invoiceItems=await  getpurcheseitem(purchaseID);
+                     
+  //================================================================
+  let totalPrice = 0;
+  console.log("totalPrice"+totalPrice);
+  invoiceItems.forEach(item => {
+    totalPrice += item.totalprice; // Assuming 'total' is the field in the database for each item’s total price
+  });
+  
+  console.log("Final Total Price:", totalPrice);
+
+
+  //===================================================
+      // Success: Render the updated list of items with a success message
+   
+     
+      const invoiceItem = await getpurcheseitem(purchaseID);
+      let totalprice  = invoiceItem.reduce((sum, item) => sum + item.totalprice, 0);
+      const data = {
+        title: "purchases/editrpurchesinvoice",
+      msg:"Item has ben successfully added",
+        style: 'success',
+        supplier,
+        totalprice ,
+        store,
+        invoice:invoice[0],
+        items:invoiceItem,
+        supplierdata: supplierdata[0],
+        PurchaseID : purchaseID  // Correctly access the insertId from the result
+      };
+  
+      return res.render('home', { data });
+
+
+
+  }
+  else{
+
+
+  
+
+
+
+    const data = {
+      title: "purchases/editrpurchesinvoice",
+   msg :"there is error  ",
+      style: 'danger',
+      supplier,
+      store,totalprice,
+      invoice:invoice[0],
+      items,
+      supplierdata: supplierdata[0],
+      PurchaseID : invoiceid  // Correctly access the insertId from the result
+    };
+
+    return res.render('home', { data });
+
+  }
+//================================================================
+
+
+
+//================================================================
+    // Fetch updated items for the sales invoice, join with item table to get more info
+  
+
+  } catch (err) {
+    const invoiceItems = await  getpurcheseitem  (purchaseID);
+
+
+
+    const data = {
+      title: "purchases/addpurchesesinvoice",
+      msg: "there is some error +err",
+      style: 'warring',
+      supplier,
+      store,
+      showadd:true,
+      items:invoiceItems,
+      invoice:invoices,
+      PurchaseID:purchaseID,
+    };
+
+    return res.render('home', { data });
+  }
+};
+
+
+const addourchesItemController = async (req, res) => {
 
   const { purchaseID, search, quantity,StoreID,purcheseprice,employee_id } = req.body;
   console.log(req.body);
@@ -181,6 +368,7 @@ console.log("0");
   //===================================================
       // Success: Render the updated list of items with a success message
    
+     
    
 
       const data = {
@@ -255,9 +443,13 @@ console.log("0");
 
 
 
+
 const deletePurchasesitem=async(req, res) => {deleteitem(req, res, title = 'purchases/addpurchesesinvoice');}
 const  updatepurchesitem =async(req, res) => {updateitemainvoice (req, res, title = 'purchases/addpurchesesinvoice');}
 
+
+const deletePurchasesitemedit=async(req, res) => {deleteitemedit(req, res, title = 'purchases/editrpurchesinvoice');}
+const  updatepurchesitemedit =async(req, res) => {updateitemainvoiceedit(req, res, title = 'purchases/editrpurchesinvoice');}
 
 
 
@@ -375,11 +567,80 @@ const viewpurchesinvoice = async (req, res) => {
 };
 
 
+const deletepurchesinvoice = async (req, res) => {
+  try {
+    const invoiceid = req.params.id;
+
+    // Delete all items associated with this invoice
+    const sqldeletitems = "DELETE FROM purchaseitem WHERE purchaseID = ?";
+    const deleteitems = await runQuery(sqldeletitems, invoiceid);
+
+    // Delete the invoice itself
+    const sqldeletinvoices = "DELETE FROM purchase WHERE purchaseID = ?";
+    const deletinvoice = await runQuery(sqldeletinvoices, invoiceid);
+    const invoice =   await getpurchesesinvoice();
+    // Check if both deletion queries were successful
+    if (deleteitems && deletinvoice) {
+      // Redirect to the invoice list or home page with a success message
+      const data = {
+        title: "purchases/purchesesinvoice",
+        msg: "Invoice with number " + invoiceid + " has been successfully deleted",
+        style: 'danger',
+        items: invoice,
+      };
+      return res.render('home', { data });
+    } else {
+      // In case deletion fails
+      return res.status(500).send("Failed to delete the invoice or associated items.");
+    }
+  } catch (error) {
+    console.error("Error deleting invoice:", error);
+    return res.status(500).send("An error occurred while deleting the invoice.");
+  }
+};
+
+
+const editpurchesinvoice=async(req, res) => { 
+  const invoiceid = req.params.id;
+  const invoice = await getpurchesesinvoicebyid(invoiceid);
+  const supplier = await getSupplierData();
+  const store = await getStoreData();
+  const items = await getpurcheseitem(invoiceid);
+  const supplierdata=await getSupplierbyid(invoice[0].supplierID);
+  
+
+  const employee_id = res.locals.user.employee_id; // Employee ID from session
+console.log("supplierdata",JSON.stringify(supplierdata));
+
+  
 
 
 
-module.exports = { purchaseInvoicePage ,updatepurchesitem,
-  addpurchaseinvocepage,addourchesItemController,deletePurchasesitem,createthevoicepurchesecontroller,viewpurchesinvoice
+
+     
+
+    const data = {
+      title: "purchases/editrpurchesinvoice",
+  
+      style: 'success',
+      supplier,
+      store,
+      invoice:invoice[0],
+      items,
+      supplierdata: supplierdata[0],
+      PurchaseID : invoiceid  // Correctly access the insertId from the result
+    };
+
+    return res.render('home', { data });
+ 
+ }
+
+
+
+
+
+module.exports = { purchaseInvoicePage ,updatepurchesitem,editpurchesinvoice,addPourchesItemforeditController ,deletePurchasesitemedit,updatepurchesitemedit,
+  addpurchaseinvocepage,addourchesItemController,deletePurchasesitem,createthevoicepurchesecontroller,viewpurchesinvoice,deletepurchesinvoice
 
 };
 
@@ -511,15 +772,19 @@ const additem = async (req, res, title = "sales/salesinvoice") => {
 
 
 
+
+
 const deleteitem = async (req, res, title = 'purchases/addpurchesesinvoice') => {
   const { invoiceid, PurchaseItemid, itemid, quantity } = req.body;
   const employee_id = res.locals.user.employee_id;
   console.log(req.body);
 
   try {
+
+    
     const invoice = await getpurchesesinvoicebyid(invoiceid);
     let items = await getpurcheseitem(invoiceid); 
-
+    const supplierdata=await getSupplierbyid(invoice[0].supplierID);
     const supplier = await getSupplierData();
     const store = await getStoreData();
 
@@ -540,7 +805,8 @@ const deleteitem = async (req, res, title = 'purchases/addpurchesesinvoice') => 
       if (result.affectedRows === 0) {
 
         
-        console.log("No item found to delete.");
+     
+
         const data = {
           title,
           msg: "No item found to delete.",
@@ -548,10 +814,12 @@ const deleteitem = async (req, res, title = 'purchases/addpurchesesinvoice') => 
           supplier,
           store,
           showadd: true,
-          items, totalPrice ,
-          invoice,
-          PurchaseID: invoiceid,
+          invoice:invoice[0],
+          items:items,
+          supplierdata: supplierdata[0],
+          PurchaseID :invoiceid,  // Correctly access the insertId from the result
         };
+
 
         return res.render('home', { data });
       }
@@ -563,15 +831,7 @@ const deleteitem = async (req, res, title = 'purchases/addpurchesesinvoice') => 
    
 
       // Update the invoice's last edited details
-      const sqlUpdateInvoice = `UPDATE purchase SET edited_by = ?, date_edit = ? WHERE PurchaseID = ?`;
-      const currentDate = new Date();
-      db.query(sqlUpdateInvoice, [employee_id, currentDate, invoiceid], (err, result) => {
-        if (err) {
-          console.error("Error updating purchase invoice:", err);
-          return res.status(500).send("Error updating purchase invoice.");
-        }
-        console.log("Invoice updated successfully:", result);
-      });
+  
 
       // Fetch the updated list of items
       let updatedItems = await getpurcheseitem(invoiceid);
@@ -582,17 +842,19 @@ const deleteitem = async (req, res, title = 'purchases/addpurchesesinvoice') => 
       });
  console.log("totalprice 3:", totalPrice3);
       // Prepare data to render after successful deletion
+  
+
       const data = {
         title,
         msg: `Item ${itemid} has been deleted successfully.`,
-        style: 'success',
+        style: 'danger',
         supplier,
         store,
         showadd: true,
-        items: updatedItems,
-        invoice,
-        totalPrice:totalPrice3 ,
-        PurchaseID: invoiceid,
+        invoice:invoice[0],
+        items:updatedItems,
+        supplierdata: supplierdata[0],
+        PurchaseID :invoiceid,  // Correctly access the insertId from the result
       };
 
       return res.render('home', { data });
@@ -611,37 +873,43 @@ const updateitemainvoice = async (req, res, title = 'purchases/addpurchesesinvoi
   const employee_id = res.locals.user.employee_id;
   console.log(req.body);
   const totalprice = quantity * price ;  
-    console.log("totalPrice"+totalprice  );
+  const invoice = await getpurchesesinvoicebyid(invoiceid);
+  const supplierdata=await getSupplierbyid(invoice[0].supplierID);
+  let items = await  getpurcheseitem(invoiceid);
+  const supplier = await getSupplierData();
+  const store = await getStoreData();
+  const updateItem = await getpurcheseitembyid(PurchaseItemid);
+ 
   try {
   
-    const invoice = await getpurchesesinvoicebyid(invoiceid);
-    console.log("invoic",JSON.stringify(invoice));
-    let items = await  getpurcheseitem(invoiceid);
+    
 
-    const supplier = await getSupplierData();
-    const store = await getStoreData();
-    const updateItem = await getpurcheseitembyid(PurchaseItemid);
   
-
-
-  console.log("updateItemt",JSON.stringify( updateItem));
 
 
     // Check if there are items to update
     if (items.length === 0) {
+
+      totalprice=0;
+
       console.log("items.length === 0");
+ 
+
       const data = {
         title,
+        showadd: true,
         msg: "No items found to update.",
         style: 'warning',
         supplier,
         store,
+        totalprice,
         showadd: true,
-        items,
-        totalPrice: 0,
-        invoice,
-        PurchaseID: invoiceid,
+        invoice:invoice[0],
+        items:items,
+        supplierdata: supplierdata[0],
+        PurchaseID :invoiceid,  // Correctly access the insertId from the result
       };
+
       return res.render('home', { data });
     }
     
@@ -654,19 +922,25 @@ const updateitemainvoice = async (req, res, title = 'purchases/addpurchesesinvoi
     // Check if the update was successful
     if (result.affectedRows === 0) {
       console.log("No item was updated.");
+  
+
       const data = {
         title,
+        showadd: true,
         msg: "Failed to update the item.",
         style: 'warning',
         supplier,
-        store,
+        store,  totalprice,
         showadd: true,
-        items,
-        totalPrice: 0,
-        invoice,
-        PurchaseID: invoiceid,
+        invoice:invoice[0],
+        items:items,
+        supplierdata: supplierdata[0],
+        PurchaseID :invoiceid,  // Correctly access the insertId from the result
       };
+
       return res.render('home', { data });
+
+     
     }
 
     // Update the purchase invoice with the employee who edited and the current date
@@ -685,21 +959,30 @@ const updateitemainvoice = async (req, res, title = 'purchases/addpurchesesinvoi
     let totalPrice = updatedItems.reduce((sum, item) => sum + item.totalprice, 0);
 
     // Render the response with success message
+    const updatedinvoice = await getpurchesesinvoicebyid(invoiceid);
+
     const data = {
       title,
+      showadd: true,
       msg: `Item ${itemid} has been updated successfully.`,
       style: 'success',
       supplier,
       store,
-      showadd: true,
-      items: updatedItems,
       totalPrice,
-      invoice,
-      PurchaseID: invoiceid,
+      showadd: true,
+      invoice:updatedinvoice[0],
+      items: updatedItems,
+      supplierdata: supplierdata[0],
+      PurchaseID :invoiceid,  // Correctly access the insertId from the result
     };
+    console.log("data: " + JSON.stringify(data));
     return res.render('home', { data });
 
+
+
+
   } catch (err) {
+   const  invoice=await getpurchesesinvoicebyid(invoiceid)
     console.error("An error occurred:", err);
     const data = {
       title,
@@ -709,8 +992,8 @@ const updateitemainvoice = async (req, res, title = 'purchases/addpurchesesinvoi
       store: await getStoreData(),
       showadd: true,
       items: await  getpurcheseitem(invoiceid),
-      totalPrice: 0,
-      invoice: await getpurchesesinvoicebyid(invoiceid),
+   
+      invoice:invoice[0] ,
       PurchaseID: invoiceid,
     };
     return res.render('home', { data });
@@ -719,6 +1002,218 @@ const updateitemainvoice = async (req, res, title = 'purchases/addpurchesesinvoi
 
 // Utility function for executing queries with promises
 
+const deleteitemedit = async (req, res, title = 'purchases/editrpurchesinvoice') => {
+  const { invoiceid, PurchaseItemid, itemid, quantity } = req.body;
+  const employee_id = res.locals.user.employee_id;
+  console.log(req.body);
+
+  try {
+
+    
+    const invoice = await getpurchesesinvoicebyid(invoiceid);
+    let items = await getpurcheseitem(invoiceid); 
+    const supplierdata=await getSupplierbyid(invoice[0].supplierID);
+    const supplier = await getSupplierData();
+    const store = await getStoreData();
+
+    // SQL query to delete the purchase invoice item
+    const sqlDeleteItem = `DELETE FROM purchaseitem WHERE PurchaseItemid = ?`;
+
+    db.query(sqlDeleteItem, [PurchaseItemid], async (err, result) => {
+      if (err) {
+        console.error("Error deleting purchase invoice item:", err);
+        return res.status(500).send("Error deleting purchase invoice item.");
+      }
+
+    
+      if (result.affectedRows === 0) {
+
+        
+     
+        let totalprice = items.reduce((sum, item) => sum + item.totalprice, 0);
+
+        const data = {
+          title,
+          msg: "No item found to delete.",
+          style: 'warning',
+          supplier,
+          store,totalprice ,
+          showadd: true,
+          invoice:invoice[0],
+          items:items,
+          supplierdata: supplierdata[0],
+          PurchaseID :invoiceid,  // Correctly access the insertId from the result
+        };
+
+
+        return res.render('home', { data });
+      }
+
+      // Update quantity and fetch updated items list
+      await updatequanity(itemid, quantity);
+
+      // Recalculate total price
+   
+
+   
+
+      // Fetch the updated list of items
+      let updatedItems = await getpurcheseitem(invoiceid);
+      let totalPrice2 =  updatedItems.reduce((sum, item) => sum + item.totalprice, 0);
+      // Prepare data to render after successful deletion
+  
+
+      const data = {
+        title,
+        msg: `Item ${itemid} has been deleted successfully.`,
+        style: 'danger',
+        supplier,
+        store,
+        totalprice : totalPrice2 ,
+        showadd: true,
+        invoice:invoice[0],
+        items:updatedItems,
+        supplierdata: supplierdata[0],
+        PurchaseID :invoiceid,  // Correctly access the insertId from the result
+      };
+
+      return res.render('home', { data });
+    });
+  } catch (error) {
+    console.error("Error in deleteitem function:", error);
+    return res.status(500).send("An error occurred while processing your request.");
+  }
+};
+
+const updateitemainvoiceedit = async (req, res, title = 'purchases/editrpurchesinvoice') => {
+
+
+
+  const { invoiceid, PurchaseItemid, itemid, quantity, price } = req.body; // Ensure 'price' is passed in the request
+  const employee_id = res.locals.user.employee_id;
+  console.log(req.body);
+  const theprice = quantity * price ;  
+  const invoice = await getpurchesesinvoicebyid(invoiceid);
+  const supplierdata=await getSupplierbyid(invoice[0].supplierID);
+  let items = await  getpurcheseitem(invoiceid);
+ 
+  try {
+  
+  
+
+    const supplier = await getSupplierData();
+    const store = await getStoreData();
+    const updateItem = await getpurcheseitembyid(PurchaseItemid);
+  
+
+
+  console.log("updateItemt",JSON.stringify( updateItem));
+
+
+    // Check if there are items to update
+    if (items.length === 0) {
+      console.log("items.length === 0");
+      let totalprice = items.reduce((sum, item) => sum + item.totalprice, 0);
+
+      const data = {
+        title,
+        showadd: true,
+        msg: "No items found to update.",
+        style: 'warning',
+        supplier,
+        store, totalprice ,
+        showadd: true,
+        invoice:invoice[0],
+        items:items,
+        supplierdata: supplierdata[0],
+        PurchaseID :invoiceid,  // Correctly access the insertId from the result
+      };
+
+      return res.render('home', { data });
+    }
+    
+   
+
+ 
+    const sqlUpdate = `UPDATE purchaseitem SET Quantity = ?, totalprice = ? WHERE PurchaseItemid = ?`;
+    const result = await runQuery(sqlUpdate, [quantity, theprice, PurchaseItemid]);
+
+    // Check if the update was successful
+    if (result.affectedRows === 0) {
+      console.log("No item was updated.");
+      let totalprice = items.reduce((sum, item) => sum + item.totalprice, 0);
+
+      const data = {
+        title,
+        showadd: true,
+        msg: "Failed to update the item.",
+        style: 'warning',
+        supplier,
+        store, totalprice ,
+        showadd: true,
+        invoice:invoice[0],
+        items:items,
+        supplierdata: supplierdata[0],
+        PurchaseID :invoiceid,  // Correctly access the insertId from the result
+      };
+
+      return res.render('home', { data });
+
+     
+    }
+
+    // Update the purchase invoice with the employee who edited and the current date
+    const sqlUpdateInvoice = `UPDATE purchase SET edited_by = ?, date_edit = ? WHERE PurchaseID = ?`;
+    const currentDate = new Date();
+    await runQuery(sqlUpdateInvoice, [employee_id, currentDate, invoiceid]);
+
+    const alteQuantity = updateItem[0].Quantity;
+    const deltaquanity = quantity - alteQuantity; // Adjust how the quantity is calculated if necessary
+    await updatequanity(itemid, -deltaquanity);
+
+    // Re-fetch updated items after the update
+    let updatedItems = await  getpurcheseitem(invoiceid);
+
+    // Recalculate the total price for all items in the invoice
+    let totalprice  = updatedItems.reduce((sum, item) => sum + item.totalprice, 0);
+
+    // Render the response with success message
+  
+
+    const data = {
+      title,
+      showadd: true,
+      msg: `Item ${itemid} has been updated successfully.`,
+      style: 'success',
+      supplier,
+      store,
+      totalprice ,
+      showadd: true,
+      invoice:invoice[0],
+      items: updatedItems,
+      supplierdata: supplierdata[0],
+      PurchaseID :invoiceid,  // Correctly access the insertId from the result
+    };
+    return res.render('home', { data });
+
+  } catch (err) {
+   const  invoice=await getpurchesesinvoicebyid(invoiceid)
+    console.error("An error occurred:", err);
+    const data = {
+      title,
+      msg: "An error occurred while updating the item.",
+      style: 'danger',
+      supplier: await getSupplierData(),
+      store: await getStoreData(),
+      showadd: true,
+      items: await  getpurcheseitem(invoiceid),
+      totalprice ,
+      invoice:invoice[0] ,
+      PurchaseID: invoiceid,
+    };
+    return res.render('home', { data });
+  }
+};
 
 
 

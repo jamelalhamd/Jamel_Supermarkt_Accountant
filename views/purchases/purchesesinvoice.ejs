@@ -1,29 +1,34 @@
-<div class="container">
-  <div class="btn-container d-flex justify-content-end mb-4 mt-xl-5">
+<div class="container mt-5">
+  <!-- Add New Invoice Button -->
+  <div class="d-flex justify-content-end mb-4">
     <a href="/addpurchaseinvoce" class="btn btn-success">
       <i class="bi bi-plus-circle"></i> Add New Invoice
     </a>
   </div>
 
-  <h3>List of  Purcheses Invoices</h3>
-  <% if (data.msg &&data.style) { %>
+  <!-- Invoice List Title -->
+  <h3 class="mb-4">List of Purchases Invoices</h3>
+
+  <!-- Notification Messages -->
+  <% if (data.msg && data.style) { %>
     <div class="alert alert-<%= data.style %> mt-4">
       <%= data.msg %>
     </div>
   <% } %>
 
-  <div class="table-container" style="width: 100%; margin: 0 auto;">
-    <table class="text-center mx-auto table mt-5 table-striped table-bordered">
-      <thead>
+  <!-- Invoices Table -->
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered text-center">
+      <thead class="table-dark">
         <tr>
           <th scope="col">#</th>
           <th scope="col">ID</th>
-          <th scope="col">Name Supplier</th>
+          <th scope="col">Supplier Name</th>
           <th scope="col">Date</th>
           <th scope="col">Price</th>
           <th scope="col">Employee</th>
-          <th scope="col">Edited by</th>
-          <th scope="col">Date of Edit</th>
+          <th scope="col">Edited By</th>
+          <th scope="col">Edit Date</th>
           <th scope="col">Action</th>
         </tr>
       </thead>
@@ -36,37 +41,54 @@
               <td><%= element.supplierID %></td>
               <td>
                 <%= new Date(element.PurchaseDate).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.') %>
-               
-                
               </td>
-              <td><%= element.Price %></td>
+              <td><%= element.Price ? parseFloat(element.Price).toFixed(2) + " $" : "" %></td>
               <td><%= element.employee_id %></td>
-              <td><%= element.edited_by %></td>
+              <td><%= element.edited_by || '-' %></td>
               <td>
-                <%=  element.date_edit?    new Date(element.date_edit).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.'): " " %>
-       
-                
+                <%= element.date_edit 
+                  ? new Date(element.date_edit).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.') 
+                  : '-' %>
               </td>
               <td>
-                <a data-bs-toggle="tooltip" data-bs-title="View details" data-bs-placement="top" class="btn btn-info btn-sm" href="/viewpurchesinvoice/<%= element.PurchaseID %>">
+                <!-- Action Buttons (View, Edit, Delete) -->
+                <a href="/viewpurchesinvoice/<%= element.PurchaseID %>" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="View details">
                   <i class="bi bi-eye"></i>
                 </a>
-                <a data-bs-toggle="tooltip" data-bs-title="Edit item" data-bs-placement="top" class="btn btn-primary btn-sm" href="/editpurchesinvoice/<%= element.PurchaseID %>">
+                <a href="/editpurchesinvoice/<%= element.PurchaseID %>" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-title="Edit item">
                   <i class="bi bi-pencil"></i>
                 </a>
-                <a data-bs-toggle="tooltip" data-bs-title="Delete item" data-bs-placement="top" class="btn btn-danger btn-sm" href="/deletepurchesinvoice/<%= element.PurchaseID %>">
+                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<%= index %>" data-bs-title="Delete item">
                   <i class="bi bi-trash"></i>
-                </a>
+                </button>
               </td>
             </tr>
+
+            <!-- Delete Modal -->
+            <div class="modal fade" id="deleteModal<%= index %>" tabindex="-1" aria-labelledby="deleteModalLabel<%= index %>" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel<%= index %>">Delete Invoice No: <%= element.PurchaseID %></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Are you sure you want to delete this invoice No:<%= element.PurchaseID %>?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="/deletepurchesinvoice/<%= element.PurchaseID %>" class="btn btn-danger">Delete</a>
+                  </div>
+                </div>
+              </div>
+            </div>
           <% }); %>
         <% } else { %>
           <tr>
-            <td colspan="8">No invoices found.</td>
+            <td colspan="9">No invoices found.</td>
           </tr>
         <% } %>
       </tbody>
-      
     </table>
   </div>
 </div>
