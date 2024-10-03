@@ -28,8 +28,8 @@ router.post("/updatepurchesedititem",authcontroler.checkAuthAndFetchUser,purches
 
 
 router.post("/addPourchesItemforeditController",authcontroler.checkAuthAndFetchUser,purchesesinvoice.addPourchesItemforeditController);
-
+router.post("/updatethesupllierpurcheses/:id",authcontroler.checkAuthAndFetchUser,purchesesinvoice.updateSupplierPurchases);
 
 module.exports = router;
 
-//addPourchesItemforeditController
+//updatethesupllier

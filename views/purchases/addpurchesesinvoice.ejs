@@ -51,6 +51,7 @@
       </div>
     </div>
   </div>
+   
 
   <!-- Add Item to Invoice Section -->
   <div class="search-section p-4 rounded shadow-sm" style="max-width: 600px; margin: 20px auto;">
@@ -197,12 +198,6 @@
         </tbody>
       </table>
 
-      <!-- Action Buttons -->
-      <div class="text-center mt-4">
-        <a href="/salesinvoice" id="back-btn" class="btn btn-success">Back</a>
-        <a href="/pdfsalesinvoice/<%= data.PurchaseID %>" id="save-pdf" class="btn btn-primary">Save as PDF</a>
-        <button class="btn btn-primary mx-4" onclick="window.print()">Print</button>
-      </div>
     <% } else { %>
       <p class="text-center mt-5">No items found for this invoice.</p>
 
@@ -215,6 +210,12 @@
     <% } %>
    
 
+   
+    <div class="text-center mt-4">
+      <a href="/purchesesinvoce" id="back-btn" class="btn btn-success">Back</a>
+      <a href="/pdfsalesinvoice/<%= data.PurchaseID %>" id="save-pdf" class="btn btn-primary">Save as PDF</a>
+      <button class="btn btn-primary mx-4" onclick="window.print()">Print</button>
+    </div>
    
 
     <!-- Create Invoice Form -->
@@ -269,6 +270,8 @@
     </div>
   </div>
 </div>
+
+
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">

@@ -38,13 +38,50 @@
             <tr>
               <th scope="row"><%= index + 1 %></th>
               <td><%= element.PurchaseID %></td>
-              <td><%= element.supplierID %></td>
+
+
+
+             <td>
+    <% 
+        const matchingSupplier = data.supplier.find(supplier => supplier.SupplierID === element.supplierID); 
+        if (matchingSupplier) { 
+    %>
+        <%= matchingSupplier.SupplierName %>
+    <% } else { %>
+        "-"
+    <% } %>
+</td>
+
+
               <td>
                 <%= new Date(element.PurchaseDate).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.') %>
               </td>
               <td><%= element.Price ? parseFloat(element.Price).toFixed(2) + " $" : "" %></td>
-              <td><%= element.employee_id %></td>
-              <td><%= element.edited_by || '-' %></td>
+
+                  
+              <td>
+              <% 
+        const matchingEmployee = data.user.find(user => user.employee_id === element.employee_id); 
+        if (matchingEmployee) { 
+    %>
+        <%= matchingEmployee.employee_id %> / <%= matchingEmployee.employee_name %>  <%= matchingEmployee.	employee_lastname %>  
+    <% } else { %>
+        <%= '-' %> <!-- Optional: Display a placeholder if no employee is found -->
+    <% } %>
+</td>
+
+
+
+              <td>           <% 
+        const matchingediter = data.user.find(user => user.employee_id === element.edited_by); 
+        if (matchingediter) { 
+    %>
+        <%= matchingediter.employee_id %> / <%= matchingediter.employee_name %>  <%= matchingediter.	employee_lastname %>  
+    <% } else { %>
+        <%= '-' %> <!-- Optional: Display a placeholder if no employee is found -->
+    <% } %></td>
+
+
               <td>
                 <%= element.date_edit 
                   ? new Date(element.date_edit).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.') 

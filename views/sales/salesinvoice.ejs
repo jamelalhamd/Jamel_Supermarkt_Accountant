@@ -39,8 +39,27 @@
                 <%= element.salesinvoiceDate.toISOString().split('T')[1].slice(0, 5) %>
               </td>
               <td><%= element.totalprice %></td>
-              <td><%= element.employee_id %></td>
-              <td><%= element.edited_by %></td>
+              <td>           <% 
+                const matchingedemployee = data.user.find(user => user.employee_id === element.employee_id); 
+                if (matchingedemployee) { 
+            %>
+                <%= matchingedemployee.employee_id %> / <%= matchingedemployee.employee_name %>  <%= matchingedemployee.employee_lastname %>  
+            <% } else { %>
+                <%= '-' %> <!-- Optional: Display a placeholder if no employee is found -->
+            <% } %></td>
+        
+        
+            <td>           <% 
+        const matchingediter = data.user.find(user => user.employee_id === element.edited_by); 
+        if (matchingediter) { 
+    %>
+        <%= matchingediter.employee_id %> / <%= matchingediter.employee_name %>  <%= matchingediter.	employee_lastname %>  
+    <% } else { %>
+        <%= '-' %> <!-- Optional: Display a placeholder if no employee is found -->
+    <% } %></td>
+
+
+              
               <td>
                 <%= element.date_edit ? element.date_edit.toISOString().split('T')[0] : "" %> 
                 <%= element.date_edit ? element.date_edit.toISOString().split('T')[1].slice(0, 5) : "" %>

@@ -1,12 +1,15 @@
-const { db,  getStoreData, getSupplierbyid , getUser, getpurchesesinvoice,getSupplierData, getpurchesesinvoicebyid,runQuery ,updatequanity,getpurcheseitem ,getpurcheseitembyid} = require('./db');                                                                                                               
+const { db,  getStoreData, getSupplierbyid , getUser,getEmployees, getpurchesesinvoice,getSupplierData, getpurchesesinvoicebyid,runQuery ,updatequanity,getpurcheseitem ,getpurcheseitembyid} = require('./db');                                                                                                               
 const purchaseInvoicePage = async (req, res) =>  { 
  
   const invoices = await getpurchesesinvoice();
-
-        console.log("invoices", JSON.stringify(invoices));
+  const supplier=await getSupplierData();
+const user = await getEmployees();
+ console.log("user: " + JSON.stringify(user));
+      
         const data = {
           title: "purchases/purchesesinvoice",
-   
+          supplier,
+    user,
           style: 'danger',
           items: invoices,
         
@@ -607,10 +610,10 @@ const editpurchesinvoice=async(req, res) => {
   const store = await getStoreData();
   const items = await getpurcheseitem(invoiceid);
   const supplierdata=await getSupplierbyid(invoice[0].supplierID);
-  
-
+  let totalprice = items.reduce((sum, item) => sum + item.totalprice, 0);
+ console.log("supplierdat : "+JSON.stringify(supplierdata));
   const employee_id = res.locals.user.employee_id; // Employee ID from session
-console.log("supplierdata",JSON.stringify(supplierdata));
+
 
   
 
@@ -621,7 +624,7 @@ console.log("supplierdata",JSON.stringify(supplierdata));
 
     const data = {
       title: "purchases/editrpurchesinvoice",
-  
+      totalprice,
       style: 'success',
       supplier,
       store,
@@ -635,12 +638,36 @@ console.log("supplierdata",JSON.stringify(supplierdata));
  
  }
 
+ const updateSupplierPurchases = async (req, res) => {
+  try {
+    const supplierID = req.body.supplierID;
+    const id = req.params.id;
+    
+    // SQL query to update supplier ID in the purchase table
+    const sql = "UPDATE purchase SET supplierID = ? WHERE PurchaseID = ?";
+
+    // Execute the query
+    const done = await runQuery(sql, [supplierID, id]);
+
+    // Check if the query was successful
+    if (done) {
+      res.redirect(`/editpurchesinvoice/${id}`);
+    } else {
+      res.status(400).send('Failed to update supplier ID for this purchase.');
+    }
+
+  } catch (error) {
+    // Catch any error and send a 500 response with the error message
+    console.error("Error updating supplier ID:", error);
+    res.status(500).send("An error occurred while updating supplier ID.");
+  }
+};
 
 
 
 
 module.exports = { purchaseInvoicePage ,updatepurchesitem,editpurchesinvoice,addPourchesItemforeditController ,deletePurchasesitemedit,updatepurchesitemedit,
-  addpurchaseinvocepage,addourchesItemController,deletePurchasesitem,createthevoicepurchesecontroller,viewpurchesinvoice,deletepurchesinvoice
+  addpurchaseinvocepage,addourchesItemController,deletePurchasesitem,createthevoicepurchesecontroller,viewpurchesinvoice,deletepurchesinvoice,updateSupplierPurchases
 
 };
 

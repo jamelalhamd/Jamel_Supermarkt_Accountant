@@ -224,12 +224,12 @@
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-md-4">
-            <form class="mb-4 mt-xl-5" action="/createpurchesinvoice" method="post">
+            <form class="mb-4 mt-xl-5" action="/updatethesupllierpurcheses/<%=data.PurchaseID  %>" method="post">
             
   
-              <div class="mb-4">
+              <div hidden class="mb-4">
                 <label for="totalprice" class="form-label">Total Price</label>
-                <input 
+                <input  
                 value="<%= data. totalprice?data.totalprice:0 %>"
                                
                   
@@ -264,7 +264,7 @@
   
               <div class="d-grid">
                 <button id="create-invoice-btn" class="btn btn-primary btn-lg" type="submit">
-                  <i class="bi bi-check-lg"></i>  Save the Invoice
+                  <i class="bi bi-check-lg"></i>  Change the Supplier
                 </button>
               </div>
             </form>

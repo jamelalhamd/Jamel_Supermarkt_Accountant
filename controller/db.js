@@ -192,6 +192,29 @@ const getInvoiceItemsById = async (id) => {
 };
 
 
+
+
+const getBysalesinvoiceitemID = async (id) => {
+  const sqlInvoiceItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceitemID = ?`;
+
+  try {
+    const invoiceitemdata = await new Promise((resolve, reject) => {
+      db.query(sqlInvoiceItems, [id], (err, results) => {
+        if (err) return reject(err);
+        resolve(results); // Return all invoice items
+      });
+    });
+
+    return invoiceitemdata;
+  } catch (error) {
+    throw new Error(`Error fetching invoice items for invoice ID ${id}: ${error.message}`);
+  }
+};
+
+
+
+
+
 const getpurchesesinvoice= async () => {
   try {
     const sqlvoices = `SELECT * FROM purchase`;
@@ -233,7 +256,22 @@ const getpurchesesinvoicebyid= async (id) => {
   }
 };
 
+const getEmployees = async (req, res) => {
+  try {
+    
+      const sql = "SELECT * FROM employees";
 
+
+      const result = await runQuery(sql);
+
+    
+     return result;
+  } catch (error) {
+
+      console.error("Error fetching employees:", error);
+      res.status(500).send("Error fetching employees");
+  }
+};
 
 
         
@@ -347,7 +385,7 @@ const runQuery = (sql, params) => {
 
 module.exports = {fetchInvoiceItems,getInvoiceById,getInvoiceItemsById,getpurchesesinvoice,getpurcheseitem,runQuery,getSupplierbyid ,
   db,getPromotionData,getInvoice ,
-  getUser,getItemData,updatequanity,getpurcheseitembyid ,
+  getUser,getItemData,updatequanity,getpurcheseitembyid ,getEmployees,getBysalesinvoiceitemID,
   getStoreData, getpurchesesinvoicebyid,
   getSupplierData
 };
