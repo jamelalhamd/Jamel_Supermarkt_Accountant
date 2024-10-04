@@ -17,7 +17,7 @@
 
           <div class="form-group mb-3">
             <label for="ItemName">Item Name</label>
-            <input
+            <input readonly
               type="text"
               class="form-control"
               id="ItemName"
@@ -27,35 +27,34 @@
             >
           </div>
 
+
           <div class="form-group mb-3">
-            <label for="ItemUnit">Item Unit</label>
-            <select
-              class="form-select"
-              id="ItemUnit"
+            <label for="ItemName">Item Unit</label>
+            <input readonly
+              type="text"
+              class="form-control"
+              id="Itemunit"
               name="ItemUnit"
+              value="<%= data.item.ItemUnit %>"
               required
             >
-              <option value="" disabled>Select unit</option>
-              <% data.units.forEach(unit => { %>
-                <option value="<%= unit %>" <%= unit === data.item.ItemUnit ? 'selected' : '' %>><%= unit %></option>
-              <% }); %>
-            </select>
           </div>
 
           <div class="form-group mb-3">
-            <label for="State">State</label>
-            <select
-              class="form-select"
-              id="State"
+            <label for="ItemName">State</label>
+            <input readonly
+              type="text"
+              class="form-control"
+              id="state"
               name="State"
+              value="<%= data.item.State  %>"
               required
             >
-              <option value="" disabled>Select state</option>
-              <% data.states.forEach(state => { %>
-                <option value="<%= state %>" <%= state === data.item.State ? 'selected' : '' %>><%= state %></option>
-              <% }); %>
-            </select>
           </div>
+
+
+
+   
 
           <div class="form-group mb-3">
             <label for="Barcode">Barcode</label>
@@ -73,7 +72,7 @@
             <label for="ExpiryDate">Expiry Date</label>
             <input
               type="date"
-              class="form-control"
+              class="form-control"     disabled
               id="ExpiryDate"
               name="ExpiryDate"
               value="<%= data.item.ExpiryDate ? new Date(data.item.ExpiryDate).toISOString().split('T')[0] : '' %>"
@@ -84,7 +83,7 @@
             <label for="ProductionDate">Production Date</label>
             <input
               type="date"
-              class="form-control"
+              class="form-control"     disabled
               id="ProductionDate"
               name="ProductionDate"
               value="<%= data.item.ProductionDate ? new Date(data.item.ProductionDate).toISOString().split('T')[0] : '' %>"
@@ -141,12 +140,18 @@
             >
           </div>
 
+      
+
+  
+
+
           <div class="form-group mb-3">
             <label for="StoreID">Store</label>
             <select
               class="form-select"
               id="StoreID"
               name="StoreID"
+              disabled
               required
             >
               <option value="" disabled>Select store</option>
@@ -160,7 +165,7 @@
             <label for="PromotionID">Promotion</label>
             <select
               class="form-select"
-              id="PromotionID"
+              id="PromotionID"     disabled
               name="PromotionID"
               required
             >
@@ -173,9 +178,37 @@
 
           <!-- Buttons: Save and Cancel -->
           <div class="btn-container">
-            <button type="submit" class="btn btn-danger">Delete The Item</button>
+        
             <a href="/items" class="btn btn-secondary">Back</a>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              Delete The Item
+            </button>
           </div>
+        </form>
+
+
+ 
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete the Item :<%= data.item.ItemID %></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure that you want to delete this item ?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <form action="/deleteitem/<%= data.item.ItemID %>" method="POST" method="POST" style="display:inline;">
+          <button type="submit" class="btn btn-danger">Delete</button>
         </form>
       </div>
     </div>

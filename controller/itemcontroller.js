@@ -71,7 +71,12 @@ await updateFinalPrices(newitemwithfinalprice);
 
  
     //================================================================
-    const data = { title: "item/dashboard", items: newitemwithfinalprice,stores:stores,promotions:Promotion };
+    const data = { title: "item/dashboard",
+       items: newitemwithfinalprice,
+       stores:stores,
+       promotions:Promotion,
+       msg:""
+       };
  
    
     res.render('home', { data });
@@ -210,7 +215,7 @@ const updateItem =async (req, res) => {
       StoreID, 
       quantity,
       itemId 
-    ], (err) => {
+    ],  async (err) => {
       if (err) {
         console.error("Error updating item data:", err);
         return res.redirect(`/edititem/${itemId}?msg=Item%20not%20updated%20&style=danger`);
@@ -222,7 +227,19 @@ const updateItem =async (req, res) => {
 
 
 
-return res.redirect(`/items`);
+      const Promotion=await getPromotionData();
+      const stores=await getStoreData();
+      const itemsdata = await getItemData();
+  
+      const data = { title: "item/dashboard",
+        items: itemsdata,
+        stores:stores,
+        promotions:Promotion,
+        msg:"Item has been successfully updated",
+        style:"success"
+        };
+  
+        res.render('home', { data });
 
 
 
@@ -443,7 +460,7 @@ const deleteItemPage = async(req, res) => {
   };
 //============================================================================
 // Function to handle deleting an item
-const deleteItem = (req, res) => {
+const deleteItem =async (req, res) => {
   const itemId = req.params.id;
 
   if (!itemId) {
@@ -453,7 +470,7 @@ const deleteItem = (req, res) => {
   }
 
   const sql = 'DELETE FROM item WHERE ItemID = ?';
-  db.query(sql, [itemId], (err, result) => {
+  db.query(sql, [itemId],  async (err, result) => {
     if (err) {
       console.error("Error deleting item: " + err);
       console.log("Item not found: " + itemId);
@@ -465,9 +482,24 @@ const deleteItem = (req, res) => {
       console.log("'No item found with the given ID'" + itemId);
       return res.redirect("/items");
     }
-   
-    console.log("Item has benn successfully deleted" + itemId);
-    return res.redirect("/items");
+    const Promotion=await getPromotionData();
+    const stores=await getStoreData();
+    const itemsdata = await getItemData();
+
+    const data = { title: "item/dashboard",
+      items: itemsdata,
+      stores:stores,
+      promotions:Promotion,
+      msg:`Item with the given ID ${itemId}  has been successfully deleted`,
+      style:"danger"
+      };
+
+      res.render('home', { data });
+    
+
+
+
+    
   });
 };
 

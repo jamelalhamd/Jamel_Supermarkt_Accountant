@@ -26,7 +26,7 @@ router.post("/deleteeditepage/:id", authcontroler.checkAuthAndFetchUser, salesin
 router.post("/editeditepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.editedite);
 router.post("/addeditepage/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.addedite);
 
-
+router.post("/addeditename/:id", authcontroler.checkAuthAndFetchUser, salesinvoice.addeditename);
 
 
 

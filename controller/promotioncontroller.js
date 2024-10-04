@@ -1,20 +1,38 @@
-const { db,getPromotionData } = require('../controller/db');
+const { db,getPromotionData ,getStoreData} = require('../controller/db');
 
 const util = require('util');
 // Function to fetch and render all promotions
 db.query = util.promisify(db.query);
-const promotionViewControl = async (req, res) => {
+const promotionViewControl  = async (req, res) => {
   try {
     const promotions = await getPromotionData(); 
-    const data = { title: "promation/dashboard", promotions: promotions }; // تمرير بيانات الترويج إلى القالب
+    const store = await getStoreData();
     
-    console.log(promotions); 
+    // Assuming user is stored in res.locals after authentication middleware
+    const user = res.locals.user;
+
+    // Ensure user is defined before logging
+    if (user) {
+      console.log("user.employee_id " + JSON.stringify(user));
+    } else {
+      console.log("User is not defined");
+    }
+
+    const data = {
+      title: 'promotion/dashboard',
+      promotions: promotions,
+      store: store,
+      user 
+     // Pass user data to the template if needed
+    };
+
     res.render('home', { data }); 
   } catch (err) {
     console.error("Error fetching promotion data:", err);
     res.status(500).send('Server error'); 
   }
 };
+
 
 
 // Function to fetch and render a specific promotion for editing

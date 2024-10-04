@@ -13,6 +13,12 @@
       <i class="bi bi-plus-circle"></i> Add New Item
     </a>
   </div>
+
+  <% if (data.msg &&data.style) { %>
+    <div class="alert alert-<%= data.style %> mt-4">
+      <%= data.msg %>
+    </div>
+  <% } %>
   
   <!-- Item Table -->
   <div class="table-container"  style="width: 100%; margin: 0 auto;">

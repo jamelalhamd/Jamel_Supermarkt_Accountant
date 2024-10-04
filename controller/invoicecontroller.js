@@ -1,4 +1,4 @@
-const { db,getPromotionData,getSupplierData,getEmployees,getpurchesesinvoice ,getBysalesinvoiceitemID ,getStoreData,fetchIteminvoice,getUser,getInvoiceById,getInvoiceItemsById,getInvoice} = require('../controller/db');
+const { db,getPromotionData,getSupplierData,getEmployees,getpurchesesinvoice ,getBysalesinvoiceitemID ,getStoreData,fetchIteminvoice,getUser,getInvoiceById,getInvoiceItemsById,getInvoice, runQuery} = require('../controller/db');
 
 const salesinvocepage=async(req, res) => { 
   const sqlvoices = `SELECT * FROM salesinvoice`;
@@ -81,13 +81,12 @@ const addsalesinvocepage=(req, res) => {
       const employeeID = req.body.employee_id || res.locals.user.employee_id;
 
       const items = await getInvoiceItemsById(invoiceid);
-     
+ 
       console.log("items"+JSON.stringify(items));
 
       // Early validation for required fields
       if (!invoiceid || !searchTerm || !quantity || isNaN(quantity) || quantity <= 0) {
-
-        let totalprice = items.reduce((sum, item) => sum + item.price, 0);
+        let totalprice = items.reduce((sum, item) => sum + item.	total, 0);
           const data = {
               title: "sales/addinvoice",
               msg: "Please enter valid search details (barcode and quantity).",
@@ -107,7 +106,7 @@ console.log("storeid "+storeid )
     
       const invoiceItemsBeforeAdd = await getInvoiceItemsById(invoiceid);
 console.log("invoiceItemsBeforeAdd ",JSON.stringify(invoiceItemsBeforeAdd ))  ;
-    let totalprice = invoiceItemsBeforeAdd.reduce((sum, item) => sum + item.price, 0);
+    let totalprice = invoiceItemsBeforeAdd.reduce((sum, item) => sum + item.total, 0);
 
       // SQL to fetch item by barcode
       const sql = `SELECT * FROM item WHERE Barcode = ? AND StoreID = ?`;
@@ -121,7 +120,7 @@ console.log("invoiceItemsBeforeAdd ",JSON.stringify(invoiceItemsBeforeAdd ))  ;
       // Handle case where no item was found
       if (itemResults.length === 0) {
           const data = {
-              totalPrice,
+            totalprice,
               title: "sales/addinvoice",
               msg: `No items found for the search term "${searchTerm}" in this Store.`,
               style: 'danger',
@@ -153,7 +152,7 @@ console.log("invoiceItemsBeforeAdd ",JSON.stringify(invoiceItemsBeforeAdd ))  ;
           await updatequanity(foundItem.ItemID, parsedQuantity);
 
           const invoiceItemsAfter = await getInvoiceItemsById(invoiceid);
-          totalPrice = invoiceItemsAfter.reduce((sum, item) => sum + item.price, 0);
+          totalprice = invoiceItemsAfter.reduce((sum, item) => sum + item.total, 0);
 
           // Success: Render the updated list of items
           const data = {
@@ -167,7 +166,7 @@ console.log("invoiceItemsBeforeAdd ",JSON.stringify(invoiceItemsBeforeAdd ))  ;
           return res.render('home', { data });
       } else {
           const invoiceItems = await getInvoiceItemsById(invoiceid);
-          totalprice = invoiceItems.reduce((sum, item) => sum + item.price, 0);
+          totalprice = invoiceItems.reduce((sum, item) => sum + item.total, 0);
 
           const data = {
               title: "sales/addinvoice",
@@ -183,7 +182,7 @@ console.log("invoiceItemsBeforeAdd ",JSON.stringify(invoiceItemsBeforeAdd ))  ;
       console.error("Error in item search:", err);
       
       const invoiceItems = await getInvoiceItemsById(req.body.invoiceid);
-      let        totalprice = invoiceItems.reduce((sum, item) => sum + item.price, 0);
+      let        totalprice = invoiceItems.reduce((sum, item) => sum + item.total, 0);
       
       const data = {
         totalprice,
@@ -633,12 +632,14 @@ console.log("id: " + id);
         const invoiceitems = await getInvoiceItemsById(id);
         console.log("Invoice Items:", JSON.stringify(invoiceitems, null, 2));
     
-        // Update quantities for each item before deletion
-
+        
+      
        
-        await Promise.all(invoiceitems.map(item =>    updatequanity(item.itemid, item.Quantity *(-1))));
+       // await Promise.all(invoiceitems.map(item =>    updatequanity(item.itemid , item.Quantity *(-1))));
     
-        // Check if the invoice exists
+        for (const item of invoiceitems) {
+          await updatequanity(item.itemid, -item.Quantity);
+        }
       
     
         // Delete invoice items
@@ -668,8 +669,14 @@ console.log("id: " + id);
           });
         });
     
+
+        const invoiceItems = await getInvoiceItemsById(id);  
+        let totalprice = invoiceItems.reduce((sum, item) => sum + item.total, 0);
+        const supplier=await getSupplierData();
+        const user = await getEmployees();
        
         const data = {
+          totalprice,user,supplier,
           title: "sales/salesinvoice",
           msg: `Invoice   has been deleted successfully`,
           style: 'success',
@@ -790,6 +797,40 @@ const pdfsalesinvoic = async (req, res) => {
 
 
 
+const addeditename = async (req, res) => {
+  try {
+    const id = req.params.id; // Get invoice ID from the URL
+    const newname = req.body.clientname; // Get the new client name from the request body
+    console.log("id " + id); 
+    console.log("name " + newname); 
+    
+    // Get the current date and the employee ID
+    const currentDate = new Date();
+    const employee_id = res.locals.user.employee_id;
+
+    // Update the client's name, edited_by, and date_edit fields in the salesinvoice table
+    const sql = `
+      UPDATE salesinvoice 
+      SET NameClient = ?, edited_by = ?, date_edit = ? 
+      WHERE salesinvoiceID = ?
+    `;
+    
+    // Run the query with the provided parameters
+    const done = await runQuery(sql, [newname, employee_id, currentDate, id]);
+
+    if (done.affectedRows > 0) {
+      // Redirect to the sales invoice page if the update was successful
+      res.redirect(`/salesinvoice`);
+    } else {
+      // If no rows were affected, something went wrong
+      res.status(400).send("Failed to update the client name.");
+    }
+  } catch (err) {
+    console.error("Error updating client name:", err);
+    res.status(500).send("An error occurred while updating the client name.");
+  }
+};
+
 
 
 
@@ -802,7 +843,7 @@ module.exports = {salesinvocepage,deleteinvoice,addedite,editedite,deleteedite,
   updateSalesInvoiceItem,deleteinvoicecontroller,
   deleteSalesInvoiceItem,
   createthevoicecontroller,
-  viewinvoicepagecontroller,pdfsalesinvoic
+  viewinvoicepagecontroller,pdfsalesinvoic,addeditename,
 
 }
 

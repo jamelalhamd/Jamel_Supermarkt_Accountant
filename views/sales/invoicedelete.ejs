@@ -78,10 +78,35 @@
   </div>
 
   <div class="text-center mt-4">
-    <form  method="post" action="/deleteinvoice/<%= data.salesinvoiceID %>">
-         <input type="hidden" name="salesinvoiceID" value="<%= data.salesinvoiceID %>">
-         <a href="/salesinvoice" id="save-pdf" class="btn btn-success">Back</a>
-     <button  type="submit"  id="Deleteinvoice" class="btn btn-danger">Delete Invoice</button></form>
+  
      
+     <a href="/salesinvoice" id="save-pdf" class="btn btn-success">Back</a>
+     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      Delete Invoice
+    </button>
      
    </div>
+
+
+
+
+   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Delete the Invoice :<%= data.salesinvoiceID %></h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure that you want to delete this invoice?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <form action="/deleteinvoice/<%= data.salesinvoiceID %>" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
