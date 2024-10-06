@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { db, getStoreData } = require('../controller/db');
+const { db, getStoreData,getEmployees } = require('../controller/db');
 
 // Helper function to fetch store data
 
@@ -28,7 +28,11 @@ const addcontroller_post = async (req, res) => {
     
     const { firstname, lastname, phone, gender, address, password, email, role, store } = req.body;
     if (!firstname || !lastname || !gender || !password || !email || !role || !store || !address) {
-      const data = { title: 'add', user: "All fields are required", stores: storeResults };
+      const data = { title: 'add', user: "All fields are required", stores: storeResults ,
+
+msg:"All fields are required",style:"warning"
+
+      };
       return res.render('home', { data });
     }
 
@@ -36,12 +40,17 @@ const addcontroller_post = async (req, res) => {
     db.query(sqlemail, [email], async (err, result) => {
       if (err) {
         console.error("Error checking email: " + err);
-        const data = { title: 'add', user: "Error checking email, select another email " + err, stores: storeResults };
+        const data = {
+           title: 'add',
+           user: "Error checking email, select another email " + err, stores: storeResults ,
+          msg:"Error checking email, select another email " ,
+          style:"danger"
+        };
         return res.render('home', { data });
       }
 
       if (result.length > 0) {
-        const data = { title: 'add', user: "The email is already used", stores: storeResults };
+        const data = { title: 'add', user: "The email is already used", stores: storeResults,msg: "The email is already used",style:"warning"};
         return res.render('home', { data });
       }
 
@@ -70,19 +79,30 @@ const addcontroller_post = async (req, res) => {
         (employee_name, employee_lastname, employee_phone, employee_gender, employee_address, employee_password, employee_email, employee_role, storeID) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-      db.query(sql, Object.values(newEmployee), (err) => {
+      db.query(sql, Object.values(newEmployee), async (err) => {
         if (err) {
           console.error("Error inserting employee data: " + err);
           const data = { title: 'add', user: "Error inserting employee data: " + err, stores: storeResults };
           return res.render('home', { data });
         }
+//================================================================
+const stores=await getStoreData();
+const employees=await getEmployees();
+const data = {
+  title: 'dashboard',
+  employees,
+  msg:"User has been succesfully added",
+  style:"success",
+  stores,
 
-        const data = { title: 'add', user: "User successfully added", stores: storeResults };
-        return res.render('home', { data });
+};
+res.render('home', { data });
+//================================================================
+    
       });
     });
   } catch (err) {
-    const data = { title: 'add', user: err, stores: [] };
+    const data = { title: 'add', user: err, stores: [] ,msg:err };
     res.render('home', { data });
   }
 };
@@ -105,7 +125,7 @@ const editcontroller_post = async (req, res) => {
     }
   } catch (err) {
     console.error("Error hashing password: " + err);
-    return res.render('home', { title: 'edit', user: 'Error hashing password' });
+    return res.render('home', { title: 'edit', user: 'Error hashing password', msg:"Error hashing password "+err });
   }
 
   const updatedEmployee = {
@@ -141,14 +161,24 @@ const editcontroller_post = async (req, res) => {
     updatedEmployee.employee_password,
     updatedEmployee.employee_role,
     email
-  ], (err) => {
+  ], async (err) => {
     if (err) {
       console.error("Error updating employee data: " + err);
-      return res.render('home', { title: 'edit', user: "Error updating employee data: " + err });
+      return res.render('home', { title: 'edit', user: "Error updating employee data: " + err ,msg:"Error updating employee data: " + err  });
     }
 
-    console.log("Successfully updated employee");
-    return res.redirect('/dash');
+ 
+const stores=await getStoreData();
+const employees=await getEmployees();
+const data = {
+  title: 'dashboard',
+  employees,
+  msg:`User with email : ${email}  has been succesfully Updated`,
+  style:"success",
+  stores,
+
+};
+res.render('home', { data });
   });
 };
 
@@ -157,21 +187,49 @@ const deletecontroller_post = (req, res) => {
   console.log("id: " + id);
 
   const sql = 'DELETE FROM employees WHERE employee_id = ?';
-  db.query(sql, [id], (err, results) => {
+  db.query(sql, [id],  async (err, results) => {
     if (err) {
       console.error("Error deleting employee data: " + err);
-      const data = { title: 'dash', user: "Error deleting employee data: " + err };
-      return res.render('home', { data });
+      const stores=await getStoreData();
+      const employees=await getEmployees();
+      const data = {
+        title: 'dashboard',
+        employees,
+        msg:"Error deleting employee data: " + err,
+        style:"danger",
+        stores,
+      
+      };
+      res.render('home', { data });
     }
 
     if (results.affectedRows === 0) {
       console.log("No employee found with ID: " + id);
-      const data = { title: 'edit', employees: [] };
-      return res.render('home', { data, message: 'No employee found to delete' });
+      const stores=await getStoreData();
+      const employees=await getEmployees();
+      const data = {
+        title: 'dashboard',
+        employees,
+        msg:"No employee found with ID: " + id,
+        style:"danger",
+        stores,
+      
+      };
+      res.render('home', { data });
     }
 
     console.log("Successfully deleted employee data for ID: " + id);
-    res.redirect('/dash');
+    const stores=await getStoreData();
+    const employees=await getEmployees();
+    const data = {
+      title: 'dashboard',
+      employees,
+      msg:"Successfully deleted employee data for ID: " + id,
+      style:"danger",
+      stores,
+    
+    };
+    res.render('home', { data });
   });
 };
 

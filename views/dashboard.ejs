@@ -7,6 +7,13 @@
     <button class="btn btn-outline-success" type="submit">Search</button>
   </form>
 </div>
+
+
+<% if (data.msg && data.style) { %>
+  <div class="alert alert-<%= data.style %> mt-4">
+    <%= data.msg %>
+  </div>
+<% } %>
 <div class="btn-container d-flex justify-content-end mb-4">
   <a href="/add" class="btn btn-primary">
     <i class="bi bi-plus-circle"></i> Add New Employee
