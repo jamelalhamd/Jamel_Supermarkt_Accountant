@@ -7,7 +7,11 @@
     </form>
   </div>
 
-  <!-- Add Promotion Button -->
+  <% if (data.msg && data.style) { %>
+    <div class="alert alert-<%= data.style %> mt-4">
+      <%= data.msg %>
+    </div>
+  <% } %>
   <div class="btn-container d-flex justify-content-end mb-4">
     <a href="/addPromotion" class="btn btn-primary">
       <i class="bi bi-plus-circle"></i> Add New Promotion

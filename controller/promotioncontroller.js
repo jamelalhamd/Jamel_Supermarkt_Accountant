@@ -1,4 +1,4 @@
-const { db,getPromotionData ,getStoreData} = require('../controller/db');
+const { db,getPromotionData ,getStoreData, runQuery} = require('../controller/db');
 
 const util = require('util');
 // Function to fetch and render all promotions
@@ -19,7 +19,7 @@ const promotionViewControl  = async (req, res) => {
     }
 
     const data = {
-      title: 'promotion/dashboard',
+      title: 'promation/dashboard',
       promotions: promotions,
       store: store,
       user 
@@ -106,13 +106,27 @@ const addPromotion = async (req, res) => {
   const sql = 'INSERT INTO promotion (PromotionName, Description, StartDate, EndDate, DiscountPercentage) VALUES (?, ?, ?, ?, ?)';
 
   try {
-    db.query(sql, [PromotionName, Description, StartDate, EndDate, DiscountPercentage], (err) => {
+    db.query(sql, [PromotionName, Description, StartDate, EndDate, DiscountPercentage],  async (err) => {
       if (err) {
         console.error("Error inserting promotion: " + err);
         const data = { title: 'promation/add', msg: "Promotion has not been added", style: "danger" };
         return res.render('home', { data });
       }
-      const data = { title: 'promation/add', msg: "Promotion has been successfully added", style: "success" };
+    
+
+
+
+      const promotions = await getPromotionData(); 
+      const store = await getStoreData();
+      const user = res.locals.user;
+  
+      const data = {
+        title: 'promation/dashboard',
+        msg: "Promotion has not been successfully added", style: "success" ,
+        promotions: promotions,
+        store: store,
+        user: user
+      };
       return res.render('home', { data });
     });
   } catch (err) {
@@ -147,32 +161,92 @@ const deletePromotionpage = (req, res) => {
 
 
 // Function to handle deleting a promotion
-const deletePromotion = (req, res) => {
+const deletePromotion  = async (req, res) => {
   const promotionId = req.params.id;
-
+ console.log(" promotionId"+ promotionId);
   if (!promotionId) {
-    const data = { title: 'promation/delete', msg: 'No promotion ID provided for deletion' };
+  
+    const data = {
+      title: 'promation/delete',
+      promotion: [],
+      msg: 'No promotion ID provided for deletion'
+    };
     return res.render('home', { data });
   }
+   const sqlu="Update item SET promotionID =? where promotionID=? ";
+  runQuery(sqlu,[null,promotionId]);
 
   const sql = 'DELETE FROM promotion WHERE PromotionID = ?';
-  db.query(sql, [promotionId], (err, result) => {
+  db.query(sql, [promotionId], async (err, result) => {
     if (err) {
+      
       console.error("Error deleting promotion: " + err);
-      const data = { title: 'promation/delete', msg: 'Error occurred while deleting the promotion', style: "danger" };
+
+      
+      const promotions = await getPromotionData(); 
+      const store = await getStoreData();
+      const user = res.locals.user;
+
+      const data = {
+        msg: "Error occurred while deleting the promotion",
+        style: "danger",
+        title: 'promation/dashboard',
+        promotions: promotions,
+        store: store,
+        user: user
+      };
+
       return res.render('home', { data });
     }
 
     if (result.affectedRows === 0) {
-      const data = { title: 'promation/delete', msg: 'No promotion found with the given ID', style: "danger" };
+
+      const data = { 
+        title: 'promation/delete', 
+        msg: 'No promotion found with the given ID', 
+        style: "danger", 
+        promotions: [] 
+      };
       return res.render('home', { data });
     }
 
-    const data = { title: 'promation/add', msg: 'Promotion has been successfully deleted', style: "danger" };
-    res.render('home', { data });
+  
+    const promotions = await getPromotionData(); 
+    const store = await getStoreData();
+    const user = res.locals.user;
+
+    const data = {
+      title: 'promation/dashboard',
+      msg: 'Promotion has been successfully deleted',
+      style: "danger", 
+      promotions: promotions,
+      store: store,
+      user: user
+    };
+
+    return res.render('home', { data });
   });
 };
+
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Function to render the page for adding a new promotion
 const addPromotionPage = (req, res) => {
   const data = { title: 'promation/add' };

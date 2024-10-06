@@ -3,7 +3,7 @@ const router = express.Router();
 const promotionViewControl = require('../controller/promotioncontroller');
 const authcontroler = require("../controller/authcontroler");
 // Route to view all promotions
-router.get('/promotions', promotionViewControl.promotionViewControl);
+router.get('/promotions',authcontroler.checkAuthAndFetchUser, promotionViewControl.promotionViewControl);
 
 // Route to view a specific promotion for editing
 
