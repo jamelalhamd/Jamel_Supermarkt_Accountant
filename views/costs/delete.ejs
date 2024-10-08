@@ -1,0 +1,48 @@
+<div class="container mt-5">
+  <h1>Edit Cost</h1>
+
+  <!-- Edit Cost Form -->
+  <form action="/editcost/<%= cost.costID %>" method="post" class="mb-4">
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label for="costType" class="form-label">Cost Type</label>
+        <input type="text" class="form-control" id="costType" name="costType" required value="<%= cost.costType %>">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="amount" class="form-label">Amount</label>
+        <input type="number" class="form-control" id="amount" name="amount" required value="<%= cost.amount %>">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="description" required><%= cost.description %></textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label for="referenceID" class="form-label">Reference ID</label>
+        <input type="number" class="form-control" id="referenceID" name="referenceID" value="<%= cost.referenceID %>" placeholder="Enter reference ID (optional)">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="employeeID" class="form-label">Employee ID</label>
+        <input type="number" class="form-control" id="employeeID" name="employeeID" required value="<%= cost.employeeID %>">
+      </div>
+      <div class="col-md-4 mb-3">
+        <button type="submit" class="btn btn-success mt-4">Update Cost</button>
+      </div>
+    </div>
+  </form>
+
+  <% if (data.msg && data.style) { %>
+    <div class="alert alert-<%= data.style %> mt-4">
+      <%= data.msg %>
+    </div>
+  <% } %>
+
+  <div class="btn-container d-flex justify-content-end mb-4">
+    <a href="/costs" class="btn btn-primary">
+      <i class="bi bi-arrow-left-circle"></i> Back to Costs List
+    </a>
+  </div>
+</div>
+
+<!-- Include Bootstrap JS and its dependencies -->

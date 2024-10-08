@@ -1,0 +1,126 @@
+
+  <div class="container mt-5">
+    <!-- Search Form -->
+    <div style="width: 25%;" class="d-flex justify-content-center mb-4">
+      <form action="/searchcost" method="post" class="d-flex" role="search">
+        <input class="form-control me-2" name="search" type="search" placeholder="Search Supplier" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    </div>  
+<% const  costs=data.costs  %>
+
+<% if (data.msg && data.style) { %>
+  <div class="alert alert-<%= data.style %> mt-4">
+    <%= data.msg %>
+  </div>
+<% } %>
+
+    <!-- Add Supplier Button -->
+    <div class="btn-container d-flex justify-content-end mb-4">
+      <a href="/addcostpage" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Add New Cost
+      </a>
+    </div>
+
+    <!-- Supplier Table -->
+    <div class="table-container">
+      <table class="text-center mx-auto table mt-5 table-striped table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Cost ID</th>
+            <th scope="col">Cost type</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Description</th>
+            <th scope="col">Reference</th>
+            <th scope="col">Employee ID</th>
+            <th scope="col">Branch ID</th>
+            <th scope="col">Created Date </th>
+            <th scope="col">Updated</th>
+ 
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%  costs.forEach((e, index) => { %>
+          <tr>
+            <th scope="row"><%= index + 1 %></th>
+            <td><%= e.costID  %></td>
+            <td><%= e.costType %></td>
+            <td><%= e.amount %></td>
+            
+            <td><%= e.description %></td>
+            <td><%= e.referenceID %></td>
+            <td>
+              <% 
+                const employee = data.employees.find(employee => employee.employee_id === e.employee_id );
+                const employeeName = employee ? employee.employee_name +" "+ employee.employee_lastname: 'N/A'; 
+              %> 
+              <%= employeeName %>  
+            </td>
+            
+
+            <td>
+              <% 
+                const store = data.stores.find(store => store.StoreID === e.store_id );
+                const storeName = store ? store.StoreName : 'N/A'; 
+              %> 
+              <%= storeName %>
+            </td>
+            <td><%= e.CreatedAt.toISOString().split('T')[0]%></td>
+            <td><%= e.UpdatedAt.toISOString().split('T')[1].slice(0, 5)  %></td>
+     
+            <td>
+              <a
+                data-bs-toggle="tooltip"
+                data-bs-title="View details"
+                data-bs-placement="top"
+                class="btn btn-info btn-sm"
+                href="/viewcost/<%= e.costID %>"
+              >
+                <i class="bi bi-eye"></i>
+              </a>
+
+              <a
+                data-bs-toggle="tooltip"
+                data-bs-title="Edit supplier"
+                data-bs-placement="top"
+                class="btn btn-primary btn-sm"
+                href="/editcost/<%= e.costID %>"
+              >
+                <i class="bi bi-pencil"></i>
+              </a>
+
+
+              <a
+              data-bs-toggle="tooltip"
+              data-bs-title="Edit supplier"
+              data-bs-placement="top"
+              class="btn btn-danger btn-sm"
+              href="viewcost/<%= e.costID %>"
+            >
+            <i class="bi bi-trash"></i>
+            </a>
+
+
+           
+            </td>
+          </tr>
+
+
+
+
+
+
+
+          
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Include Bootstrap JS and its dependencies -->
+
+
+

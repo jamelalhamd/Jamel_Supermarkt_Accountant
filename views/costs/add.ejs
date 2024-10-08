@@ -1,0 +1,50 @@
+<div class="container mt-5">
+  <h1 class="mb-4 text-center">Add New Cost</h1>
+
+  <% if (data.msg && data.style) { %>
+    <div class="alert alert-<%= data.style %> mt-4">
+      <%= data.msg %>
+    </div>
+  <% } %>
+
+  <!-- Add Cost Form -->
+  <form action="/addcost" method="post" class="card shadow p-4">
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="costType" class="form-label">Cost Type</label>
+        <input type="text" class="form-control" id="costType" name="costType" required placeholder="Enter cost type">
+      </div>
+      <div class="col-md-6">
+        <label for="amount" class="form-label">Amount</label>
+        <input type="number" class="form-control" id="amount" name="amount" required placeholder="Enter amount">
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea class="form-control" id="description" name="description" rows="3" required placeholder="Enter description"></textarea>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <label for="referenceID" class="form-label">Reference ID (Optional)</label>
+        <input type="number" class="form-control" id="referenceID" name="referenceID" placeholder="Enter reference ID">
+      </div>
+   
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <button type="submit" class="btn btn-success btn-lg px-5">Add Cost</button>
+    </div>
+  </form>
+
+
+
+  <div class="btn-container d-flex justify-content-center mt-4">
+    <a href="/mainboard" class="btn btn-primary btn-lg">
+      <i class="bi bi-arrow-left-circle"></i> Back to Costs List
+    </a>
+  </div>
+</div>
+
+<!-- Include Bootstrap JS and its dependencies -->

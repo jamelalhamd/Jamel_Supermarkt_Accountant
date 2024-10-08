@@ -31,6 +31,12 @@ const getStoreData = () => {
   });
 };
 
+
+
+
+
+
+
 const getSupplierData = () => {
   return new Promise((resolve, reject) => {
     const supplierQuery = 'SELECT * FROM supplier'; // Query to fetch all suppliers
@@ -432,9 +438,51 @@ const itemStatesArray = [
 ];
 
 
+const getcosts = async () => {
+  try {
+      // SQL query to select all costs
+      const Sql = "SELECT * FROM costs";
+      
+      // Await the result of the database query
+      const result = await runQuery(Sql);
+      
+      // Return the result
+      return result;
+  } catch (error) {
+      // Log the error for debugging
+      console.error("Error retrieving costs:", error);
+      // You might want to handle the error further, e.g., throw it or return a specific value
+      throw error; // Rethrow the error after logging
+  }
+};
+
+
+
+const getcostsbyid = async (id) => {
+  try {
+
+      // SQL query to select all costs
+      const Sql = "SELECT * FROM costs where costID=?";
+      
+      // Await the result of the database query
+      const result = await runQuery(Sql,[id]);
+      
+      // Return the result
+      return result;
+  } catch (error) {
+      // Log the error for debugging
+      console.error("Error retrieving costs:", error);
+      // You might want to handle the error further, e.g., throw it or return a specific value
+      throw error; // Rethrow the error after logging
+  }
+};
+
+
+
+
 module.exports = {fetchInvoiceItems,getInvoiceById,getInvoiceItemsById,getpurchesesinvoice,getpurcheseitem,runQuery,getSupplierbyid , categoriesArray ,
-  db,getPromotionData,getInvoice ,
+  db,getPromotionData,getInvoice ,getcostsbyid,
   getUser,getItemData,updatequanity,getpurcheseitembyid ,getEmployees,getBysalesinvoiceitemID,itemStatesArray,unitsArray,
-  getStoreData, getpurchesesinvoicebyid,
+  getStoreData, getpurchesesinvoicebyid,getcosts,
   getSupplierData
 };

@@ -23,7 +23,9 @@ const signupcontroler = (req, res) => {
 
  // Update with your actual db connection
 
-const loginpostcontroller = (req, res) => {
+const loginpostcontroller = async(req, res) => {
+
+  await hasesword("Afpc1967#");
     const { email, password } = req.body;
     const sql = 'SELECT * FROM employees WHERE employee_email = ?';
 
@@ -305,3 +307,12 @@ module.exports = {
     signupcontroler,
     checkAuthAndFetchUser
 };
+
+
+
+
+
+const hasesword=async(password)=> {
+  hashedPassword = await bcrypt.hash(password, 10);
+  console.log("hashed password : "+hashedPassword)
+} 

@@ -1,0 +1,57 @@
+<div class="container mt-5">
+  <h1 class="mb-4">Edit Cost Details</h1>
+  
+  <% if (data.msg && data.style) { %>
+    <div class="alert alert-<%= data.style %> mt-4">
+      <%= data.msg %>
+    </div>
+  <% } %>
+
+  <% const cost = data.costs; %> <!-- assuming cost is passed from the server -->
+  
+  <div class="card mb-4">
+      <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Edit Cost Information</h5>
+      </div>
+      <div class="card-body">
+          <form action="/editthecost/<%= cost.costID %>" method="POST">
+              <div class="mb-3">
+                  <label for="costType" class="form-label"><strong>Cost Type:</strong></label>
+                  <input type="text" class="form-control" id="costType" name="costType" value="<%= cost.costType %>" required>
+              </div>
+              <div class="mb-3">
+                  <label for="amount" class="form-label"><strong>Amount:</strong></label>
+                  <input type="number" class="form-control" id="amount" name="amount" value="<%= cost.amount %>" required>
+              </div>
+              <div class="mb-3">
+                  <label for="description" class="form-label"><strong>Description:</strong></label>
+                  <textarea class="form-control" id="description" name="description" rows="3" required><%= cost.description %></textarea>
+              </div>
+              <div class="mb-3">
+                  <label for="referenceID" class="form-label"><strong>Reference ID:</strong></label>
+                  <input type="text" class="form-control" id="referenceID" name="referenceID" value="<%= cost.referenceID %>" required>
+              </div>
+              <div class="mb-3">
+                  <label for="employeeID" class="form-label"><strong>Employee ID:</strong></label>
+                  <input type="number" class="form-control" id="employeeID" name="employeeID" value="<%= cost.employee_id %>" required>
+              </div>
+              <div class="mb-3">
+                  <label for="storeID" class="form-label"><strong>Store ID:</strong></label>
+                  <input type="number" class="form-control" id="storeID" name="storeID" value="<%= cost.store_id %>" required>
+              </div>
+              <div class="mb-3">
+                  <label for="createdAt" class="form-label"><strong>Created At:</strong></label>
+                  <p class="form-text"><%= new Date(cost.CreatedAt).toLocaleString('en-GB') %></p>
+              </div>
+              <div class="mb-3">
+                  <label for="updatedAt" class="form-label"><strong>Updated At:</strong></label>
+                  <p class="form-text"><%= new Date(cost.UpdatedAt).toLocaleString('en-GB') %></p>
+              </div>
+              <button type="submit" class="btn btn-success">Update Cost</button>
+              <a href="/mainboard" class="btn btn-secondary ms-2">Cancel</a>
+          </form>
+      </div>
+  </div>
+</div>
+
+<!-- Include Bootstrap JS and its dependencies -->

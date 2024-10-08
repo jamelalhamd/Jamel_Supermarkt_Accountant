@@ -346,7 +346,11 @@
                           Alarm
                       </a>
                   </li>
-                  
+                  <li class="nav-item">
+                    <a class="nav-link <%= (data.title === "alarm/delete" || data.title === "alarm/expiredate" || data.title === "alarm/lowstock" || data.title === "alarm/view" || data.title === "alarm/nostock") ? 'active' : '' %>" href="/mainboard">
+                       Costs
+                    </a>
+                </li>
               
                     <li class="nav-item">
                         <a style="display: none;" class="nav-link disabled" aria-disabled="true">Disabled</a>
