@@ -379,13 +379,62 @@ const runQuery = (sql, params) => {
 
 
 
+const categoriesArray = [
+  "Dairy",
+  "Bakery",
+  "Meat",
+  "Produce",
+  "Canned Goods",
+  "Frozen Foods",
+  "Vegetables",
+  "Fruits",
+  "Beverages",
+  "Snacks",
+  "Condiments",
+  "Seafood",
+  "Grains",
+  "Pasta",
+  "Sauces",
+  "Oils",
+  "Spices",
+  "Breakfast Foods",
+  "Health Foods"
+];
+
+const unitsArray = [
+  "Kilogram (kg)",
+  "Gram (g)",
+  "Milligram (mg)",
+  "Liter (l)",
+  "Milliliter (ml)",
+  "Piece",
+  "Pack",
+  "Box",
+  "Dozen",
+  "Meter (m)",
+  "Centimeter (cm)",
+  "Inch"
+];
 
 
+const itemStatesArray = [
+  "Damaged", // Damaged goods
+   // Spoiled
+  "In Store", // Available in the store/warehouse
+  "On Shelf", // Placed on the shelf
+  "Out of Stock", // Temporarily unavailable
+  "Expired", // Expired goods
+  "In Transit", // Being transported
+  "In Inspection", // Under quality control
+  "Reserved", // Reserved for customer
+  "Returned", // Returned by customer
+  "Awaiting Restock" // Waiting for restock
+];
 
 
-module.exports = {fetchInvoiceItems,getInvoiceById,getInvoiceItemsById,getpurchesesinvoice,getpurcheseitem,runQuery,getSupplierbyid ,
+module.exports = {fetchInvoiceItems,getInvoiceById,getInvoiceItemsById,getpurchesesinvoice,getpurcheseitem,runQuery,getSupplierbyid , categoriesArray ,
   db,getPromotionData,getInvoice ,
-  getUser,getItemData,updatequanity,getpurcheseitembyid ,getEmployees,getBysalesinvoiceitemID,
+  getUser,getItemData,updatequanity,getpurcheseitembyid ,getEmployees,getBysalesinvoiceitemID,itemStatesArray,unitsArray,
   getStoreData, getpurchesesinvoicebyid,
   getSupplierData
 };

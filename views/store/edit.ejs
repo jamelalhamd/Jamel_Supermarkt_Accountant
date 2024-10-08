@@ -51,24 +51,72 @@
             <div class="btn-container">
               <button type="submit" class="btn btn-primary">Save Changes</button>
 
-              <!-- Cancel button -->
-              <a href="/storeview" class="btn btn-secondary">Cancel</a>
+           
+              <a href="/storeview" id="save-pdf" class="btn btn-success">Back</a>
+              <!-- Trigger Button -->
+      <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteInvoiceModal">
+        Delete Invoice
+      </button>
 
               <!-- Delete form -->
             
             </div>
           </form>
-          <% if (data.store) { %>
-            <form method="POST" action="/deletestore/<%= data.store.StoreID %>" class="mt-3">
-              <button type="submit" class="btn btn-danger">
-                Delete Store
-              </button>
-            </form>
-          <% } %>
+      
+
+
+
           <!-- Display any user messages -->
       
         </div>
       </div>
     </div>
   </div>
+
+<!-- First Modal for Confirming Deletion -->
+<div class="modal fade" id="confirmDeleteInvoiceModal" tabindex="-1" aria-labelledby="confirmDeleteInvoiceLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="confirmDeleteInvoiceLabel">Delete Branch : <%=data.store.StoreID %> %></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mt-3"><strong>You will delete all items in this Branch and employees working in this Branch.</strong></p>
+        <p><strong><%= data.store.StoreID %> <%= data.store.StoreName %>  <%= data.store.Address %> </strong></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteBranchModal">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Second Modal for Deleting Branch -->
+<div class="modal fade" id="confirmDeleteBranchModal" tabindex="-1" aria-labelledby="confirmDeleteBranchLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-danger text-white">
+        <h1 class="modal-title fs-5" id="confirmDeleteBranchLabel">Delete Branch for Branch ID: <%= data.store.StoreID %></h1>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <i class="bi bi-exclamation-triangle-fill text-danger fs-1"></i> <!-- Warning icon -->
+        <p class="mt-3"><strong>You will delete all items in this Branch and employees working in this Branch.</strong></p>
+        <p><strong><%= data.store.StoreID %> <%= data.store.StoreName %>  <%= data.store.Address %> </strong></p>
+        <p><strong>So you can first edit them to another Branch.</strong></p>
+        <p class="text-danger"><strong>This action cannot be undone.</strong></p>
+      </div>
+      <div class="modal-footer justify-content-center border-0">
+  
+        <form method="POST" action="/deletestore/<%= data.store.StoreID %>" class="mt-3 d-inline-block" style="display: inline;">
+          <button style="display: inline;" type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger px-4">Delete The Branch</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 

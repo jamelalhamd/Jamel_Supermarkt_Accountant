@@ -1,13 +1,23 @@
 <% const store = data.stores;  %>
 <% console.log("store data header: " + JSON.stringify(store, null, 2)); %>
 
-<div style="width: 25%;" class="d-flex justify-content-center">
+<div style="width: 25%;" class="d-flex justify-content-center mt-5">
   <form action="/searchstore" method="post" class="d-flex" role="search">
     <input class="form-control me-2" name="search" type="search" placeholder="Search" aria-label="Search">
     <button class="btn btn-outline-success" type="submit">Search</button>
   </form>
 </div>
+<div class="btn-container d-flex justify-content-end mb-4">
+  <a href="/addstore" class="btn btn-primary">
+    <i class="bi bi-plus-circle"></i> Add New Branch
+  </a>
+</div>
 
+<% if (data.msg &&data.style) { %>
+  <div class="alert alert-<%= data.style %> mt-4">
+    <%= data.msg %>
+  </div>
+<% } %>
 <table
   style="width: 99%"
   class="text-center mx-auto table mt-5 table-striped table-bordered"
@@ -15,8 +25,8 @@
   <thead>
     <tr>
       <th scope="col">#</th>
-      <th scope="col">Store ID</th>
-      <th scope="col">Store Name</th>
+      <th scope="col">Branch ID</th>
+      <th scope="col">Branch Name</th>
       <th scope="col">Location</th>
       <th scope="col">Address</th>
       <th scope="col">Action</th>
@@ -31,15 +41,7 @@
       <td><%= e.Location %></td>
       <td><%= e.Address %></td>
       <td>
-        <a
-          data-bs-toggle="tooltip"
-          data-bs-title="View details"
-          data-bs-placement="top"
-          class="btn btn-primary btn-sm"
-          href="/addstore"
-        >
-        <i class="bi bi-plus-circle"></i>
-        </a>
+  
 
         <a
           data-bs-toggle="tooltip"

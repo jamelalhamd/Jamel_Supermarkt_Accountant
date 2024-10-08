@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const { check, validationResult } = require("express-validator");
 require('dotenv').config();
 const cloudinary = require("cloudinary").v2;
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 //================================================
 const { db, getStoreData } = require('../controller/db');
 const bcrypt = require("bcrypt");
@@ -84,6 +86,82 @@ const loginpostcontroller = (req, res) => {
         });
     });
 };
+//Afpc1967#
+
+
+
+
+
+const forgotPasswordController = (req, res) => {
+    const { email } = req.body;
+    const sql = 'SELECT * FROM employees WHERE employee_email = ?';
+
+    db.query(sql, [email], (err, results) => {
+        if (err) {
+            console.error("Database error: " + err.message);
+            return res.render('authen/forgot-password', { message: "Error fetching employee data." });
+        }
+
+        if (results.length === 0) {
+            console.log("No employee found with email: " + email);
+            return res.render('authen/forgot-password', { message: "No account found with the provided email." });
+        }
+
+        const employee = results[0];
+
+        // Generate a reset token with JWT
+        const token = jwt.sign({ email: employee.employee_email }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+
+        // Send reset email with link
+        const resetLink = `${req.protocol}://${req.get('host')}/reset-password/${token}`;
+        const transporter = nodemailer.createTransport({ /* transport options */ });
+
+        const mailOptions = {
+            from: 'noreply@example.com',
+            to: employee.employee_email,
+            subject: 'Password Reset',
+            text: `Click the following link to reset your password: ${resetLink}`
+        };
+
+        transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+                console.error("Error sending email: " + err.message);
+                return res.render('authen/forgot-password', { message: "Error sending reset email." });
+            }
+
+            console.log("Reset email sent to: " + employee.employee_email);
+            res.render('authen/forgot-password', { message: "Password reset link has been sent to your email." });
+        });
+    });
+};
+
+
+
+const resetPasswordController = (req, res) => {
+    const { token, password } = req.body;
+
+    // Verify token
+    jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.render('authen/reset-password', { message: "Invalid or expired token." });
+        }
+
+        const sql = 'UPDATE employees SET employee_password = ? WHERE employee_email = ?';
+        const hashedPassword = bcrypt.hashSync(password, 10);
+
+        db.query(sql, [hashedPassword, decoded.email], (err, result) => {
+            if (err) {
+                console.error("Database error: " + err.message);
+                return res.render('authen/reset-password', { message: "Error updating password." });
+            }
+
+            console.log("Password updated for email: " + decoded.email);
+            res.redirect('/signin');
+        });
+    });
+};
+
+
 
 
 

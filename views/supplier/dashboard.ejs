@@ -8,6 +8,13 @@
       </form>
     </div>  
 <% const suppliers=data.suppliers  %>
+
+<% if (data.msg && data.style) { %>
+  <div class="alert alert-<%= data.style %> mt-4">
+    <%= data.msg %>
+  </div>
+<% } %>
+
     <!-- Add Supplier Button -->
     <div class="btn-container d-flex justify-content-end mb-4">
       <a href="/addsupplier" class="btn btn-primary">
@@ -59,12 +66,13 @@
                 <i class="bi bi-pencil"></i>
               </a>
 
+
               <a
               data-bs-toggle="tooltip"
               data-bs-title="Edit supplier"
               data-bs-placement="top"
               class="btn btn-danger btn-sm"
-              href="deletesupplier/<%= e.SupplierID %>"
+              href="deletesupplierpage/<%= e.SupplierID %>"
             >
             <i class="bi bi-trash"></i>
             </a>
@@ -73,6 +81,14 @@
            
             </td>
           </tr>
+
+
+
+
+
+
+
+          
           <% }); %>
         </tbody>
       </table>
@@ -80,4 +96,6 @@
   </div>
 
   <!-- Include Bootstrap JS and its dependencies -->
+
+
 

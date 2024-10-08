@@ -69,7 +69,7 @@
               </td>
               <td><% 
                 const promotion = data.promotions.find(promo => promo.PromotionID === e.promotionID);
-                const promotionName = promotion ? promotion.DiscountPercentage : 'N/A';
+                const promotionName = promotion ? promotion.DiscountPercentage : '0';
               %>
               <%= promotionName %> %</td>
 
@@ -123,4 +123,4 @@
   </div>
 </div>
 
-<!-- Include Bootstrap JS and its dependencies -->
+

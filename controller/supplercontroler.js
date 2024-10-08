@@ -50,30 +50,35 @@ const editSupplier = (req, res) => {
 
 
 const deleteSupplie_get = (req, res) => {
+  // Capture the supplier ID from the request parameters
   const supplierId = req.params.id;
-  console.log("0");
+
+  // SQL query to select the supplier based on the SupplierID
   const sql = 'SELECT * FROM supplier WHERE SupplierID = ?';
+
+  // Execute the SQL query
   db.query(sql, [supplierId], (err, results) => {
+    // Check for errors in the query execution
     if (err) {
-      console.log("1");
       console.error("Error fetching supplier data: " + err);
+      // Redirect to the supplier dashboard on error
       return res.redirect('/supplierdash');
     }
 
+    // If no results are found, redirect to the supplier dashboard
     if (results.length === 0) {
-      console.log("2");
       return res.redirect('/supplierdash');
     }
-    console.log("3");
+
+    // Prepare data for rendering the view
     const data = {
       title: 'supplier/delete',
-      supplier: results[0],
-      msg:" "
+      supplier: results[0], // Pass the supplier data to the view
+      msg: " " // Initialize an empty message
     };
   
-    console.log("4");
+    // Render the home view with the supplier data
     res.render('home', { data });
-    
   });
 };
 
@@ -82,9 +87,10 @@ const deleteSupplie_get = (req, res) => {
 
 
 
+
 // Update Supplier
 // Update Supplier
-const updateSupplier = (req, res) => {
+const updateSupplier = async(req, res) => {
   const supplierId = req.params.id;
   const { SupplierName, Phone, Address, Email } = req.body;
   console.log("update 1");
@@ -98,7 +104,7 @@ const updateSupplier = (req, res) => {
 
   const sql = 'UPDATE supplier SET SupplierName = ?, Phone = ?, Address = ?, Email = ? WHERE SupplierID = ?';
 
-  db.query(sql, [SupplierName, Phone, Address, Email, supplierId], (err) => {
+  db.query(sql, [SupplierName, Phone, Address, Email, supplierId], async (err) => {
     if (err) {
       console.error("Error updating supplier data:", err);
       const data = { title: 'supplier/edit', msg: "Error updating supplier data: " + err, style: "danger", supplier: req.body };
@@ -106,10 +112,16 @@ const updateSupplier = (req, res) => {
     }
     console.log("update don");
     console.log("Supplier updated successfully with ID:", supplierId);
-    const data = { title: 'supplier/edit', msg: "Supplier updated successfully with ID:"+supplierId, style: "success", supplier: { SupplierID: supplierId, SupplierName, Phone, Address, Email } };
+  
     console.log("update rerender");
-    // Optionally redirect to supplier view or back to edit page
-    return res.render('home', { data });
+    const suppliers = await getSupplierData(); // Await the result of the asynchronous function
+    const data = { title: "supplier/add",
+       suppliers: suppliers,
+        msg:`supplier ${supplierId} has been  successfully updated`,
+        style:"success"
+      }; 
+    res.render('home', { data });
+  
   });
 };
 
@@ -126,14 +138,19 @@ const addSupplier = async (req, res) => {
   const sql = 'INSERT INTO supplier (SupplierName, Phone, Address, Email) VALUES (?, ?, ?, ?)';
 
   try {
-    db.query(sql, [SupplierName, Phone, Address, Email], (err, results) => {
+    db.query(sql, [SupplierName, Phone, Address, Email], async (err, results) => {
       if (err) {
         console.error("Error inserting supplier: " + err);
         const data = { title: 'supplier/add', user: "Supplier has not been added", style: "danger" };
         return res.render('home', { data });
       }
-      const data = { title: 'supplier/add', user: "Supplier has been successfully added", style: "success" };
-      return res.render('home', { data });
+      const suppliers = await getSupplierData(); // Await the result of the asynchronous function
+    const data = { title: "supplier/dashboard",
+       suppliers: suppliers,
+        msg:`supplier ${ SupplierName} has been  successfully added`,
+        style:"success"
+      }; 
+    res.render('home', { data });
     });
   } catch (err) {
     console.error("Error handling request: " + err);
@@ -142,7 +159,7 @@ const addSupplier = async (req, res) => {
 };
 
 // Delete Supplier
-const deleteSupplier = (req, res) => {
+const deleteSupplier = async(req, res) => {
   const supplierId = req.params.id;
 
   if (!supplierId) {
@@ -153,7 +170,7 @@ const deleteSupplier = (req, res) => {
   console.log("Deleting supplier with ID: " + supplierId);
 
   const sql = 'DELETE FROM supplier WHERE SupplierID = ?';
-  db.query(sql, [supplierId], (err, result) => {
+  db.query(sql, [supplierId], async (err, result) => {
     if (err) {
       console.error("Error deleting supplier: " + err);
       const data = { title: 'supplier/add', user: 'Error occurred while deleting the supplier', style: "danger" };
@@ -165,7 +182,12 @@ const deleteSupplier = (req, res) => {
       return res.render('home', { data });
     }
 
-    const data = { title: 'supplier/add', user: 'Supplier has been successfully deleted', style: "danger" };
+    const suppliers = await getSupplierData(); // Await the result of the asynchronous function
+    const data = { title: "supplier/dashboard",
+       suppliers: suppliers,
+        msg:`supplier ${supplierId} has been  successfully deleted`, 
+        style:"danger"
+      }; 
     res.render('home', { data });
   });
 };

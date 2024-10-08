@@ -1,0 +1,98 @@
+<div class="container mt-5">
+  <% const item = data.item; %>
+  
+  <!-- Breadcrumb Navigation -->
+  <nav class="px-2 mt-4 d-flex flex-wrap justify-content-between" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/nostock">Back</a></li>
+      <li class="breadcrumb-item active" aria-current="page">  
+        Item ID: <%= item.ItemID ? item.ItemID : "" %>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Item Details Table -->
+  <div class="table-container mt-4">
+    <table class="ms-1 table table-striped table-bordered" style="width: 100%;">
+      <thead>
+        <tr>
+          <th scope="col">Attribute</th>
+          <th scope="col">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Item ID</th>
+          <td><%= item.ItemID %></td>
+        </tr>
+        <tr>
+          <th scope="row">Item Name</th>
+          <td><%= item.ItemName %></td>
+        </tr>
+        <tr>
+          <th scope="row">Unit</th>
+          <td><%= item.ItemUnit %></td>
+        </tr>
+        <tr>
+          <th scope="row">Barcode</th>
+          <td><%= item.Barcode ? item.Barcode : "N/A" %></td>
+        </tr>
+        <tr>
+          <th scope="row">Expiry Date</th>
+          <td><%= item.ExpiryDate ? new Date(item.ExpiryDate).toISOString().split('T')[0] : "N/A" %></td>
+        </tr>
+        <tr>
+          <th scope="row">Production Date</th>
+          <td><%= item.ProductionDate ? new Date(item.ProductionDate).toISOString().split('T')[0] : "N/A" %></td>
+        </tr>
+        <tr>
+          <th scope="row">Price</th>
+          <td><%= item.Price ? item.Price.toFixed(2) : "N/A" %></td>
+        </tr>
+        <th scope="row">Quanatity</th>
+        <td><%= item.quantity ? item.quantity.toFixed(2) : "N/A" %></td>
+      </tr>
+        <tr>
+          <th scope="row">State</th>
+          <td><%= item.State ? item.State : "N/A" %></td>
+        </tr>
+        <tr>
+          <th scope="row">Category</th>
+          <td><%= item.Category ? item.Category : "N/A" %></td>
+        </tr>
+        <tr>
+          <th scope="row">Country of Origin</th>
+          <td><%= item.CountryOfOrigin ? item.CountryOfOrigin : "N/A" %></td>
+        </tr>
+        <tr>
+          <th scope="row">Promotion %</th>
+          <td>
+            <% 
+              const promotion = data.promotions.find(promo => promo.PromotionID === item.promotionID);
+              const promotionName = promotion ? promotion.DiscountPercentage : 0;
+            %>
+            <%= promotion && promotion.PromotionName ? promotion.PromotionName : " " %> <%= promotionName %>%
+          </td>
+          
+        </tr>
+        <tr>
+          <th scope="row">Store ID</th>
+          <td><% 
+            const store = data.stores.find(store => store.StoreID === item.StoreID);
+            const storeName = store ? store.StoreName : 'N/A';
+            %>   <%= storeName %></td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <div class="btn-container"> 
+        
+      <a href="/nostock" class="btn btn-primary">Back</a>
+    
+
+
+    
+    </div>
+  </div>
+</div>

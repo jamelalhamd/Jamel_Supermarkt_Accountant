@@ -66,11 +66,13 @@
         </tr>
         <tr>
           <th scope="row">Promotion %</th>
-          <td><% 
-            const promotion = data.promotions.find(promo => promo.PromotionID === item.promotionID);
-            const promotionName = promotion ?  promotion.DiscountPercentage  : 'N/A';
-          %>
-         <%=promotion.PromotionName  %> : <%= promotionName %> % </td>
+          <td>
+            <% 
+              const promotion = data.promotions.find(promo => promo.PromotionID === item.promotionID);
+              const promotionName = promotion ? promotion.DiscountPercentage : 0;
+            %>
+            <%= promotion && promotion.PromotionName ? promotion.PromotionName : " " %> <%= promotionName %>%
+          </td>
           
         </tr>
         <tr>
@@ -82,5 +84,15 @@
         </tr>
       </tbody>
     </table>
+
+
+    <div class="btn-container"> 
+        
+      <a href="/items" class="btn btn-primary">Back >>All Items</a>
+    
+
+
+    
+    </div>
   </div>
 </div>

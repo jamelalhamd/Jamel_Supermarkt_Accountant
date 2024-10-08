@@ -5,9 +5,9 @@
         <div class="form-container">
           <h2 class="mb-4">Add New Supplier</h2>
 
-          <% if (data.user &&data.style) { %>
+          <% if (data.msg && data.style) { %>
             <div class="alert alert-<%= data.style %> mt-4">
-              <%= data.user %>
+              <%= data.msg %>
             </div>
           <% } %>
           <form action="/addsupplier" method="POST">

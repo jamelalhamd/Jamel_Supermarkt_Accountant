@@ -257,39 +257,39 @@
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
       <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
       <span class="fs-4"> <strong><%= user ?store.StoreName : " " %></strong> </span>
-      <button id="toggle-btn" class="btn" type="button"><i class="bi bi-x-circle" style="font-size: 2rem;"></i></button>
+
     </a>
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="/items" class="nav-link active" aria-current="page">
+        <a href="/items" class="nav-link <%= (data.title === "item/add" || data.title === "item/dashboard" || data.title === "item/delete" || data.title === "item/edit" || data.title === "item/view") ? "active" : "" %>" aria-current="page">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"/></svg>
           Items
         </a>
       </li>
       <li style=`display:<%= user.employee_role == 'Store' ? 'none' : 'none' %>;`>
 
-        <a href="/promotions" class="nav-link text-white">
+        <a href="/promotions" class="nav-link text-white <%= (data.title === "promation/add" || data.title === "promation/dashboard" || data.title === "promation/delete" || data.title === "promation/edit" || data.title === "promation/view") ? "active" : "" %>"  >
             <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"/></svg>
             Promotions
         </a>
     </li>
     
       <li>
-        <a href="/dash" class="nav-link text-white">
+        <a href="/dash" class="nav-link text-white <%= (data.title === "add" || data.title === "dashboard" || data.title === "delete" || data.title === "edit" || data.title === "view") ? 'active' : '' %>">
      
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           Employees
         </a>
       </li>
       <li>
-        <a href="/purchesesinvoce" class="nav-link text-white">
+        <a href="/purchesesinvoce" class="nav-link text-white <%= (data.title === "purchases/purchesesinvoiceedite"||data.title === "purchases/purchesesinvoiceview" ||data.title === "purchases/viewpurchesinvoice" ||data.title === "purchases/addpurchesesinvoice" || data.title === "purchases/deletepurchesinvoice" || data.title === "purchases/editrpurchesinvoice" || data.title === "purchases/purchesesinvoice" || data.title === "purchases/purchesesinvoicedelete") ? "active" : "" %>"  >
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"/></svg>
           Purcheses
         </a>
       </li>
       <li>
-        <a href="/salesinvoice" class="nav-link text-white">
+        <a href="/salesinvoice" class="nav-link text-white <%= (data.title === "sales/addinvoice" || data.title === "sales/invoicedelete" || data.title === "sales/invoiceedite" || data.title === "sales/invoiceview" || data.title === "sales/salesinvoice") ? 'active' : '' %>">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"/></svg>
           Sales
         </a>
@@ -304,9 +304,9 @@
 
       </a>
       <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-        <li><a class="dropdown-item" href="#"><%= user ? user.employee_name +" "+user.employee_lastname : "Guest" %></a></li>
-        <li><a class="dropdown-item" href="#">Settings</a></li>
-        <li><a class="dropdown-item" href="#">Profile</a></li>
+        <li><a class="dropdown-item" href="/view/<%= user.employee_id %>"><%= user ? user.employee_name +" "+user.employee_lastname : "Guest" %></a></li>
+      
+        <li><a class="dropdown-item" href="/view/<%= user.employee_id %>">Profile</a></li>
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="/signout">Sign out</a></li>
       </ul>
@@ -327,34 +327,29 @@
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid justify-content-md-between justify-content-between">
             <a class="mx-1 navbar-brand"><i class="bi bi-list"></i></a>
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="/mainboard">Navbar</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="storeview">Branches</a>
-                    </li>
+                      <a class="nav-link <%= (data.title === "store/add" || data.title === "store/dashboard" || data.title === "store/edit" || data.title === "store/view") ? 'active' : '' %>" aria-current="page" href="/storeview">
+                        Branches
+                    </a>
                     <li class="nav-item">
-                        <a class="nav-link" href="/signin">Sign in</a>
+                      <a  class="nav-link <%= (data.title === "supplier/add" || data.title === "supplier/dashboard" || data.title === "supplier/edit" || data.title === "supplier/view"|| data.title === "supplier/delete") ? 'active' : '' %>" href="/supplierdash">Supplier</a>
                     </li>
+
                     <li class="nav-item">
-                      <a class="nav-link" href="/supplierdash">Supplier</a>
+                      <a class="nav-link <%= (data.title === "alarm/delete" || data.title === "alarm/expiredate" || data.title === "alarm/lowstock" || data.title === "alarm/view" || data.title === "alarm/nostock") ? 'active' : '' %>" href="/nostock">
+                          Alarm
+                      </a>
                   </li>
-                    <li  style="display: hidden;" class="nav-item dropdown ">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Dropdown
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                    </li>
+                  
+              
                     <li class="nav-item">
-                        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                        <a style="display: none;" class="nav-link disabled" aria-disabled="true">Disabled</a>
                     </li>
                     <li class="nav-item">
                      

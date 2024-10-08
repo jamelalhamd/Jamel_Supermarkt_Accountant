@@ -106,7 +106,7 @@ const updateStore = (req, res) => {
   const { StoreName, Location, Address } = req.body;
 
   const sql = 'UPDATE store SET StoreName = ?, Location = ?, Address = ? WHERE StoreID = ?';
-  db.query(sql, [StoreName, Location, Address, storeId], (err) => {
+  db.query(sql, [StoreName, Location, Address, storeId], async (err) => {
     if (err) {
       console.error("Error updating store data: " + err);
       const data = { title: 'store/add',
@@ -116,7 +116,17 @@ const updateStore = (req, res) => {
           
       return   res.render('home', { data });
     }
-    const data = { title: 'store/add',user:"User has been sucessfully edited" , style:"success"};
+    const stores = await getStoreData(); // Await the result of the asynchronous function
+  
+
+
+    const data = { 
+      title: "store/dashboard",
+
+msg:`Store ${storeId} has been successfully updated`,
+      
+       stores: stores,
+        style:"success"};
           
             return   res.render('home', { data }); // Redirect back to the store view after successful update
   });
@@ -150,16 +160,23 @@ const addStore = async (req, res) => {
 
     try {
         // Use a prepared statement to prevent SQL injection
-        db.query(sql, [StoreName, Location, Address], (err, results) => {
+        db.query(sql, [StoreName, Location, Address], async (err, results) => {
             if (err) {
                 console.error("Error inserting store: " + err);
                const data = { title: 'store/add',user:"User has been not added" ,};
                return  res.render('home', { data });
             }
-            // Redirect or send a success message
-            const data = { title: 'store/add',user:"User has been sucessfully added",   style:"success" };
-          
-            return   res.render('home', { data });// Redirect to store view with success message
+            const stores=await getStoreData();
+            const data = { 
+              title: "store/dashboard",
+        
+        msg:`Branch ${StoreName} has been successfully added`,
+              
+               stores: stores,
+                style:"success"};
+                  
+                    return   res.render('home', { data });
+
         });
     } catch (err) {
         console.error("Error handling request: " + err);
@@ -187,7 +204,7 @@ const deleteStore = (req, res) => {
     console.log("Deleting store with ID: " + storeId);
   
     const sql = 'DELETE FROM store WHERE StoreID = ?';
-    db.query(sql, [storeId], (err, result) => {
+    db.query(sql, [storeId], async (err, result) => {
       if (err) {
         console.error("Error deleting store: " + err);
         const data = {
@@ -207,13 +224,16 @@ const deleteStore = (req, res) => {
         return res.render('home', { data });
       }
   
-      // Successful deletion
-      const data = {
-        title: 'store/add',
-        user: 'Store has been successfully deleted',
-           style:"danger"
-      };
-      res.render('home', { data });
+      const stores=await getStoreData();
+      const data = { 
+        title: "store/dashboard",
+  
+  msg:`Branch ${storeId} has been successfully Deleted`,
+        
+         stores: stores,
+          style:"danger"};
+            
+              return   res.render('home', { data });
     });
   };
   

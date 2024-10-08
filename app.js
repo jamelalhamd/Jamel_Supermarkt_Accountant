@@ -96,6 +96,8 @@ const itemcontroller = require('./route/itemroute');
 
 const Promotion_Route = require("./route/promationroute");
 const Sales_Route = require("./route/salesroute");
+const Stock_Route = require("./route/stockroute");
+const mainboard_Route = require("./route/mainboardroute");
 
 const purchesese_Route = require("./route/purchesesroute");
 app.use(purchesese_Route);
@@ -103,6 +105,8 @@ app.use(Sales_Route);
 app.use(itemcontroller);
 app.use(productRoutes);
 app.use(userRoutes);
+app.use(Stock_Route);
+app.use(mainboard_Route);
 
 app.use(store_item_suppler_Route);
 app.use(Promotion_Route);
@@ -130,3 +134,5 @@ app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
 //================================================================
+
+

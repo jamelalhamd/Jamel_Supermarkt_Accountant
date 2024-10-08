@@ -1,5 +1,5 @@
 const dayjs = require('dayjs');
-const { db ,getStoreData,getPromotionData,getItemData} = require('../controller/db');
+const { db ,getStoreData,getPromotionData,getItemData,unitsArray, itemStatesArray ,categoriesArray } = require('../controller/db');
 const util = require('util');
 
 const fetch = require('node-fetch');
@@ -239,7 +239,7 @@ const updateItem =async (req, res) => {
         style:"success"
         };
   
-        res.render('home', { data });
+      return  res.render('home', { data });
 
 
 
@@ -255,57 +255,8 @@ const updateItem =async (req, res) => {
 
 
 // Define your categories
-const categoriesArray = [
-    "Dairy",
-    "Bakery",
-    "Meat",
-    "Produce",
-    "Canned Goods",
-    "Frozen Foods",
-    "Vegetables",
-    "Fruits",
-    "Beverages",
-    "Snacks",
-    "Condiments",
-    "Seafood",
-    "Grains",
-    "Pasta",
-    "Sauces",
-    "Oils",
-    "Spices",
-    "Breakfast Foods",
-    "Health Foods"
-  ];
-  
-  const unitsArray = [
-    "Kilogram (kg)",
-    "Gram (g)",
-    "Milligram (mg)",
-    "Liter (l)",
-    "Milliliter (ml)",
-    "Piece",
-    "Pack",
-    "Box",
-    "Dozen",
-    "Meter (m)",
-    "Centimeter (cm)",
-    "Inch"
-  ];
-  
 
-  const itemStatesArray = [
-    "Damaged", // Damaged goods
-     // Spoiled
-    "In Store", // Available in the store/warehouse
-    "On Shelf", // Placed on the shelf
-    "Out of Stock", // Temporarily unavailable
-    "Expired", // Expired goods
-    "In Transit", // Being transported
-    "In Inspection", // Under quality control
-    "Reserved", // Reserved for customer
-    "Returned", // Returned by customer
-    "Awaiting Restock" // Waiting for restock
-  ];
+  
 
 
 // Function to fetch country data

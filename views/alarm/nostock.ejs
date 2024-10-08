@@ -1,0 +1,126 @@
+<div class="container-xxl mt-5">
+    <!-- Search Form -->
+    <div style="width: 50%;" class="d-flex justify-content-center mb-4">
+   
+ 
+
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a  href="/expirdate">Expired Date</a></li>
+                
+          <li class="breadcrumb-item"><a  href="/nostock">Out of Stock</a></li>
+         
+          <li class="breadcrumb-item"><a  href="/lowstock">Low Inventory Alert</a></li>
+        
+          <li class="breadcrumb-item"><a  href="/experdatenear">Near Expiry Alert</a></li>
+        
+        </ol>
+      </nav>
+    </div>
+   
+
+   <% console.log("data.items"+JSON.stringify(data.items, null, 2));  %>
+    <!-- Add Item Button -->
+
+    <% if (data.msg && data.style) { %>
+      <div class="alert alert-<%= data.style %> mt-4">
+        <%= data.msg %>
+      </div>
+    <% } %>
+    
+    <!-- Item Table -->
+    <div class="table-container"  style="width: 100%; margin: 0 auto;">
+      <% if (data.items && data.items.length > 0) { %>
+        <table class="text-center mx-auto table mt-5 table-striped table-bordered" >
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col"> ID</th>
+              <th scope="col"> Name</th>
+              <th scope="col"> Unit</th>
+              <th scope="col">Barcode</th>
+              <th scope="col">Exp. Date</th>
+           
+              <th scope="col">Price</th>
+              <th scope="col">Quanatity</th>
+              <th scope="col">State</th>
+              <th scope="col">Category</th>
+       
+              <th scope="col">Branch </th>
+              <th scope="col">Promotion %</th>
+              <th scope="col">final price </th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% data.items.forEach((e, index) => { %>
+              <tr>
+                <th scope="row"><%= index + 1 %></th>
+                <td><%= e.ItemID %></td>
+                <td><%= e.ItemName %></td>
+                <td><%= e.ItemUnit %></td>
+                <td><%= e.Barcode %></td>
+                <td><%= e.ExpiryDate ? e.ExpiryDate.toISOString().split('T')[0] : 'N/A' %></td>
+            
+                <td><%= e.Price %></td>
+                <td><%= e.quantity%></td>
+                <td><%= e.State %></td>
+                <td><%= e.Category %></td>
+            
+               
+                <td>
+                  <% 
+                    const store = data.stores.find(store => store.StoreID === e.StoreID);
+                    const storeName = store ? store.StoreName : 'N/A';
+                  %>
+                  <%= storeName %>
+                </td>
+                <td><% 
+                  const promotion = data.promotions.find(promo => promo.PromotionID === e.promotionID);
+                  const promotionName = promotion ? promotion.DiscountPercentage : '0';
+                %>
+                <%= promotionName %> %</td>
+  
+                <td>
+                  <%= e.FinalPrice %>
+                </td>
+                
+               
+                <td>
+                  <a
+                    data-bs-toggle="tooltip"
+                    data-bs-title="View details"
+                    data-bs-placement="top"
+                    class="btn btn-info btn-sm"
+                    href="/viewnostockitem/<%= e.ItemID %>"
+                  >
+                    <i class="bi bi-eye"></i>
+                  </a>
+  
+  
+                  <a
+                    data-bs-toggle="tooltip"
+                    data-bs-title="Delete item"
+                    data-bs-placement="top"
+                    class="btn btn-danger btn-sm"
+                    href="/deletenostockitempage/<%= e.ItemID %>"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </a>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <!-- No Items Available Message -->
+        <div class="text-center mt-5">
+          <h4>No items available .</h4>
+    
+        </div>
+      <% } %>
+    </div>
+  </div>
+  
+  
+  

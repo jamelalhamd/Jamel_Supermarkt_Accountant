@@ -1,0 +1,218 @@
+<div class="container m-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="form-container">
+        <h2 class="mb-4">Delete Item: <%= data.item.ItemName %></h2>
+        
+        <% if (data.msg && data.style) { %>
+          <div class="alert alert-<%= data.style %> mt-4">
+            <%= data.msg %>
+          </div>
+        <% } %>
+
+        <!-- Form for editing item details -->
+        <form action="/deleteitem/<%= data.item.ItemID %>" method="POST">
+          <!-- CSRF Token (if needed for security) -->
+          <input type="hidden" name="_csrf" value="<%= data.csrfToken %>">
+
+          <div class="form-group mb-3">
+            <label for="ItemName">Item Name</label>
+            <input readonly
+              type="text"
+              class="form-control"
+              id="ItemName"
+              name="ItemName"
+              value="<%= data.item.ItemName %>"
+              required
+            >
+          </div>
+
+
+          <div class="form-group mb-3">
+            <label for="ItemName">Item Unit</label>
+            <input readonly
+              type="text"
+              class="form-control"
+              id="Itemunit"
+              name="ItemUnit"
+              value="<%= data.item.ItemUnit %>"
+              required
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="ItemName">State</label>
+            <input readonly
+              type="text"
+              class="form-control"
+              id="state"
+              name="State"
+              value="<%= data.item.State  %>"
+              required
+            >
+          </div>
+
+
+
+   
+
+          <div class="form-group mb-3">
+            <label for="Barcode">Barcode</label>
+            <input
+              type="text"
+              class="form-control"
+              id="Barcode"
+              name="Barcode"
+              value="<%= data.item.Barcode %>"
+              required
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="ExpiryDate">Expiry Date</label>
+            <input
+              type="date"
+              class="form-control"     disabled
+              id="ExpiryDate"
+              name="ExpiryDate"
+              value="<%= data.item.ExpiryDate ? new Date(data.item.ExpiryDate).toISOString().split('T')[0] : '' %>"
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="ProductionDate">Production Date</label>
+            <input
+              type="date"
+              class="form-control"     disabled
+              id="ProductionDate"
+              name="ProductionDate"
+              value="<%= data.item.ProductionDate ? new Date(data.item.ProductionDate).toISOString().split('T')[0] : '' %>"
+            >
+          </div>
+
+          <div class="form-group mb-4">
+            <label for="Price">Price</label>
+            <input
+              type="number"
+              class="form-control"
+              id="Price"
+              name="Price"
+              step="0.01"
+              min="0"
+              value="<%= data.item.Price %>"
+              required
+            >
+          </div>
+          <div class="form-group mb-4">
+
+            <label for="Price">Quantity</label>
+            <input
+              type="number"
+              class="form-control"
+              id="quantity"
+              name="quantity"
+              step="1"
+              min="0"
+              value="<%= data.item.quantity %>"
+              required
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="Category">Category</label>
+            <input
+              type="text"
+              class="form-control"
+              id="Category"
+              name="Category"
+              value="<%= data.item.Category %>"
+            >
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="CountryOfOrigin">Country of Origin</label>
+            <input
+              type="text"
+              class="form-control"
+              id="CountryOfOrigin"
+              name="CountryOfOrigin"
+              value="<%= data.item.CountryOfOrigin %>"
+            >
+          </div>
+
+      
+
+  
+
+
+          <div class="form-group mb-3">
+            <label for="StoreID">Store</label>
+            <select
+              class="form-select"
+              id="StoreID"
+              name="StoreID"
+              disabled
+              required
+            >
+              <option value="" disabled>Select store</option>
+              <% data.stores.forEach(store => { %>
+                <option value="<%= store.StoreID %>" <%= store.StoreID === data.item.StoreID ? 'selected' : '' %>><%= store.StoreName %></option>
+              <% }); %>
+            </select>
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="PromotionID">Promotion</label>
+            <select
+              class="form-select"
+              id="PromotionID"     disabled
+              name="PromotionID"
+              required
+            >
+              <option value="" disabled>Select promotion</option>
+              <% data.promotions.forEach(promotion => { %>
+                <option value="<%= promotion.PromotionID %>" <%= promotion.PromotionID === data.item.PromotionID ? 'selected' : '' %>><%= promotion.PromotionName %> - <%= promotion.DiscountPercentage %>%</option>
+              <% }); %>
+            </select>
+          </div>
+
+          <!-- Buttons: Save and Cancel -->
+          <div class="btn-container"> 
+        
+            <a href="/nostock" class="btn btn-primary">Back </a>
+
+
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              Delete The Item
+            </button>
+          </div>
+        </form>
+
+
+ 
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete the Item :<%= data.item.ItemID %></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure that you want to delete this item ?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <form action="/deletenostockitem/<%= data.item.ItemID %>" method="POST" method="POST" style="display:inline;">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
