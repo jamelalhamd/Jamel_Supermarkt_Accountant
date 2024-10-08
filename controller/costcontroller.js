@@ -1,4 +1,4 @@
-const { db ,getEmployees,getcostsbyid,getcosts,getStoreData,getPromotionData,getItemData,unitsArray, itemStatesArray ,categoriesArray } = require('../controller/db');
+const { db ,getEmployees,getcostsbyid,getcosts,getStoreData,getPromotionData,getItemData,unitsArray, itemStatesArray ,categoriesArray } = require('./db');
 
 
 

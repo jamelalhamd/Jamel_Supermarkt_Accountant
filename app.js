@@ -97,7 +97,7 @@ const itemcontroller = require('./route/itemroute');
 const Promotion_Route = require("./route/promationroute");
 const Sales_Route = require("./route/salesroute");
 const Stock_Route = require("./route/stockroute");
-const mainboard_Route = require("./route/mainboardroute");
+const mainboard_Route = require("./route/costroute");
 
 const purchesese_Route = require("./route/purchesesroute");
 app.use(purchesese_Route);

@@ -3,7 +3,7 @@ const app = express();
 const router = express.Router();
 
 const authcontroler = require("../controller/authcontroler");
-const mainboardcontroller = require("../controller/mainboardcontroller");
+const mainboardcontroller = require("../controller/costcontroller");
 
 router.get('/mainboard', authcontroler.checkAuthAndFetchUser,mainboardcontroller.mainboard);
 router.get('/viewcost/:id', authcontroler.checkAuthAndFetchUser,mainboardcontroller.viewcost);
