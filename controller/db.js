@@ -180,6 +180,7 @@ const getInvoice = async (id) => {
 
 
 
+
 const getInvoiceItemsById = async (id) => {
   const sqlInvoiceItems = `SELECT * FROM salesinvoiceitem WHERE salesinvoiceID = ?`;
 

@@ -100,6 +100,7 @@ const Stock_Route = require("./route/stockroute");
 const mainboard_Route = require("./route/costroute");
 
 const purchesese_Route = require("./route/purchesesroute");
+const dashboard_Route = require("./route/dashboardcontrollerroute");
 app.use(purchesese_Route);
 app.use(Sales_Route);
 app.use(itemcontroller);
@@ -107,7 +108,7 @@ app.use(productRoutes);
 app.use(userRoutes);
 app.use(Stock_Route);
 app.use(mainboard_Route);
-
+app.use(dashboard_Route);
 app.use(store_item_suppler_Route);
 app.use(Promotion_Route);
 
