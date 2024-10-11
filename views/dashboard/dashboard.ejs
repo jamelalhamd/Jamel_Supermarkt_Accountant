@@ -18,8 +18,9 @@
                         class="form-control"
                         id="fromdate"
                         name="fromdate"
-                        value="<%= data.date1 ? data.date1 : '' %>"
-                       required
+                        value="<%= data.date1 ? new Date(data.date1).toISOString().slice(0, 10) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); %>"
+
+                    
                     >
                 </div>
                 
@@ -31,8 +32,8 @@
                         class="form-control"
                         id="todate"
                         name="todate"
-                        value="<%=data.date2?data.date2: Date.now  %>"
-                    required
+                        value="<%= data.date2 ? new Date(data.date2).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10) %>"
+                 
                  
                     >
                 </div>

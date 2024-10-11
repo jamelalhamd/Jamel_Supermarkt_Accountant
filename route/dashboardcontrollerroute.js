@@ -7,4 +7,5 @@ const dasboardcontroller = require("../controller/dashboardcontroller");
 
 router.get('/getdash',authcontroler.checkAuthAndFetchUser, dasboardcontroller.getdash);
 router.post('/showdashboard',authcontroler.checkAuthAndFetchUser, dasboardcontroller.showdashboard);
+router.get('/showdashboard',authcontroler.checkAuthAndFetchUser, dasboardcontroller.showdashboard);
 module.exports = router;

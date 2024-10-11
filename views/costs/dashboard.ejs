@@ -35,7 +35,7 @@
             <th scope="col">Reference</th>
             <th scope="col">Employee ID</th>
             <th scope="col">Branch ID</th>
-            <th scope="col">Created Date </th>
+            <th scope="col"> Date </th>
             <th scope="col">Updated</th>
  
             <th scope="col">Action</th>
@@ -68,7 +68,7 @@
               <%= storeName %>
             </td>
             <td><%= e.CreatedAt.toISOString().split('T')[0]%></td>
-            <td><%= e.UpdatedAt.toISOString().split('T')[1].slice(0, 5)  %></td>
+            <td><%= e.UpdatedAt.toISOString().split('T')[0] %></td>
      
             <td>
               <a

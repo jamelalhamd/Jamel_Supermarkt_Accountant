@@ -117,8 +117,10 @@ const showdashboard=async(req,res)=>
    
         {
     
-const date1=req.body.fromdate;
-const date2=req.body.todate;
+          const date1 = req.body.fromdate ? req.body.fromdate : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30 days ago if not provided
+          const date2 = req.body.todate ? req.body.todate : new Date(); // current date if not provided
+          
+          
 
 console.log("body"+date1);
 console.log("body"+date2)
@@ -248,6 +250,26 @@ const getcostsdated = async (date1, date2) => {
         throw error;
     }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
