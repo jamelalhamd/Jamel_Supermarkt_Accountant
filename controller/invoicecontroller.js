@@ -884,7 +884,7 @@ const updateitemainvoice = async (req, res, title = "sales/addinvoice") => {
      
 
       // SQL query to update the sales invoice item
-      const sqlUpdate = `UPDATE salesinvoiceitem SET Quantity = ?, Total = ? WHERE salesinvoiceitemID = ?`;
+      const sqlUpdate = `UPDATE salesinvoiceitem SET Quantity = ?, total = ? WHERE salesinvoiceitemID = ?`;
       console.log(`Executing SQL: ${sqlUpdate}`);
 
       // Perform the update
@@ -899,9 +899,22 @@ const updateitemainvoice = async (req, res, title = "sales/addinvoice") => {
       });
 
 
-      const sqlUpdateinoice = `UPDATE salesinvoice SET edited_by = ?, date_edit = ? WHERE salesinvoiceID = ?`;
+
+      const itemsafter = await getInvoiceItemsById(id);
+
+    
+
+      let totalPriceinvoice = 0;
+      itemsafter.forEach(item => {
+        totalPriceinvoice += item.total; // Assuming 'total' is the field in the database for each item’s total price
+      });
+
+
+      const sqlUpdateinoice = `UPDATE salesinvoice 
+      SET totalprice = ?, edited_by = ?, date_edit = ? 
+      WHERE salesinvoiceID = ?`;
       const currentDate = new Date();
-      db.query(sqlUpdateinoice, [employee_id, currentDate, id], (err, result) => {
+      db.query(sqlUpdateinoice, [totalPriceinvoice ,employee_id, currentDate, id], (err, result) => {
         if (err) {
           console.error("Error updating salesinvoice:", err);
           return;
@@ -909,7 +922,7 @@ const updateitemainvoice = async (req, res, title = "sales/addinvoice") => {
         console.log("Invoice updated successfully:", result);
       });
 
-
+      const invoiceafter = await getInvoiceById(id);
 
 
       if (result.affectedRows === 0) {
@@ -927,7 +940,7 @@ const updateitemainvoice = async (req, res, title = "sales/addinvoice") => {
       }
 
       // Fetch updated items after the successful update
-      const itemsafter = await getInvoiceItemsById(id);
+    
 
       // Update the item quantity in the store
       await updatequanity(itemid, deltaqunitity);
@@ -948,7 +961,7 @@ const updateitemainvoice = async (req, res, title = "sales/addinvoice") => {
               msg: "Quantity has been updated successfully.",
               style: 'success',
               items:  itemsafter,
-              invoice: invoice
+              invoice: invoiceafter
           }
       });
 
@@ -1039,19 +1052,28 @@ const additem = async (req, res, title = "sales/salesinvoice") => {
       const updatedItems = await getInvoiceItemsById(id);
 
       // Calculate total price after item addition
-      let totalPrice = updatedItems.reduce((acc, item) => acc + item.total, 0);
-      console.log("Final Total Price:", totalPrice);
+      let totalPrice = 0;
+      updatedItems.forEach(item => {
+        totalPrice += item.total; // Assuming 'total' is the field in the database for each item’s total price
+      });
+      
 
       // Update salesinvoice with current employee and timestamp
-      const sqlUpdate = `UPDATE salesinvoice SET edited_by = ?, date_edit = ? WHERE salesinvoiceID = ?`;
-      const currentDate = new Date();
-      db.query(sqlUpdate, [employee_id, currentDate, id], (err, result) => {
-        if (err) {
-          console.error("Error updating salesinvoice:", err);
-          return;
-        }
-        console.log("Invoice updated successfully:", result);
-      });
+      const sqlUpdate = `UPDATE salesinvoice 
+      SET totalprice = ?, edited_by = ?, date_edit = ? 
+      WHERE salesinvoiceID = ?`;
+
+const currentDate = new Date(); // Gets the current date and time
+
+// Assuming `db.query` is your function to interact with the database
+db.query(sqlUpdate, [totalPrice, employee_id, currentDate, id], (err, result) => {
+if (err) {
+console.error("Error updating salesinvoice:", err);
+return;
+}
+console.log("Invoice updated successfully:", result);
+});
+
 
       // Render the updated invoice view with success message
       const data = {
@@ -1142,9 +1164,9 @@ const deleteitem= async (req, res,title="sales/salesinvoice") => {
       console.log("Invoice Items Before Add:", JSON.stringify(items, null, 2));
 
 
-      const sqlUpdateinoice = `UPDATE salesinvoice SET edited_by = ?, date_edit = ? WHERE salesinvoiceID = ?`;
+      const sqlUpdateinoice = `UPDATE salesinvoice SET totalprice=?, edited_by = ?, date_edit = ? WHERE salesinvoiceID = ?`;
       const currentDate = new Date();
-      db.query(sqlUpdateinoice, [employee_id, currentDate, id], (err, result) => {
+      db.query(sqlUpdateinoice, [totalPrice,employee_id, currentDate, id], (err, result) => {
         if (err) {
           console.error("Error updating salesinvoice:", err);
           return;
@@ -1152,15 +1174,15 @@ const deleteitem= async (req, res,title="sales/salesinvoice") => {
         console.log("Invoice updated successfully:", result);
       });
 
-
+      const invoiceafter = await getInvoiceById(id);
 
       const data = {
         totalPrice:totalPrice,
         title,
-        msg: `Item ${itemid}  has been deleted Successfully`, 
+        msg: `Item ${itemid}..  has been deleted Successfully   `, 
         style: 'danger',
         items: items,
-        invoice:  invoice
+        invoice:  invoiceafter,
     };
     return res.render('home', { data });
   });

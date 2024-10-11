@@ -1,6 +1,50 @@
 
     <div class="container mt-5">
+
+
+    
+        
+
         <h1>Supermarket Dashboard</h1>
+
+        <div class="container mt-4">
+            <form action="/showdashboard" method="POST" class="d-flex justify-content-center align-items-center">
+                
+                <!-- Barcode Field -->
+                <div class="form-group mb-3 me-3">
+                    <label for="Barcode">From Date</label>
+                    <input
+                        type="date"
+                        class="form-control"
+                        id="fromdate"
+                        name="fromdate"
+                        value="<%= data.date1 ? data.date1 : '' %>"
+                       required
+                    >
+                </div>
+                
+                <!-- Item Name Field -->
+                <div class="form-group mb-3 me-3">
+                    <label for="ItemName">To Date</label>
+                    <input
+                        type="date"
+                        class="form-control"
+                        id="todate"
+                        name="todate"
+                        value="<%=data.date2?data.date2: Date.now  %>"
+                    required
+                 
+                    >
+                </div>
+        
+                <!-- Buttons: Add Item and Back -->
+                <div class="form-group d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">Show</button>
+             
+                </div>
+        
+            </form>
+        </div>
         <div class="row">
             <div class="col-md-3">
                 <div class="card text-center">
@@ -35,12 +79,25 @@
                 </div>
             </div>
         </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
         <div class="row mt-4">
             <div class="col-md-3">
                 <div class="card text-center">
                     <div class="card-body">
-                        <h5 class="card-title">Total Purchase Invoices</h5>
-                        <p class="card-text"><%= data.total_verkauf %></p> <!-- Replace with actual data -->
+                        <h5 class="card-title">Total Purchase Items Costs</h5>
+                        <p class="card-text"><%= data.total_kauf %></p> <!-- Replace with actual data -->
                     </div>
                 </div>
             </div>
@@ -48,15 +105,15 @@
                 <div class="card text-center">
                     <div class="card-body">
                         <h5 class="card-title">Total Sales Revenue</h5>
-                        <p class="card-text"><%=100 %> $</p> <!-- Replace with actual data -->
+                        <p class="card-text"><%=data.total_verkauf %> $</p> <!-- Replace with actual data -->
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card text-center">
                     <div class="card-body">
-                        <h5 class="card-title">Total Purchase Costs</h5>
-                        <p class="card-text"><%= 800%> $</p> <!-- Replace with actual data -->
+                        <h5 class="card-title">Total Another Costs</h5>
+                        <p class="card-text"><%= data.costs_total%> $</p> <!-- Replace with actual data -->
                     </div>
                 </div>
             </div>
@@ -64,7 +121,7 @@
                 <div class="card text-center">
                     <div class="card-body">
                         <h5 class="card-title">Total Employees</h5>
-                        <p class="card-text"><%=5 %></p> <!-- Replace with actual data -->
+                        <p class="card-text"><%=data.employees_total %></p> <!-- Replace with actual data -->
                     </div>
                 </div>
             </div>
@@ -84,62 +141,38 @@
             <div class="col-md-3">
                 <div class="card text-center">
                     <div class="card-body">
-                        <h5 class="card-title">Total Sales Revenue</h5>
-                        <p class="card-text"><%=100 %> $</p> <!-- Replace with actual data -->
+                        <h5 class="card-title">Total Costs</h5>
+                        <p class="card-text"><%=data.costs_total+data.total_kauf %> $</p> <!-- Replace with actual data -->
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card text-center">
                     <div class="card-body">
-                        <h5 class="card-title">Total Purchase Costs</h5>
-                        <p class="card-text"><%= 800%> $</p> <!-- Replace with actual data -->
+                        <h5 class="card-title">Total Profits</h5>
+                        <p class="card-text"><%= (data.total_verkauf)-(data.costs_total+data.total_kauf)%> $</p> <!-- Replace with actual data -->
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card text-center">
                     <div class="card-body">
-                        <h5 class="card-title">Total Employees</h5>
-                        <p class="card-text"><%=5 %></p> <!-- Replace with actual data -->
+                        <h5 class="card-title">Total Purches Invoice</h5>
+                        <p class="card-text"><%=data.total_invoice_kaufen %></p> <!-- Replace with actual data -->
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row mt-4">
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Items Amount</h5>
-                        <p class="card-text"><%=data.itemamounts %></p> <!-- Replace with actual data -->
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Sales Revenue</h5>
-                        <p class="card-text"><%=100 %> $</p> <!-- Replace with actual data -->
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Purchase Costs</h5>
-                        <p class="card-text"><%= 800%> $</p> <!-- Replace with actual data -->
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Employees</h5>
-                        <p class="card-text"><%=5 %></p> <!-- Replace with actual data -->
-                    </div>
-                </div>
-            </div>
-        </div>
+
+
+
+
+
+
+
+
+
+      
     </div>
 

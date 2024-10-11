@@ -6,5 +6,5 @@ const authcontroler = require("../controller/authcontroler");
 const dasboardcontroller = require("../controller/dashboardcontroller");
 
 router.get('/getdash',authcontroler.checkAuthAndFetchUser, dasboardcontroller.getdash);
-router.post('/getdashboard',authcontroler.checkAuthAndFetchUser, dasboardcontroller.getdashboard);
+router.post('/showdashboard',authcontroler.checkAuthAndFetchUser, dasboardcontroller.showdashboard);
 module.exports = router;
