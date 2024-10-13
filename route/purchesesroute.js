@@ -3,12 +3,12 @@ const app = express();
 const router = express.Router();
 const purchesesinvoice = require("../controller/purchesescontroller");
 const authcontroler = require("../controller/authcontroler");
-
+const rolecontrooler= require("../controller/middelware");
 
 
 
 //================================================
-router.get("/purchesesinvoce",authcontroler.checkAuthAndFetchUser,purchesesinvoice.purchaseInvoicePage);
+router.get("/purchesesinvoce",authcontroler.checkAuthAndFetchUser,rolecontrooler.Buyer,purchesesinvoice.purchaseInvoicePage);
 router.get("/addpurchaseinvoce",authcontroler.checkAuthAndFetchUser,purchesesinvoice.addpurchaseinvocepage);
 router.post("/addpurchesitem",authcontroler.checkAuthAndFetchUser,purchesesinvoice.addourchesItemController);
 router.post("/deletepurchesinvoiceitem",authcontroler.checkAuthAndFetchUser,purchesesinvoice.deletePurchasesitem);

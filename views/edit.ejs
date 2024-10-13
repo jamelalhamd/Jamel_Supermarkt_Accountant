@@ -66,12 +66,17 @@
     <label for="inputRole" class="form-label">Role:</label>
     <select name="role" id="inputRole" class="form-select" required>
       <option value="" disabled <% if (!emp.employee_role) { %> selected <% } %>>Choose here...</option>
-      
-      <option value="Casher" <% if (emp.employee_role === 'Casher') { %> selected <% } %>>Casher Empl.</option>
-      <option value="Store" <% if (emp.employee_role === 'Store') { %> selected <% } %>>Store Admin</option>
+  
+      <option value="Casher" <% if (emp.employee_role === 'Casher') { %> selected <% } %>>Cashier</option>
       <option value="Chef" <% if (emp.employee_role === 'Chef') { %> selected <% } %>>Chef</option>
+      <option value="HR" <% if (emp.employee_role === 'HR') { %> selected <% } %>>Human Resources (HR)</option>
+      <option value="Store" <% if (emp.employee_role === 'Store') { %> selected <% } %>>Store Manager</option>
+      <option value="Buyer" <% if (emp.employee_role === 'Buyer') { %> selected <% } %>>Purchasing Manager</option>
+      <option value="Accountant" <% if (emp.employee_role === 'Accountant') { %> selected <% } %>>Accountant</option>
+      <option value="Sale"<% if (emp.employee_role === 'HR') { %> selected <% } %>>Sale Manager</option>
     </select>
   </div>
+  
 
 
   <div class="col-md-6">

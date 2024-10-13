@@ -4,10 +4,10 @@ const promotionViewControl = require('../controller/promotioncontroller');
 const authcontroler = require("../controller/authcontroler");
 // Route to view all promotions
 router.get('/promotions',authcontroler.checkAuthAndFetchUser, promotionViewControl.promotionViewControl);
-
+const rolecontrooler= require("../controller/middelware");
 // Route to view a specific promotion for editing
 
-router.post('/searchpromotion',authcontroler.checkAuthAndFetchUser, promotionViewControl.searchPromotionController);
+router.post('/searchpromotion',authcontroler.checkAuthAndFetchUser,rolecontrooler.Sale, promotionViewControl.searchPromotionController);
 router.get('/editpromotion/:id',authcontroler.checkAuthAndFetchUser, promotionViewControl.editPromotion);
 router.post('/updatepromotion/:id',authcontroler.checkAuthAndFetchUser, promotionViewControl.updatePromotion);
 router.get('/deletepromotion/:id',authcontroler.checkAuthAndFetchUser, promotionViewControl.deletePromotionpage)

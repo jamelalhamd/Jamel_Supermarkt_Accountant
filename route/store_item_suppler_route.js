@@ -5,8 +5,8 @@ const storecontroller = require("../controller/storecontrol");
 const supplierController = require("../controller/supplercontroler");
 
 const authcontroler = require("../controller/authcontroler");
-
-router.get('/storeview',authcontroler.checkAuthAndFetchUser, storecontroller.storeviewcontrol);
+const rolecontrooler= require("../controller/middelware");
+router.get('/storeview',authcontroler.checkAuthAndFetchUser,rolecontrooler.Chef, storecontroller.storeviewcontrol);
 
 // Route for handling search functionality for stores
 router.post('/searchstore',authcontroler.checkAuthAndFetchUser, storecontroller.searchcontroller);

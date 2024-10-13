@@ -3,7 +3,7 @@ const app = express();
 const router = express.Router();
 
 const authcontroler = require("../controller/authcontroler");
-
+const rolecontrooler= require("../controller/middelware");
 
 
 
@@ -13,7 +13,7 @@ const authcontroler = require("../controller/authcontroler");
 const itemViewControl = require('../controller/itemcontroller');  // Update the path to the new controller
 
 // Route to view all items
-router.get('/items',authcontroler.checkAuthAndFetchUser, itemViewControl.itemViewControl);
+router.get('/items',authcontroler.checkAuthAndFetchUser,rolecontrooler.Store,rolecontrooler.Buyer,rolecontrooler.Sale, itemViewControl.itemViewControl);
 
 // Route to search for items
 router.post('/searchitems',authcontroler.checkAuthAndFetchUser, itemViewControl.searchItemController);

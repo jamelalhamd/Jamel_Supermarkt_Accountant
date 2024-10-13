@@ -4,10 +4,10 @@ const router = express.Router();
 
 const authcontroler = require("../controller/authcontroler");
 const stockcontroler = require("../controller/stockcontroller");
+const rolecontrooler= require("../controller/middelware");
 
 
-
-router.get('/nostock',authcontroler.checkAuthAndFetchUser,stockcontroler.nostock  );
+router.get('/nostock',authcontroler.checkAuthAndFetchUser,rolecontrooler.Store,rolecontrooler.Buyer,rolecontrooler.Sale,stockcontroler.nostock  );
 router.get('/lowstock',authcontroler.checkAuthAndFetchUser,stockcontroler.lowstock  );
 router.get('/back',authcontroler.checkAuthAndFetchUser,stockcontroler.back );
 router.post('/searchnostock',authcontroler.checkAuthAndFetchUser,stockcontroler.searchItemController );
