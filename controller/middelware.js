@@ -14,8 +14,12 @@ const checkRole = (requiredRole) => {
         return next();
       }
   
-      // Handle unauthorized access if role does not match
-      return res.status(403).send('Access Denied: Insufficient permissions.');
+
+      const data = { title: "permision",
+     
+        };
+      res.render('home', { data });
+ 
     };
   };
   

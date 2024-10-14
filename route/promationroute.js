@@ -7,12 +7,12 @@ router.get('/promotions',authcontroler.checkAuthAndFetchUser, promotionViewContr
 const rolecontrooler= require("../controller/middelware");
 // Route to view a specific promotion for editing
 
-router.post('/searchpromotion',authcontroler.checkAuthAndFetchUser,rolecontrooler.Sale, promotionViewControl.searchPromotionController);
-router.get('/editpromotion/:id',authcontroler.checkAuthAndFetchUser, promotionViewControl.editPromotion);
-router.post('/updatepromotion/:id',authcontroler.checkAuthAndFetchUser, promotionViewControl.updatePromotion);
-router.get('/deletepromotion/:id',authcontroler.checkAuthAndFetchUser, promotionViewControl.deletePromotionpage)
-router.post('/deletepromotion/:id',authcontroler.checkAuthAndFetchUser, promotionViewControl.deletePromotion);
-router.get('/addPromotion', authcontroler.checkAuthAndFetchUser,promotionViewControl.addPromotionpage);
+router.post('/searchpromotion',authcontroler.checkAuthAndFetchUser, promotionViewControl.searchPromotionController);
+router.get('/editpromotion/:id',authcontroler.checkAuthAndFetchUser,rolecontrooler.Sale, promotionViewControl.editPromotion);
+router.post('/updatepromotion/:id',authcontroler.checkAuthAndFetchUser,rolecontrooler.Sale, promotionViewControl.updatePromotion);
+router.get('/deletepromotion/:id',authcontroler.checkAuthAndFetchUser,rolecontrooler.Sale, promotionViewControl.deletePromotionpage)
+router.post('/deletepromotion/:id',authcontroler.checkAuthAndFetchUser,rolecontrooler.Sale, promotionViewControl.deletePromotion);
+router.get('/addPromotion', authcontroler.checkAuthAndFetchUser,rolecontrooler.Sale,promotionViewControl.addPromotionpage);
 router.post('/addPromotion',authcontroler.checkAuthAndFetchUser, promotionViewControl.addPromotion);
 router.get('/viewPromotion/:id',authcontroler.checkAuthAndFetchUser, promotionViewControl.promotionViewDetails);
 module.exports = router;

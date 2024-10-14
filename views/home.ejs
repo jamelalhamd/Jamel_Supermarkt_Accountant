@@ -259,9 +259,10 @@
       <span class="fs-4"> <strong><%= user ?store.StoreName : " " %></strong> </span>
 
     </a>
+    <% const role=user.employee_role %>
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
-      <li class="nav-item">
+      <li class="nav-item" >
         <a href="/items" class="nav-link <%= (data.title === "item/add" || data.title === "item/dashboard" || data.title === "item/delete" || data.title === "item/edit" || data.title === "item/view") ? "active" : "" %>" aria-current="page">
           <i class="bi bi-box"></i>
           Items
