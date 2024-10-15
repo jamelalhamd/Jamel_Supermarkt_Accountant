@@ -114,9 +114,14 @@ app.use(Promotion_Route);
 
 // Test Route
 app.get("/test", (req, res) => {
+  const user = res.locals.user;
+  const data = { 
+    title: "permision",
+  };
 
+  res.render('home', { data,user });
   console.log("error................................................................");
-  res.render('test');
+ // res.render('test');
 });
 
 // Basic Error Handling Middleware
@@ -136,4 +141,20 @@ app.listen(port, () => {
 });
 //================================================================
 
+app.get("/permision", (req, res) => {
+  const data1 = { 
+    title: "permission"
+  };
+  console.log(data1.title);
+  res.render('home', { data1 });
+});
 
+
+app.get("/test2", (req, res) => {
+  const data1 = { 
+    title: "permission"
+  };
+  console.log(data1.title);
+ res.render('home', { data1 });
+
+});

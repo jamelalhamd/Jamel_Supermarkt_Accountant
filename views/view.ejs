@@ -2,9 +2,9 @@
 <% const storeDetail = data.storedetails.find(store => emp.storeID === store.StoreID); %>
 
 <nav class="px-2 mt-4" style="width: 88%" aria-label="breadcrumb">
-  <ol class="breadcrumb">
+  <ol class="breadcrumb p-3 shadow-sm rounded">
     <li class="breadcrumb-item">
-      <a href="/dash" class="text-decoration-none">Back</a>
+      <a href="/dash" class="text-decoration-none text-primary"><i class="bi bi-arrow-left"></i> Back</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
       <%= `${emp.employee_name} ${emp.employee_lastname}` %>
@@ -13,64 +13,71 @@
 </nav>
 
 <div class="container mt-5" style="width: 88%">
-  <div class="card">
-    <div class="card-header bg-primary text-white d-flex justify-content-between">
-      <h5 class="mb-0">Employee Details</h5>
-      <span>ID: <%= emp.employee_id %></span>
-    </div>
-    
-    <div class="card-body">
-      <div class="row">
-        <div class="col-md-6 mb-4">
-          <h6 class="fw-bold">First Name</h6>
-          <p><%= emp.employee_name %></p>
-        </div>
-        <div class="col-md-6 mb-4">
-          <h6 class="fw-bold">Last Name</h6>
-          <p><%= emp.employee_lastname %></p>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6 mb-4">
-          <h6 class="fw-bold">Telephone</h6>
-          <p><%= emp.employee_phone %></p>
-        </div>
-        <div class="col-md-6 mb-4">
-          <h6 class="fw-bold">Email</h6>
-          <p><%= emp.employee_email %></p>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6 mb-4">
-          <h6 class="fw-bold">Gender</h6>
-          <p><%= emp.employee_gender %></p>
-        </div>
-        <div class="col-md-6 mb-4">
-          <h6 class="fw-bold">Role</h6>
-          <p><%= emp.employee_role %></p>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12 mb-4">
-          <h6 class="fw-bold">Address</h6>
-          <p><%= emp.employee_address %></p>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12 mb-4">
-          <h6 class="fw-bold">Branch</h6>
-          <p><%= storeDetail ? storeDetail.StoreName : 'Store not found' %></p>
+  <div class="row">
+    <!-- Employee Overview Section -->
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-body text-center">
+          <h4 class="fw-bold mb-3"><%= emp.employee_name %> <%= emp.employee_lastname %></h4>
+          <p class="text-muted">Employee ID: <%= emp.employee_id %></p>
+          <hr>
+          <p class="fw-semibold mb-1">Role: <%= emp.employee_role %></p>
+          <p class="fw-semibold mb-1">Branch: <%= storeDetail ? storeDetail.StoreName : 'Store not found' %></p>
         </div>
       </div>
     </div>
-    
-    <div class="card-footer d-flex justify-content-end">
-      <a href="/dash" class="btn btn-secondary me-2">Back to Employees</a>
-      <a href="/edit/<%= emp.employee_id %>" class="btn btn-primary">Edit Employee</a>
+
+    <!-- Employee Details Section -->
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Employee Details</h5>
+        </div>
+
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <h6 class="text-muted">First Name</h6>
+              <p class="fw-semibold"><%= emp.employee_name %></p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <h6 class="text-muted">Last Name</h6>
+              <p class="fw-semibold"><%= emp.employee_lastname %></p>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <h6 class="text-muted">Telephone</h6>
+              <p class="fw-semibold"><%= emp.employee_phone %></p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <h6 class="text-muted">Email</h6>
+              <p class="fw-semibold"><%= emp.employee_email %></p>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <h6 class="text-muted">Gender</h6>
+              <p class="fw-semibold"><%= emp.employee_gender %></p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <h6 class="text-muted">Address</h6>
+              <p class="fw-semibold"><%= emp.employee_address %></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-end gap-2">
+          <a href="/dash" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Employees
+          </a>
+          <a href="/edit/<%= emp.employee_id %>" class="btn btn-primary">
+            <i class="bi bi-pencil-square"></i> Edit Employee
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </div>

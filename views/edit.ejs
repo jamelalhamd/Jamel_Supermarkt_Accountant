@@ -34,12 +34,12 @@
 
   <div class="col-md-6">
     <label for="inputEmail" class="form-label">Email:</label>
-    <input name="email" value="<%= emp.employee_email %>" placeholder="ali@gmail.com" type="email" class="form-control" id="inputEmail" required />
+    <input readonly name="email" value="<%= emp.employee_email %>" placeholder="ali@gmail.com" type="email" class="form-control" id="inputEmail" required />
   </div>
 
   <div class="col-md-6">
     <label for="inputPassword" class="form-label">Password:</label>
-    <!-- لا تعرض كلمة المرور الأصلية -->
+
     <input name="password" value="<%= emp.employee_password %>"   placeholder="Enter new password (optional)" type="password" class="form-control" id="inputPassword" />
   </div>
 

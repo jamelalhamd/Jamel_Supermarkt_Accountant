@@ -113,7 +113,10 @@ const editcontroller_post = async (req, res) => {
   // Input validation (Example: email validation)
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   if (!isValidEmail(email)) {
-    return res.status(400).json({ error: 'Invalid email format' });
+   return res.status(400).json({ error: 'Invalid email format' });
+
+
+  
   }
 
   let hashedPassword = '';

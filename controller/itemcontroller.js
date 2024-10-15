@@ -59,7 +59,14 @@ const updateFinalPrices = async (itemsWithFinalPrices) => {
 
 
 const itemViewControl = async (req, res) => {
+
+
   try {
+
+
+
+
+
     const user = res.locals.user;
     const Promotion=await getPromotionData();
     const stores=await getStoreData();

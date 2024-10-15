@@ -1,10 +1,14 @@
 <div class="container mt-5">
   <% const promotion = data.promotion; %>
-  
+
   <!-- Breadcrumb Navigation -->
   <nav class="px-2 mt-4 d-flex flex-wrap justify-content-between" aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="/promotions">Back</a></li>
+    <ol class="breadcrumb  p-3 shadow-sm rounded">
+      <li class="breadcrumb-item">
+        <a href="/promotions" class="text-decoration-none text-primary">
+          <i class="bi bi-arrow-left"></i> Back
+        </a>
+      </li>
       <li class="breadcrumb-item active" aria-current="page">
         Promotion ID: <%= promotion.PromotionID ? promotion.PromotionID : "" %>
       </li>
@@ -13,8 +17,8 @@
 
   <!-- Promotion Details Table -->
   <div class="table-container mt-4">
-    <table class="ms-1 table table-striped table-bordered" style="width: 100%;">
-      <thead>
+    <table class="table table-striped table-bordered table-responsive">
+      <thead class="table-primary">
         <tr>
           <th scope="col">Attribute</th>
           <th scope="col">Value</th>
@@ -39,7 +43,13 @@
         </tr>
         <tr>
           <th scope="row">Discount Percentage</th>
-          <td><%= promotion.DiscountPercentage ? promotion.DiscountPercentage : "N/A" %></td>
+          <td>
+            <% if (promotion.DiscountPercentage) { %>
+              <span class="badge bg-success"><%= promotion.DiscountPercentage %>%</span>
+            <% } else { %>
+              0 %
+            <% } %>
+          </td>
         </tr>
       </tbody>
     </table>
