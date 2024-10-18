@@ -1,12 +1,15 @@
 
 const bodyParser = require('body-parser');
+const sendEMail2=require('./sendthe email');
+const sendEMail=require('./sendemail');
+
 const { check, validationResult } = require("express-validator");
 require('dotenv').config();
 const cloudinary = require("cloudinary").v2;
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 //================================================
-const { db, getStoreData } = require('../controller/db');
+const { db, getStoreData ,runQuery} = require('../controller/db');
 const bcrypt = require("bcrypt");
 const express = require('express');
 var jwt = require("jsonwebtoken");
@@ -25,7 +28,7 @@ const signupcontroler = (req, res) => {
 
 const loginpostcontroller = async(req, res) => {
 
-  await hasesword("Afpc1967#");
+
     const { email, password } = req.body;
     const sql = 'SELECT * FROM employees WHERE employee_email = ?';
 
@@ -88,25 +91,43 @@ const loginpostcontroller = async(req, res) => {
         });
     });
 };
-//Afpc1967#
+const restpassword = (req, res) => { 
+
+    const data = {
+
+        style:"danger"// You can pass a default message or leave it blank.
+    };
+    console.log("rest page");
+    return res.render("authen/restpassword", { data });
+};
+
+
+
+
+
+
+
+
 
 
 
 
 
 const forgotPasswordController = (req, res) => {
-    const { email } = req.body;
-    const sql = 'SELECT * FROM employees WHERE employee_email = ?';
+    const { email } = req.body; // Extracting the email from the request body
+    console.log("Email: " + email);
+    
+    const sql = 'SELECT * FROM employees WHERE employee_email = ?'; // SQL query to find the employee by email
 
-    db.query(sql, [email], (err, results) => {
+    db.query(sql, [email], async (err, results) => { // Executing the SQL query
         if (err) {
             console.error("Database error: " + err.message);
-            return res.render('authen/forgot-password', { message: "Error fetching employee data." });
+            SENDGRID_API_KEY
         }
 
         if (results.length === 0) {
-            console.log("No employee found with email: " + email);
-            return res.render('authen/forgot-password', { message: "No account found with the provided email." });
+            console.log("No employee found with this email");
+            return res.render("authen/restpassword", { data: { msg: "No employee found with email: " + email, style: "danger" } });
         }
 
         const employee = results[0];
@@ -114,28 +135,30 @@ const forgotPasswordController = (req, res) => {
         // Generate a reset token with JWT
         const token = jwt.sign({ email: employee.employee_email }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
 
-        // Send reset email with link
+        // Reset password link
         const resetLink = `${req.protocol}://${req.get('host')}/reset-password/${token}`;
-        const transporter = nodemailer.createTransport({ /* transport options */ });
+        console.log("Reset link: " + resetLink);
 
-        const mailOptions = {
-            from: 'noreply@example.com',
-            to: employee.employee_email,
-            subject: 'Password Reset',
-            text: `Click the following link to reset your password: ${resetLink}`
-        };
+      let email = employee.employee_email;
+   
+      
 
-        transporter.sendMail(mailOptions, (err, info) => {
-            if (err) {
-                console.error("Error sending email: " + err.message);
-                return res.render('authen/forgot-password', { message: "Error sending reset email." });
-            }
+        console.log("email: " + email);
 
-            console.log("Reset email sent to: " + employee.employee_email);
-            res.render('authen/forgot-password', { message: "Password reset link has been sent to your email." });
-        });
+      // await sendMail(email , 'Password to Reset ', `Click the following link to reset your password: ${resetLink}`);
+ //await sendEMail2(email , 'Password to Reset ', `Click the following link to reset your password: ${resetLink}`);
+ await sendEMail(email , 'Password to Reset ', `Click the following link to reset your password: ${resetLink}`);
+        return res.render("authen/restpassword", { data: { msg: `The link has been successfully sent to your email : ${email} `, style: "success" } });
+
+
+
     });
 };
+
+
+
+module.exports = forgotPasswordController; // Export the controller for use in other parts of the application
+
 
 
 
@@ -295,15 +318,152 @@ console.log("0");
 };
 
 
+const changepassword=(req, res,) => {
+    const user= res.locals.user;
+    console.log(user);
+    data={
+  
+   title:'authen/changepassword',
+   msg:null,
+   style:"success"
+  
+  
+  
+    }
+  
+  res.render('home', {data,user});
+  
+  
+   }
+
+
+   const changepasswordpost = async (req, res) => {
+    const user = res.locals.user;
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    console.log(req.body);
+    console.log("user",JSON.stringify(user));
+    console.log("user.email"+user.employee_email);
+  
+   
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      const data = {
+        title: 'authen/changepassword',
+        msg: "Fill all fields",
+        style: "danger",
+      };
+      return res.render('home', { data, user });
+    }
+  
+
+    if (newPassword !== confirmPassword) {
+      const data = {
+        title: 'authen/changepassword',
+        msg: "The passwords do not match",
+        style: "danger",
+      };
+      return res.render('home', { data, user });
+    }
+  
+    // التحقق من صحة كلمة المرور الجديدة باستخدام Regex
+    const isValidPassword = (newPassword) => {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/;
+        return passwordRegex.test(newPassword);
+      };
+  
+    if (!isValidPassword(newPassword)) {
+      const data = {
+        title: 'authen/changepassword',
+        msg: 'Invalid password format. Password must contain at least 8 characters, including uppercase, lowercase, number, and special character.',
+        style: "danger",
+      };
+      return res.render('home', { data, user });
+    }
+  
+  const hassedpassword=user.employee_password;
+
+
+//================================================================
+
+const emailsql = "SELECT * FROM employees WHERE employee_email = ?";
+const result = await runQuery(emailsql, [user.employee_email]);
+ console.log("result: " ,JSON.stringify(result));
+ console.log("result[0].length :"+result.length)
+if (result.employee_email!=user.employee_email) {
+    const data = {
+        title: 'authen/changepassword',
+        msg: "This is not your email. You can change the password for your email only.",
+        style: "danger",
+    };
+
+    return res.render('home', { data, user });
+}
+
+
+
+const sqlUpdatePassword = "UPDATE employees SET employee_password = ? WHERE employee_email  = ?";
+
+
+
+
+bcrypt.compare(currentPassword, hassedpassword, (err, passwordMatch) => {
+    if (err) {
+        const data = {
+            title: 'authen/changepassword',
+            msg: 'Ther is error '+err,
+            style: "danger",
+          };
+          return res.render('home', { data, user });
+    }
+
+    if (!passwordMatch) {
+        const data = {
+            title: 'authen/changepassword',
+            msg: "Inocorrect password ,try again",
+            style: "danger",
+          };
+          return res.render('home', { data, user });
+    }
+
+    // Generate a JWT token with a 1-hour expiration
+
+});
+//=================================================
+     
+
+
+ 
+  if ( newPassword.trim() !== '') {
+   const  hashedPassword = await bcrypt.hash( newPassword, 10);
+   
+   const sqlUpdatePassword = "UPDATE employees SET employee_password = ? WHERE employee_email  = ?";
+   await runQuery(sqlUpdatePassword, [hashedPassword, user.employee_email]);
+  }
+  
+
+  
+    const data = {
+      title: 'authen/changepassword',
+      msg: "Password successfully changed",
+      style: "success",
+    };
+  
+    return res.render('home', { data, user });
+  };
+  
+
+
+
+
 
 
 module.exports = {
-    signoutcontroler,
+    signoutcontroler,changepassword,changepasswordpost,
     logincontroler,
     loginpostcontroller,
     post_profileIme,
     checkIfUser,
-    requireAuth,
+    requireAuth,forgotPasswordController ,
+    restpassword,
     signupcontroler,
     checkAuthAndFetchUser
 };

@@ -25,6 +25,8 @@ const addcontroller = async (req, res) => {
 const addcontroller_post = async (req, res) => {
   try {
     const storeResults = await getStoreData();
+    const stores=await getStoreData();
+const employees=await getEmployees();
     
     const { firstname, lastname, phone, gender, address, password, email, role, store } = req.body;
     if (!firstname || !lastname || !gender || !password || !email || !role || !store || !address) {
@@ -36,13 +38,52 @@ msg:"All fields are required",style:"warning"
       return res.render('home', { data });
     }
 
+
+    const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!isValidEmail(email)) {
+
+
+
+     const data = {
+      title: 'add',
+      stores,employees,
+     msg:'Invalid email format'   ,
+     style:"danger"
+   };
+   return res.render('home', { data });
+
+  
+  
+    
+    }
+
+    const isValidPassword = (password) => {
+      
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      return passwordRegex.test(password);
+    };
+
+    if (!isValidPassword(password)) {
+      const data = {
+        title: 'add',
+        stores,
+        employees,
+        msg: 'Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.',
+        style: 'danger'
+      };
+      return res.render('home', { data });
+    }
+
+
+
+
     const sqlemail = 'SELECT * FROM employees WHERE employee_email = ?';
     db.query(sqlemail, [email], async (err, result) => {
       if (err) {
         console.error("Error checking email: " + err);
         const data = {
            title: 'add',
-           user: "Error checking email, select another email " + err, stores: storeResults ,
+           user,
           msg:"Error checking email, select another email " ,
           style:"danger"
         };
@@ -110,13 +151,43 @@ res.render('home', { data });
 const editcontroller_post = async (req, res) => {
   const { firstname, lastname, phone, gender, address, password, email, role } = req.body;
 
+  const stores=await getStoreData();
+  const employees=await getEmployees();
+
   // Input validation (Example: email validation)
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   if (!isValidEmail(email)) {
-   return res.status(400).json({ error: 'Invalid email format' });
+
+
+
+   const data = {
+    title: 'edit',
+    employees,
+    stores,
+   msg:'Invalid email format'   ,
+   style:"danger"
+ };
+ return res.render('home', { data });
 
 
   
+  }
+
+  const isValidPassword = (password) => {
+    
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
+  if (!isValidPassword(password)) {
+    const data = {
+      title: 'edit',
+      employees,
+      stores,
+     msg:'Invalid password format'   ,
+     style:"danger"
+   };
+    return res.render('home', { data });
   }
 
   let hashedPassword = '';
@@ -304,7 +375,7 @@ const editcontroller = async (req, res) => {
       employees: employeeResults,
       stores: storeResults
     };
-    console.log("store data: " + JSON.stringify(storeResults, null, 2));
+
     res.render('home', { data });
   } catch (err) {
     const data = { title: 'edit', user: err };
@@ -386,6 +457,11 @@ const searchcontroller = async (req, res) => {
     res.render('home', { data });
   }
 };
+
+
+
+
+
 
 module.exports = {
   errorcontroller,

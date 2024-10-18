@@ -18,6 +18,7 @@ router.get('/view/:id',authcontroler.checkAuthAndFetchUser, productController.vi
 router.post('/adduser',authcontroler.checkAuthAndFetchUser, productController.addcontroller_post);
 router.post('/edituser',authcontroler.checkAuthAndFetchUser, productController.editcontroller_post);
 router.post('/deleteuser/:id',authcontroler.checkAuthAndFetchUser, productController.deletecontroller_post);
-router.post('/search',authcontroler.checkAuthAndFetchUser,productController.searchcontroller)
+router.post('/search',authcontroler.checkAuthAndFetchUser,productController.searchcontroller);
+
 module.exports = router;
 

@@ -30,15 +30,59 @@
   
     <style>
 
+
 @media print {
-          /* إخفاء الأزرار وأي عناصر غير ضرورية عند الطباعة */
-          button {
-            display: none;
-          } }
+    body {
+        font-family: Arial, sans-serif;
+        color: black;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: bold;
+        color: black;
+    }
+
+    p, th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: center;
+        font-weight: bold;
+        color: black;
+        font-size: 14px;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        font-size: 16px;
+    }
+
+    .invoice-details-section h4,
+    .invoice-details-section h5,
+    .invoice-details-section h6 {
+        font-weight: bold;
+        color: black;
+    }
+
+    .table {
+        border-color: black;
+    }
+
+    .table th, .table td {
+        border: 1px solid black;
+        color: black;
+    }
+
+    .btn, a {
+        display: none !important;
+    }
+}
+
+
+
 
 
 .custom-width {
-  width: 90%; /* يمكنك تعديل النسبة كما ترغب */
+  width: 90%;
 }
 #sidebar {
   width: 280px; /* Default width */
@@ -392,6 +436,14 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 
 
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    
+    document.getElementById("printButton").addEventListener("click", function() {
+            window.print();
+    });
+  });
+</script>
 
     </body>
   </body>
