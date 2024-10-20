@@ -1,15 +1,10 @@
 const express = require('express');
 const path = require('path');
-const puppeteer = require('puppeteer');
-const ejs = require('ejs');
-const fs = require('fs');
-
-const html_to_pdf = require('html-pdf-node');
-
-
 
 
 const app = express();
+
+app.use(express.static('public'));
 const port = process.env.PORT || 3000;
 const methodOverride = require('method-override');
 const cookieParser = require('cookie-parser');
@@ -101,6 +96,7 @@ const mainboard_Route = require("./route/costroute");
 
 const purchesese_Route = require("./route/purchesesroute");
 const dashboard_Route = require("./route/dashboardcontrollerroute");
+const print_Route = require("./route/printroute");
 app.use(purchesese_Route);
 app.use(Sales_Route);
 app.use(itemcontroller);
@@ -111,18 +107,10 @@ app.use(mainboard_Route);
 app.use(dashboard_Route);
 app.use(store_item_suppler_Route);
 app.use(Promotion_Route);
+app.use(print_Route);
 
 // Test Route
-app.get("/test", (req, res) => {
-  const user = res.locals.user;
-  const data = { 
-    title: "permision",
-  };
 
-  res.render('home', { data,user });
-  console.log("error................................................................");
- // res.render('test');
-});
 
 // Basic Error Handling Middleware
 app.use((err, req, res, next) => {
@@ -141,20 +129,10 @@ app.listen(port, () => {
 });
 //================================================================
 
-app.get("/permision", (req, res) => {
-  const data1 = { 
-    title: "permission"
-  };
-  console.log(data1.title);
-  res.render('home', { data1 });
-});
 
 
-app.get("/test2", (req, res) => {
-  const data1 = { 
-    title: "permission"
-  };
-  console.log(data1.title);
- res.render('home', { data1 });
 
-});
+
+
+
+//===========================================
