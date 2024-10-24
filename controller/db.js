@@ -65,7 +65,18 @@ const getSupplierbyid = (id) => {
   });
 };
 
-
+const getuserbyid = (id) => {
+  return new Promise((resolve, reject) => {
+    const supplierQuery = 'SELECT * FROM employees where employee_id=?'; // Query to fetch all suppliers
+    db.query(supplierQuery, [id],(err, supplierResults) => {
+      if (err) {
+        console.error("Error fetching supplier data: " + err);
+        return reject("Error fetching supplier data: " + err);
+      }
+      resolve(supplierResults);
+    });
+  });
+};
 
 
 const getUser = (req, res) => {
@@ -482,9 +493,9 @@ const getcostsbyid = async (id) => {
 
 
 module.exports = {fetchInvoiceItems,getInvoiceById,getInvoiceItemsById,getpurchesesinvoice,getpurcheseitem,runQuery,getSupplierbyid , categoriesArray ,
-  db,getPromotionData,getInvoice ,getcostsbyid,
+  db,getPromotionData,getInvoice ,getcostsbyid,getuserbyid ,
   getUser,getItemData,updatequanity,getpurcheseitembyid ,getEmployees,getBysalesinvoiceitemID,itemStatesArray,unitsArray,
-  getStoreData, getpurchesesinvoicebyid,getcosts,
+  getStoreData, getpurchesesinvoicebyid,getcosts,getInvoiceById,
   getSupplierData
 };
 

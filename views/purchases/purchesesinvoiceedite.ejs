@@ -33,7 +33,7 @@
     <!-- Total Price and Number of Items -->
     <div class="row mb-3">
       <div class="col">
-        <h5>Total Price :  <%= data.invoice.totalprice %> $</h5>
+        <h5>Total Price :  <%= data.invoice.totalprice %> €</h5>
       </div>
       <div class="col text-end">
         <h5>Number of Items: <%= data.items.length %></h5>
@@ -72,8 +72,8 @@
               <td><%= item.baracode %></td>
               <td><%= item.item_name %></td>
               <td><%= item.Quantity %></td>
-              <td>$<%= item.price.toFixed(2) %></td>
-              <td>$<%= item.total.toFixed(2) %></td>
+              <td>€<%= item.price.toFixed(2) %></td>
+              <td>€<%= item.total.toFixed(2) %></td>
               <td>
                 <!-- Edit Button -->
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal"

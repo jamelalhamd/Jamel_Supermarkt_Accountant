@@ -1,77 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice <%= invoice.id %></title>
+    <title>Invoice <%= invoice[0].id %></title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            padding: 30px;
+            background-color: #f9f9f9;
+            color: #050117;
         }
-        h1, h2, h3, h4, h5, h6 {
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(11, 11, 11, 0.986);
+        }
+        h2 {
+            color: #4CAF50;
             text-align: center;
+            margin-bottom: 40px;
+        }
+        .invoice-header, .invoice-items, .totals {
+            margin-bottom: 30px;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .row .col {
+            flex: 1;
+        }
+        .text-end {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .invoice-header h4, .invoice-header h5, .invoice-header h6 {
+            margin: 5px 0;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 25px;
+            font-size: 14px;
         }
-        table, th, td {
-            border: 1px solid #000;
+        table th {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            color: #4CAF50;
         }
-        th, td {
-            padding: 8px;
+        table td,tr,th {
+            padding: 10px;
             text-align: center;
+            border: 1px solid #111010;
         }
         .totals {
-            margin-top: 20px;
             float: right;
             width: 50%;
         }
-        .totals h3 {
-            margin: 5px 0;
+        .totals h3, .totals h5 {
+            margin: 0;
+        }
+        .totals h5 {
+            color: #333;
+        }
+        .total-price {
+            font-size: 18px;
+            color: #4CAF50;
+        }
+        .note {
+            margin-top: 20px;
+            font-style: italic;
+            color: #505052;
         }
     </style>
 </head>
-
-
 <body>
-    <h1>Invoice for <%= invoice.id %></h1>
-    <p>Date: <%= invoice.date %></p>
-    <p>Edited by: <%= invoice.editedBy %></p>
-    
-    <h2>Products</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Unit</th>
-                <th>Quantity</th>
-                <th>Price ($)</th>
-                <th>Total ($)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% items.forEach(item => { %>
-                <tr>
-                    <td><%= item.name %></td>
-                    <td><%= item.description %></td>
-                    <td><%= item.unit %></td>
-                    <td><%= item.quantity %></td>
-                    <td><%= item.price %></td>
-                    <td><%= item.total %></td>
-                </tr>
-            <% }); %>
-        </tbody>
-    </table>
-    
-    <div class="totals">
-        <h3>Subtotal: $<%= invoice.subtotal %></h3>
-        <h3>Tax (20%): $<%= invoice.tax %></h3>
-        <h3>Grand Total: $<%= invoice.grandTotal %></h3>
+    <div class="container">
+        <!-- Invoice Header -->
+        <div class="invoice-header">
+            <div class="store-info">
+                <p><strong>Supermarkt Bad Driburg</strong></p>
+                <p>Sudstraße 7, 33014 Bad Driburg</p>
+                <p>Email: <a href="mailto:info@supermarkt-baddriburg.com">info@supermarkt-baddriburg.com</a>, Tel: 05011925176</p>
+            </div>
+            
+            <hr style="border: 1px solid #4CAF50; margin: 20px 0;">
+        
+            <h2 style="text-align: center; color: #4CAF50; margin-bottom: 30px;">Invoice Details</h2>
+            <div class="row">
+                <div class="col">
+                    <h4>Invoice ID: <strong><%= invoice[0].PurchaseID %></strong></h4>
+                </div>
+                <div class="col text-end">
+                    <h6>Date: 
+                        <strong><%= invoice[0].PurchaseDate 
+                            ? new Date(invoice[0].PurchaseDate).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.') 
+                            : 'N/A' %></strong>
+                    </h6>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h5>Employee: <strong><%= invoice[0].employee_id %></strong></h5>
+                </div>
+                <div class="col text-end">
+                    <h5>Employee Name: <strong><%= user[0].employee_name %> <%= user[0].employee_lastname %></strong></h5>
+                </div>
+                
+            </div>
+            <% if (supplierdata) { %>
+            <div class="row">
+                <div class="col">
+                    <h5>Supplier No: <strong><%= supplierdata[0].SupplierID %></strong></h5>
+                </div>
+                <div class="col text-end">
+                    <h5>Supplier Name: <strong><%= supplierdata[0].SupplierName %></strong></h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h6>Supplier Address: <strong><%= supplierdata[0].address %></strong></h6>
+                </div>
+                <div class="col text-end">
+                    <h6>Supplier Email: <strong><%= supplierdata[0].email %></strong></h6>
+                </div>
+            </div>
+            <% } else { %>
+            <div class="row">
+                <div class="col">
+                    <h5>Supplier details not available</h5>
+                </div>
+            </div>
+            <% } %>
+        </div>
+
+        <!-- List of Items -->
+        <div class="invoice-items">
+            <h3 class="text-center">List of Items</h3>
+            <% if (items.length === 0) { %>
+            <div class="text-center my-5">
+                <p>No items found for this invoice.</p>
+            </div>
+            <% } else { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Item ID</th>
+                        <th>Barcode</th>
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% items.forEach((item, index) => { %>
+                    <tr>
+                        <td><%= index + 1 %></td>
+                        <td><%= item.itemID %></td>
+                        <td><%= item.baracode %></td>
+                        <td><%= item.item_name %></td>
+                        <td><%= item.Quantity %></td>
+                        <td>€<%= item.Price ? parseFloat(item.Price).toFixed(2) : '0.00' %></td>
+                        <td>€<%= item.totalprice ? parseFloat(item.totalprice).toFixed(2) : '0.00' %></td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+            <% } %>
+        </div>
+
+        <!-- Invoice Summary -->
+        <div class="row">
+            <div class="col">
+                <h5>Total Price: <strong class="total-price"><%= invoice[0].Price %> €</strong></h5>
+            </div>
+            <div class="col text-end">
+                <h5>Number of Items: <strong><%= (items && items.length > 0) ? items.length : 0 %></strong></h5>
+            </div>
+        </div>
+
+        <!-- Note -->
+        <div class="note">
+            <p>=========================================== </p>
+            
+        </div>
     </div>
 </body>
 </html>

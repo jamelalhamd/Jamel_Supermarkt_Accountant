@@ -27,7 +27,7 @@
       <!-- Total Price and Number of Items -->
       <div class="row mb-3 ">
         <div class="col">
-          <h5>Total Price: $<%= data.totalPrice.toFixed(2) %></h5>
+          <h5>Total Price: €<%= data.totalPrice.toFixed(2) %></h5>
         </div>
         <div class="col text-end">
           <h5>Number of Items: <%= data.items.length %></h5>
@@ -79,20 +79,20 @@
             <td><%= item.baracode %></td>
             <td><%= item.item_name %></td>
             <td><%= item.Quantity %></td>
-            <td>$<%= item.price.toFixed(2) %></td>
-            <td>$<%= item.total.toFixed(2) %></td>
+            <td>€<%= item.price.toFixed(2) %></td>
+            <td>€<%= item.total.toFixed(2) %></td>
          
           </tr>
           <% }) %>
         </tbody>
       </table>
- 
+     
       <div class="text-center mt-4">
         <a href="/salesinvoice" id="save-pdf" class="btn btn-success">Back</a>
-        <a href="/pdfsalesinvoice/<%= data.salesinvoiceID %>" id="save-pdf" class="btn btn-primary">Save as PDF</a>
-        
+        <a href="/salespdfinvoice/<%= data.salesinvoiceID %>" id="save-pdf" class="btn btn-primary">Save as PDF</a>
+        <a href="/salespdfinvoiceprint/<%= data.salesinvoiceID %>" id="save-pdf" class="btn btn-primary">Print</a>
       
-        <button class="btn btn-primary mx-4" id="printButton">Print</button>
+
 
 
         

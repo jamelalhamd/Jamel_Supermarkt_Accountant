@@ -48,7 +48,7 @@
         <!-- Invoice Summary -->
         <div class="row mt-4">
           <div class="col">
-            <h5>Total Price: <strong>$<%= data.invoice.Price %></strong></h5>
+            <h5>Total Price: <strong>€<%= data.invoice.Price %></strong></h5>
           </div>
           <div class="col text-end">
             <h5>Number of Items: <strong><%= (data.items && data.items.length > 0) ? data.items.length : 0 %></strong></h5>
@@ -116,8 +116,8 @@
                   <td><%= item.baracode %></td>
                   <td><%= item.item_name %></td>
                   <td><%= item.Quantity %></td>
-                  <td>$<%= item.Price ? parseFloat(item.Price).toFixed(2) : '0.00' %></td>
-                  <td>$<%= item.totalprice ? parseFloat(item.totalprice).toFixed(2) : '0.00' %></td>
+                  <td>€<%= item.Price ? parseFloat(item.Price).toFixed(2) : '0.00' %></td>
+                  <td>€<%= item.totalprice ? parseFloat(item.totalprice).toFixed(2) : '0.00' %></td>
                 </tr>
               <% }) %>
             </tbody>
@@ -128,7 +128,8 @@
         <div class="text-center mt-4">
           <a href="/purchesesinvoce" class="btn btn-success">Back</a>
           <a href="/pdfinvoice/<%= data.PurchaseID %>" class="btn btn-primary">Save as PDF</a>
-          <button class="btn btn-primary mx-4" id="printButton">Print</button>
+          <a href="/pdfinvoiceprint/<%= data.PurchaseID %>" class="btn btn-primary">Print</a>
+  
         </div>
       <% } %>
     </div>

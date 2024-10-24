@@ -20,7 +20,7 @@
         </div>
         <div class="col text-end">
           <h6>
-            <%= data.invoice.PurchaseDate ? `Date: ${data.invoice.PurchaseDate}` : '' %>
+            <%= data.invoice.PurchaseDate ? `Date: €{data.invoice.PurchaseDate}` : '' %>
           </h6>
         </div>
       </div>
@@ -28,7 +28,7 @@
       <!-- Total Price and Number of Items -->
       <div class="row mb-3">
         <div class="col">
-          <h5>Total Price: $<%= data.invoice.Price %></h5>
+          <h5>Total Price: €<%= data.invoice.Price %></h5>
         </div>
         <div class="col text-end">
           <h5>Number of Items: <%= (data.items && data.items.length > 0)? data.items.length :0 %></h5>
@@ -161,8 +161,8 @@
                 <td><%= element.baracode %></td>
                 <td><%= element.item_name %></td>
                 <td><%= element.Quantity %></td>
-                <td>$<%= (element.Price ? parseFloat(element.Price).toFixed(2) : "0.00") %></td>
-                <td>$<%= (element.totalprice ? element.totalprice.toFixed(2) : "0.00") %></td>
+                <td>€<%= (element.Price ? parseFloat(element.Price).toFixed(2) : "0.00") %></td>
+                <td>€<%= (element.totalprice ? element.totalprice.toFixed(2) : "0.00") %></td>
                 
                 <td>
                   <!-- Edit Item Button -->
