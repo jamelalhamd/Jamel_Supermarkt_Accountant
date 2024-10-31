@@ -174,7 +174,9 @@
         display: block !important;
       }
 
-
+      .hidden {
+    display: none;
+}
    /* General Hover State for Navbar and Pills */
 .navbar-brand:hover,
 .navbar-nav .nav-link:hover,
@@ -304,15 +306,38 @@
 
     </a>
     <% const role=user.employee_role %>
+
+
+    <% 
+    const storeBuyerRoles = ["Chef", "Store", "Buyer"];
+    const chefOnly = ["Chef"];
+    const hrRoles = ["Chef", "HR"];
+    const accountantRoles = ["Chef", "Accountant"];
+    const supplierRoles = ["Chef", "Store", "Buyer", "Accountant"];
+    casher = ["Chef", "Casher","Sale"].includes(role);
+    item = storeBuyerRoles.includes(role);
+    promotion = chefOnly.includes(role);
+    employee = hrRoles.includes(role);
+    purchase = storeBuyerRoles.includes(role);
+
+    dashboard = accountantRoles.includes(role);
+    branch = hrRoles.includes(role);
+    suppler = supplierRoles.includes(role);
+    alarm = storeBuyerRoles.includes(role);
+    accountant = accountantRoles.includes(role);
+  %>
+
+
+
     <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
-      <li class="nav-item" >
+    <ul class="nav nav-pills flex-column mb-auto"         >
+      <li class="nav-item ">
         <a href="/items" class="nav-link <%= (data.title === "item/add" || data.title === "item/dashboard" || data.title === "item/delete" || data.title === "item/edit" || data.title === "item/view") ? "active" : "" %>" aria-current="page">
           <i class="bi bi-box"></i>
           Items
         </a>
       </li>
-      <li style=`display:<%= user.employee_role == 'Store' ? 'none' : 'none' %>;`>
+      <li class="nav-item <%= promotion ? '' : 'd-none' %>">
 
         <a href="/promotions" class="nav-link text-white <%= (data.title === "promation/add" || data.title === "promation/dashboard" || data.title === "promation/delete" || data.title === "promation/edit" || data.title === "promation/view") ? "active" : "" %>"  >
           <i class="bi bi-percent"></i>
@@ -320,20 +345,20 @@
         </a>
     </li>
     
-      <li>
+    <li class="nav-item <%= employee ? '' : 'd-none' %>">
         <a href="/dash" class="nav-link text-white <%= (data.title === "add" || data.title === "dashboard" || data.title === "delete" || data.title === "edit" || data.title === "view") ? 'active' : '' %>">
      
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           Employees
         </a>
       </li>
-      <li>
+      <li class="nav-item <%= purchase ? '' : 'd-none' %>">
         <a href="/purchesesinvoce" class="nav-link text-white <%= (data.title === "purchases/purchesesinvoiceedite"||data.title === "purchases/purchesesinvoiceview" ||data.title === "purchases/viewpurchesinvoice" ||data.title === "purchases/addpurchesesinvoice" || data.title === "purchases/deletepurchesinvoice" || data.title === "purchases/editrpurchesinvoice" || data.title === "purchases/purchesesinvoice" || data.title === "purchases/purchesesinvoicedelete") ? "active" : "" %>"  >
           <i class="bi bi-bag"></i>
           Purcheses
         </a>
       </li>
-    <li>
+      <li class="nav-item <%= casher ? '' : 'd-none' %>">
         <a href="/salesinvoice" class="nav-link text-white <%= (data.title === "sales/addinvoice" || data.title === "sales/invoicedelete" || data.title === "sales/invoiceedite" || data.title === "sales/invoiceview" || data.title === "sales/salesinvoice") ? 'active' : '' %>">
           <i class="bi bi-cart4"></i>
           Sales
@@ -376,37 +401,39 @@
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid justify-content-md-between justify-content-between">
         
-            <a class="navbar-brand" href="/showdashboard"> 
+            <a class="navbar-brand  <%=  dashboard ? '' : 'd-none' %>    " href="/showdashboard"> 
               <i class="bi bi-speedometer2"></i> <!-- Dashboard Icon -->
               Dashboard
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler <%=  dashboard ? '' : 'd-none' %>  " type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
+                    <li class="nav-item  <%=  branch ? '' : 'd-none' %>  ">
                       <a class="nav-link <%= (data.title === "store/add" || data.title === "store/dashboard" || data.title === "store/edit" || data.title === "store/view") ? 'active' : '' %>" aria-current="page" href="/storeview">
                         <i class="bi bi-shop"></i> <!-- Branches Icon -->
                         Branches
                       </a>
                     </li>
 
-                    <li class="nav-item">
+                    <li class="nav-item <%=  suppler ? '' : 'd-none' %>">
                       <a class="nav-link <%= (data.title === "supplier/add" || data.title === "supplier/dashboard" || data.title === "supplier/edit" || data.title === "supplier/view"|| data.title === "supplier/delete") ? 'active' : '' %>" href="/supplierdash">
                         <i class="bi bi-people"></i> <!-- Supplier Icon -->
                         Supplier
                       </a>
                     </li>
 
-                    <li class="nav-item">
+                    <li class="nav-item <%=  alarm ? '' : 'd-none' %>">
                       <a class="nav-link <%= (data.title === "alarm/delete" || data.title === "alarm/expiredate" || data.title === "alarm/lowstock" || data.title === "alarm/view" || data.title === "alarm/nostock") ? 'active' : '' %>" href="/nostock">
                         <i class="bi bi-exclamation-triangle"></i> <!-- Alarm Icon -->
                         Alarm
                       </a>
                     </li>
 
-                    <li class="nav-item">
+                    <li class="nav-item <%=  accountant
+                    
+                    ? '' : 'd-none' %>">
                       <a class="nav-link <%= (data.title === "costs/add" || data.title === "costs/dashboard" || data.title === "costs/delete" || data.title === "costs/view" || data.title === "costs/edit") ? 'active' : '' %>" href="/mainboard">
                         <i class="bi bi-currency-dollar"></i> <!-- Costs Icon -->
                         Costs

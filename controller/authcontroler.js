@@ -87,7 +87,7 @@ const loginpostcontroller = async(req, res) => {
             });
 
             console.log("Successfully logged in employee: " + email);
-            res.redirect('/dash');
+            res.redirect('/items');
         });
     });
 };
