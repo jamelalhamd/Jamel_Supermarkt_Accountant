@@ -11,5 +11,5 @@ router.post('/showdashboard',authcontroler.checkAuthAndFetchUser, dasboardcontro
 
 
 
-router.get('/showdashboard',authcontroler.checkAuthAndFetchUser,rolecontrooler.Chef,rolecontrooler.Sale, dasboardcontroller.showdashboard);
+router.get('/showdashboard',authcontroler.checkAuthAndFetchUser,rolecontrooler. allrole ,rolecontrooler.Sale, dasboardcontroller.showdashboard);
 module.exports = router;

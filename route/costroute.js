@@ -6,7 +6,7 @@ const authcontroler = require("../controller/authcontroler");
 const mainboardcontroller = require("../controller/costcontroller");
 const rolecontrooler= require("../controller/middelware");
 
-router.get('/mainboard', authcontroler.checkAuthAndFetchUser,rolecontrooler.Accountant,mainboardcontroller.mainboard);
+router.get('/mainboard', authcontroler.checkAuthAndFetchUser,rolecontrooler.allrole ,mainboardcontroller.mainboard);
 router.get('/viewcost/:id', authcontroler.checkAuthAndFetchUser,mainboardcontroller.viewcost);
 router.get('/editcost/:id', authcontroler.checkAuthAndFetchUser,mainboardcontroller.editcost);
 router.get('/addcostpage', authcontroler.checkAuthAndFetchUser,mainboardcontroller.addcostpage);

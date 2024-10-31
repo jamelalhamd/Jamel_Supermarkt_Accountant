@@ -19,15 +19,15 @@ router.get('/items',authcontroler.checkAuthAndFetchUser, itemViewControl.itemVie
 router.post('/searchitems',authcontroler.checkAuthAndFetchUser, itemViewControl.searchItemController);
 
 // Route to view a specific item for editing
-router.get('/edititem/:id',authcontroler.checkAuthAndFetchUser,rolecontrooler.Store,rolecontrooler.Buyer, itemViewControl.editItem);
-router.post('/updateitem/:id',authcontroler.checkAuthAndFetchUser,rolecontrooler.Store,rolecontrooler.Buyer, itemViewControl.updateItem);
+router.get('/edititem/:id',authcontroler.checkAuthAndFetchUser,rolecontrooler.allrole , itemViewControl.editItem);
+router.post('/updateitem/:id',authcontroler.checkAuthAndFetchUser,rolecontrooler.allrole, itemViewControl.updateItem);
 
 // Route to render delete item page and handle item deletion
-router.post('/deleteitem/:id', authcontroler.checkAuthAndFetchUser,rolecontrooler.Store,rolecontrooler.Buyer,itemViewControl.deleteItem);
-router.get('/deleteitempage/:id',authcontroler.checkAuthAndFetchUser,rolecontrooler.Store,rolecontrooler.Buyer, itemViewControl.deleteItemPage);
+router.post('/deleteitem/:id', authcontroler.checkAuthAndFetchUser,rolecontrooler.allrole,itemViewControl.deleteItem);
+router.get('/deleteitempage/:id',authcontroler.checkAuthAndFetchUser,rolecontrooler.allrole, itemViewControl.deleteItemPage);
 // Route to render add item page and handle adding a new item
-router.get('/additem',authcontroler.checkAuthAndFetchUser,rolecontrooler.Store,rolecontrooler.Buyer, itemViewControl.addItemPage);
-router.post('/additem', authcontroler.checkAuthAndFetchUser,rolecontrooler.Store,rolecontrooler.Buyer,itemViewControl.addItem);
+router.get('/additem',authcontroler.checkAuthAndFetchUser,rolecontrooler.allrole, itemViewControl.addItemPage);
+router.post('/additem', authcontroler.checkAuthAndFetchUser,rolecontrooler.allrole,itemViewControl.addItem);
 
 // Route to view details of a specific item
 router.get('/viewitem/:id',authcontroler.checkAuthAndFetchUser, itemViewControl.itemViewDetails);
