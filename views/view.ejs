@@ -11,7 +11,7 @@
     </li>
   </ol>
 </nav>
-
+<% console.log("image :"+emp.image); %>
 <div class="container mt-5" style="width: 88%">
   <div class="row">
     <!-- Employee Overview Section -->
@@ -23,6 +23,24 @@
           <hr>
           <p class="fw-semibold mb-1">Role: <%= emp.employee_role %></p>
           <p class="fw-semibold mb-1">Branch: <%= storeDetail ? storeDetail.StoreName : 'Store not found' %></p>
+          <hr>
+          <div style="text-align: center; padding: 20px; border: 2px solid #010a13; border-radius: 10px; box-shadow: 0 4px 20px rgba(0, 123, 255, 0.2);">
+
+            <% console.log("image :"+emp.image); %><% console.log("image :"+emp.image); %><% console.log("image :"+emp.image); %><% console.log("image :"+emp.image); %>
+            <img src="<%= emp.image %>"  
+            alt="User Profile" 
+            style="border-radius: 10%; width: 180px; height: 180px; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);"
+            crossorigin="anonymous" />
+
+
+        
+            <p style="font-size: 1.2em; color: #333;"></p>
+            
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalphoto">
+              Change the Photo
+             </button>
+        
+        </div>
         </div>
       </div>
     </div>
@@ -70,7 +88,7 @@
         </div>
 
         <div class="card-footer d-flex justify-content-end gap-2">
-          <a href="/dash" class="btn btn-outline-secondary">
+          <a href="/dash" class="btn btn-success">
             <i class="bi bi-arrow-left"></i> Back to Employees
           </a>
           <a href="/edit/<%= emp.employee_id %>" class="btn btn-primary">
@@ -85,4 +103,7 @@
     </div>
   </div>
 </div>
+
+
+
 

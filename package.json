@@ -5,7 +5,7 @@
     "body-parser": "^1.20.2",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
-    "cloudinary": "^2.4.0",
+    "cloudinary": "^2.5.1",
     "connect-livereload": "^0.6.1",
     "cookie-parser": "^1.4.6",
     "dayjs": "^1.11.13",

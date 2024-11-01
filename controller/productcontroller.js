@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { db, getStoreData,getEmployees } = require('../controller/db');
+const { db, getStoreData,getEmployees ,runQuery} = require('../controller/db');
 
 // Helper function to fetch store data
 
@@ -457,6 +457,24 @@ const searchcontroller = async (req, res) => {
     res.render('home', { data });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

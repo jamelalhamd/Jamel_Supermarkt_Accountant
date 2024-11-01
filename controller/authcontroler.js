@@ -2,10 +2,12 @@
 const bodyParser = require('body-parser');
 const sendEMail2=require('./sendthe email');
 const sendEMail=require('./sendemail');
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2
 
 const { check, validationResult } = require("express-validator");
 require('dotenv').config();
-const cloudinary = require("cloudinary").v2;
+
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 //================================================
@@ -190,26 +192,48 @@ const resetPasswordController = (req, res) => {
 
 
 
-const post_profileIme = async (req, res) => {
-    try {
-       
-   
-       
-       
-        const result = await cloudinary.uploader.upload(req.file.path, { folder: "x-system/profile-imgs" });
-
-        const decoded = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET_KEY);
-
-        await AuthUser.updateOne(
-            { _id: decoded.id },
-            { profileImage: result.secure_url }
-        );
-        res.redirect("/home");
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: "Error uploading image" });
+const post_profileImage = async (req, res) => {
+    const id = req.params.id;
+  
+    // Check if a file is uploaded
+    if (!req.file) {
+      console.error("No file provided");
+      return res.status(400).send("No file uploaded.");
     }
-};
+  
+    try {
+      // Upload the image buffer directly to Cloudinary
+      cloudinary.uploader.upload_stream({ folder: "jamel_photo" }, async (error, result) => {
+        if (error) {
+          console.error("Cloudinary upload failed:", error);
+          return res.status(500).send('Internal Server Error: Cloudinary upload failed');
+        }
+  
+        if (result) {
+          try {
+            // Decode the JWT to verify the user
+            const decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY);
+            console.log("Decoded JWT:", decoded);
+  
+            // Update the user's profile image URL in the database
+            const avatar = await User.updateOne(
+              { _id: decoded.id }, 
+              { profileImage: result.secure_url }
+            );
+  
+            console.log("User profile image updated:", avatar);
+            res.redirect("/home");
+          } catch (err) {
+            console.error('JWT verification failed:', err);
+            res.redirect("/home");
+          }
+        }
+      }).end(req.file.buffer); // Upload file buffer instead of file path
+    } catch (err) {
+      console.error("Error in post_profileImage:", err);
+      res.status(500).send("Internal Server Error");
+    }
+  };
 
 const signoutcontroler = (req, res) => {
     res.cookie("jwt", "", { maxAge: 1 });
@@ -283,7 +307,7 @@ console.log("0");
                 console.log("err");
                 console.log("Token verification failed:", err.message);
                 res.locals.user = null;
-                return res.redirect("/login");  // إعادة التوجيه في حال فشل التحقق
+                return res.redirect("/login");  
             }
 
             const email = decoded.email;
@@ -460,7 +484,7 @@ module.exports = {
     signoutcontroler,changepassword,changepasswordpost,
     logincontroler,
     loginpostcontroller,
-    post_profileIme,
+    post_profileImage ,
     checkIfUser,
     requireAuth,forgotPasswordController ,
     restpassword,

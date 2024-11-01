@@ -470,8 +470,61 @@
             window.print();
     });
   });
+
+
+
 </script>
 
     </body>
   </body>
 </html>
+
+
+
+<div class="modal fade" id="exampleModalphoto" tabindex="-1" aria-labelledby="exampleModalphoto" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="/changeimage/<%=user.employee_id %>" method="post" enctype="multipart/form-data" >
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Change the Image</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body d-flex align-items-center justify-content-between">
+          <!-- Label triggers the hidden file input -->
+         <div class="btn btn-primary">
+            <label  for="inputfile" style="cursor: pointer;">
+              Select Image <i class="bi bi-plus-circle"></i>
+            </label>
+            <!-- Hidden file input -->
+            <input name="profileimage" style="display: none;" id="inputfile" type="file" accept="image/*">
+         </div>
+          
+          <!-- Image preview -->
+          <img id="imagefile" src="/image/avatar.png" alt="Avatar" style="border-radius: 50%; width: 150px; height: 150px;" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const inputfile = document.getElementById("inputfile");
+  const imagefile = document.getElementById("imagefile");
+
+  inputfile.addEventListener("change", (event) => {
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        imagefile.src = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
+    }
+  });
+</script>
