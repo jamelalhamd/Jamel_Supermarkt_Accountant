@@ -2,8 +2,10 @@
 <html lang="en" data-bs-theme="auto">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+
    
+
     <!-- Content Security Policy -->
 
 
@@ -463,17 +465,8 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 
 
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    
-    document.getElementById("printButton").addEventListener("click", function() {
-            window.print();
-    });
-  });
 
 
-
-</script>
 
     </body>
   </body>
@@ -512,10 +505,13 @@
 </div>
 
 <script>
-  const inputfile = document.getElementById("inputfile");
-  const imagefile = document.getElementById("imagefile");
+const inputfile = document.getElementById("inputfile");
+const imagefile = document.getElementById("imagefile");
 
-  inputfile.addEventListener("change", (event) => {
+
+
+if (inputfile && imagefile) {
+      inputfile.addEventListener("change", (event) => {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
       const reader = new FileReader();
@@ -527,4 +523,6 @@
       reader.readAsDataURL(file);
     }
   });
+}
+
 </script>

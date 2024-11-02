@@ -25,12 +25,16 @@ app.use((req, res, next) => {
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:35729; " +
     "style-src 'self' https: 'unsafe-inline'; " +
     "font-src 'self' https: data:; " +
-    "img-src 'self' data:; " +  // السماح بتحميل الصور من نوع data:
+    "img-src 'self' data: https://res.cloudinary.com; " +  
     "worker-src 'self' blob:; " +
-    "connect-src 'self' ws://localhost:35729;" // السماح بالاتصالات عبر WebSocket
+    "connect-src 'self' ws://localhost:35729;"
   );
   next();
 });
+
+
+
+
 
 
 
