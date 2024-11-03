@@ -1,13 +1,19 @@
 
 const mysql = require('mysql');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
 
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'j_hamad83',
-  password: 'Afpc1967#',
-  database: 'supermarkt_db'
+  host: process.env.HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DATABASE
 });
+
+
+
+
 
 // Connect to the database
 db.connect((err) => {
@@ -15,6 +21,10 @@ db.connect((err) => {
     throw err;
   }
   console.log('Connected to MySQL database');
+  console.log("process.env.HOST :"+process.env.HOST)
+  console.log("process.env.DB_USER :"+process.env.DB_USER)
+  console.log("process.env.DB_PASSWORD :"+process.env.DB_PASSWORD)
+  console.log("process.env.DATABASE :"+process.env.DATABASE)
 });
 
 // Fetch store data
