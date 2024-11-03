@@ -5,10 +5,10 @@ require('dotenv').config();
 
 
 const db = mysql.createConnection({
-  host: process.env.HOST,
+  host: process.env.DB_HOST,
   user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DATABASE
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME
 });
 
 
@@ -21,10 +21,10 @@ db.connect((err) => {
     throw err;
   }
   console.log('Connected to MySQL database');
-  console.log("process.env.HOST :"+process.env.HOST)
+  console.log("process.env.HOST :"+process.env.DB_HOST)
   console.log("process.env.DB_USER :"+process.env.DB_USER)
-  console.log("process.env.DB_PASSWORD :"+process.env.DB_PASSWORD)
-  console.log("process.env.DATABASE :"+process.env.DATABASE)
+  console.log("process.env.DB_PASSWORD :"+process.env.DB_PASS)
+  console.log("process.env.DATABASE :"+process.env.DB_NAME)
 });
 
 // Fetch store data
