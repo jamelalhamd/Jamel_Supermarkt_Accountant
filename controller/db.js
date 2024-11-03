@@ -22,13 +22,12 @@ db.connect((err) => {
   }
   console.log('Connected to MySQL database');
   console.log("process.env.HOST :"+process.env.DB_HOST)
-  console.log("process.env.DB_USER :"+process.env.DB_USER)
-  console.log("process.env.DB_PASSWORD :"+process.env.DB_PASS)
-  console.log("process.env.DATABASE :"+process.env.DB_NAME)
+
 });
 
 // Fetch store data
 const getStoreData = () => {
+  
   return new Promise((resolve, reject) => {
     const storeQuery = 'SELECT * FROM store';
     db.query(storeQuery, (err, storeResults) => {
